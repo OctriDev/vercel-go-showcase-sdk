@@ -8,68 +8,6 @@ import (
 	"encoding/json"
 )
 
-type CreateProjectResponseJobsMfeConfigPresent struct {
-	Targets []string `json:"targets"`
-}
-
-func (value *CreateProjectResponseJobsMfeConfigPresent) UnmarshalJSON(data []byte) error {
-	type CreateProjectResponseJobsMfeConfigPresentAlias CreateProjectResponseJobsMfeConfigPresent
-	var decoded CreateProjectResponseJobsMfeConfigPresentAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateProjectResponseJobsMfeConfigPresent(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"targets"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"targets"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateProjectResponseJobsMfeConfigPresent returns a validated CreateProjectResponseJobsMfeConfigPresent built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResponseJobsMfeConfigPresent(fields CreateProjectResponseJobsMfeConfigPresent) (*CreateProjectResponseJobsMfeConfigPresent, error) {
-	return ConstructModel(fields)
-}
-
-type CreateProjectResponseJobsTypecheck struct {
-	Targets []string `json:"targets"`
-}
-
-func (value *CreateProjectResponseJobsTypecheck) UnmarshalJSON(data []byte) error {
-	type CreateProjectResponseJobsTypecheckAlias CreateProjectResponseJobsTypecheck
-	var decoded CreateProjectResponseJobsTypecheckAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateProjectResponseJobsTypecheck(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"targets"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"targets"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateProjectResponseJobsTypecheck returns a validated CreateProjectResponseJobsTypecheck built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResponseJobsTypecheck(fields CreateProjectResponseJobsTypecheck) (*CreateProjectResponseJobsTypecheck, error) {
-	return ConstructModel(fields)
-}
-
 type CreateProjectResponseLastAliasRequest struct {
 	FromDeploymentId NullableValue[string] `json:"fromDeploymentId"`
 	// FromRollingReleaseId If rolling back from a rolling release, fromDeploymentId captures the "base" of that rolling release, and fromRollingReleaseId captures the "target" of that rolling release.

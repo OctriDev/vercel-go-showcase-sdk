@@ -8,116 +8,6 @@ import (
 	"encoding/json"
 )
 
-func (value *GetFirewallConfigResponseManagedRulesVercelRuleset) UnmarshalJSON(data []byte) error {
-	type GetFirewallConfigResponseManagedRulesVercelRulesetAlias GetFirewallConfigResponseManagedRulesVercelRuleset
-	var decoded GetFirewallConfigResponseManagedRulesVercelRulesetAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetFirewallConfigResponseManagedRulesVercelRuleset(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"active"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"active"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetFirewallConfigResponseManagedRulesVercelRuleset returns a validated GetFirewallConfigResponseManagedRulesVercelRuleset built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetFirewallConfigResponseManagedRulesVercelRuleset(fields GetFirewallConfigResponseManagedRulesVercelRuleset) (*GetFirewallConfigResponseManagedRulesVercelRuleset, error) {
-	return ConstructModel(fields)
-}
-
-type GetFirewallConfigResponseManagedRulesVercelRulesetActionEnum string
-
-const (
-	GetFirewallConfigResponseManagedRulesVercelRulesetActionEnumChallenge GetFirewallConfigResponseManagedRulesVercelRulesetActionEnum = "challenge"
-	GetFirewallConfigResponseManagedRulesVercelRulesetActionEnumDeny      GetFirewallConfigResponseManagedRulesVercelRulesetActionEnum = "deny"
-	GetFirewallConfigResponseManagedRulesVercelRulesetActionEnumLog       GetFirewallConfigResponseManagedRulesVercelRulesetActionEnum = "log"
-)
-
-type GetFirewallConfigResponseRulesetsVariant0 struct {
-	Active         bool                                                      `json:"active"`
-	ConditionGroup []GetFirewallConfigResponseRulesetsVariant0ConditionGroup `json:"conditionGroup"`
-	Description    *string                                                   `json:"description,omitempty"`
-	Id             string                                                    `json:"id"`
-	Name           string                                                    `json:"name"`
-	Action         *GetFirewallConfigResponseRulesetsVariant0Action          `json:"action,omitempty"`
-}
-
-func (value *GetFirewallConfigResponseRulesetsVariant0) UnmarshalJSON(data []byte) error {
-	type GetFirewallConfigResponseRulesetsVariant0Alias GetFirewallConfigResponseRulesetsVariant0
-	var decoded GetFirewallConfigResponseRulesetsVariant0Alias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetFirewallConfigResponseRulesetsVariant0(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"active", "conditionGroup", "id", "name"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"active", "conditionGroup", "id", "name"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetFirewallConfigResponseRulesetsVariant0 returns a validated GetFirewallConfigResponseRulesetsVariant0 built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetFirewallConfigResponseRulesetsVariant0(fields GetFirewallConfigResponseRulesetsVariant0) (*GetFirewallConfigResponseRulesetsVariant0, error) {
-	return ConstructModel(fields)
-}
-
-type GetFirewallConfigResponseRulesetsVariant0ConditionGroup struct {
-	Conditions []GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditions `json:"conditions"`
-}
-
-func (value *GetFirewallConfigResponseRulesetsVariant0ConditionGroup) UnmarshalJSON(data []byte) error {
-	type GetFirewallConfigResponseRulesetsVariant0ConditionGroupAlias GetFirewallConfigResponseRulesetsVariant0ConditionGroup
-	var decoded GetFirewallConfigResponseRulesetsVariant0ConditionGroupAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetFirewallConfigResponseRulesetsVariant0ConditionGroup(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"conditions"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"conditions"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetFirewallConfigResponseRulesetsVariant0ConditionGroup returns a validated GetFirewallConfigResponseRulesetsVariant0ConditionGroup built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetFirewallConfigResponseRulesetsVariant0ConditionGroup(fields GetFirewallConfigResponseRulesetsVariant0ConditionGroup) (*GetFirewallConfigResponseRulesetsVariant0ConditionGroup, error) {
-	return ConstructModel(fields)
-}
-
-type GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditions struct {
-	Key   *string                                                                   `json:"key,omitempty"`
-	Neg   *bool                                                                     `json:"neg,omitempty"`
-	Op    GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditionsOpEnum   `json:"op"`
-	Type  GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditionsTypeEnum `json:"type"`
-	Value *GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditionsValue   `json:"value,omitempty"`
-}
-
 func (value *GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditions) UnmarshalJSON(data []byte) error {
 	type GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditionsAlias GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditions
 	var decoded GetFirewallConfigResponseRulesetsVariant0ConditionGroupConditionsAlias
@@ -680,4 +570,116 @@ const (
 type GetFirewallConfigResponseRulesetsVariant1Redirect struct {
 	Location  string `json:"location"`
 	Permanent bool   `json:"permanent"`
+}
+
+func (value *GetFirewallConfigResponseRulesetsVariant1Redirect) UnmarshalJSON(data []byte) error {
+	type GetFirewallConfigResponseRulesetsVariant1RedirectAlias GetFirewallConfigResponseRulesetsVariant1Redirect
+	var decoded GetFirewallConfigResponseRulesetsVariant1RedirectAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GetFirewallConfigResponseRulesetsVariant1Redirect(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"location", "permanent"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"location", "permanent"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGetFirewallConfigResponseRulesetsVariant1Redirect returns a validated GetFirewallConfigResponseRulesetsVariant1Redirect built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetFirewallConfigResponseRulesetsVariant1Redirect(fields GetFirewallConfigResponseRulesetsVariant1Redirect) (*GetFirewallConfigResponseRulesetsVariant1Redirect, error) {
+	return ConstructModel(fields)
+}
+
+// GetFirewallConfigResponseRulesets represents a union type.
+type GetFirewallConfigResponseRulesets struct {
+	ListOfGetFirewallConfigResponseRulesetsVariant0            *[]GetFirewallConfigResponseRulesetsVariant0
+	MapStringGetFirewallConfigResponseRulesetsVariant18798283e *map[string]GetFirewallConfigResponseRulesetsVariant1_8798283e
+}
+
+func (u *GetFirewallConfigResponseRulesets) UnmarshalJSON(data []byte) error {
+	*u = GetFirewallConfigResponseRulesets{}
+	var refusal error
+	var raw map[string]json.RawMessage
+	if json.Unmarshal(data, &raw) == nil {
+		var lossless0 []GetFirewallConfigResponseRulesetsVariant0
+		if json.Unmarshal(data, &lossless0) == nil && keepsEveryKey(raw, lossless0) {
+			u.ListOfGetFirewallConfigResponseRulesetsVariant0 = &lossless0
+			return nil
+		}
+		var lossless1 map[string]GetFirewallConfigResponseRulesetsVariant1_8798283e
+		if json.Unmarshal(data, &lossless1) == nil && keepsEveryKey(raw, lossless1) {
+			u.MapStringGetFirewallConfigResponseRulesetsVariant18798283e = &lossless1
+			return nil
+		}
+	}
+	var listofgetfirewallconfigresponserulesetsvariant0 []GetFirewallConfigResponseRulesetsVariant0
+	if err := json.Unmarshal(data, &listofgetfirewallconfigresponserulesetsvariant0); err == nil && isNonEmptyGetFirewallConfigResponseRulesetsListOfGetFirewallConfigResponseRulesetsVariant0(listofgetfirewallconfigresponserulesetsvariant0) {
+		u.ListOfGetFirewallConfigResponseRulesetsVariant0 = &listofgetfirewallconfigresponserulesetsvariant0
+		return nil
+	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
+		refusal = err
+	}
+	var mapstringgetfirewallconfigresponserulesetsvariant18798283e map[string]GetFirewallConfigResponseRulesetsVariant1_8798283e
+	if err := json.Unmarshal(data, &mapstringgetfirewallconfigresponserulesetsvariant18798283e); err == nil && isNonEmptyGetFirewallConfigResponseRulesetsMapStringGetFirewallConfigResponseRulesetsVariant18798283e(mapstringgetfirewallconfigresponserulesetsvariant18798283e) {
+		u.MapStringGetFirewallConfigResponseRulesetsVariant18798283e = &mapstringgetfirewallconfigresponserulesetsvariant18798283e
+		return nil
+	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
+		refusal = err
+	}
+	return refusal
+}
+
+func (u GetFirewallConfigResponseRulesets) MarshalJSON() ([]byte, error) {
+	if u.ListOfGetFirewallConfigResponseRulesetsVariant0 != nil {
+		return json.Marshal(u.ListOfGetFirewallConfigResponseRulesetsVariant0)
+	}
+	if u.MapStringGetFirewallConfigResponseRulesetsVariant18798283e != nil {
+		return json.Marshal(u.MapStringGetFirewallConfigResponseRulesetsVariant18798283e)
+	}
+	return []byte("null"), nil
+}
+
+func isNonEmptyGetFirewallConfigResponseRulesetsListOfGetFirewallConfigResponseRulesetsVariant0(v []GetFirewallConfigResponseRulesetsVariant0) bool {
+	b, _ := json.Marshal(v)
+	return string(b) != "{}" && string(b) != "null"
+}
+
+func isNonEmptyGetFirewallConfigResponseRulesetsMapStringGetFirewallConfigResponseRulesetsVariant18798283e(v map[string]GetFirewallConfigResponseRulesetsVariant1_8798283e) bool {
+	b, _ := json.Marshal(v)
+	return string(b) != "{}" && string(b) != "null"
+}
+
+// UnmarshalGetFirewallConfigResponseRulesets converts an untyped value to GetFirewallConfigResponseRulesets.
+func UnmarshalGetFirewallConfigResponseRulesets(v any) GetFirewallConfigResponseRulesets {
+	b, _ := json.Marshal(v)
+	var result GetFirewallConfigResponseRulesets
+	_ = json.Unmarshal(b, &result)
+	return result
+}
+
+type CreateSecurityFirewallConfigByConfigVersionActivateResponse struct {
+	BotIdEnabled    *bool                                                                    `json:"botIdEnabled,omitempty"`
+	Changes         []map[string]any                                                         `json:"changes"`
+	Conditions      []CreateSecurityFirewallConfigByConfigVersionActivateResponseConditions  `json:"conditions,omitempty"`
+	Crs             *CreateSecurityFirewallConfigByConfigVersionActivateResponseCrs          `json:"crs,omitempty"`
+	FirewallEnabled bool                                                                     `json:"firewallEnabled"`
+	Id              string                                                                   `json:"id"`
+	Ips             []CreateSecurityFirewallConfigByConfigVersionActivateResponseIps         `json:"ips"`
+	LogHeaders      *CreateSecurityFirewallConfigByConfigVersionActivateResponseLogHeaders   `json:"logHeaders,omitempty"`
+	ManagedRules    *CreateSecurityFirewallConfigByConfigVersionActivateResponseManagedRules `json:"managedRules,omitempty"`
+	OwnerId         string                                                                   `json:"ownerId"`
+	ProjectKey      string                                                                   `json:"projectKey"`
+	Rules           []CreateSecurityFirewallConfigByConfigVersionActivateResponseRulesItem   `json:"rules"`
+	Rulesets        *CreateSecurityFirewallConfigByConfigVersionActivateResponseRulesets     `json:"rulesets,omitempty"`
+	UpdatedAt       string                                                                   `json:"updatedAt"`
+	Version         float64                                                                  `json:"version"`
 }

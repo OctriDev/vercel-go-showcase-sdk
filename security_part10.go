@@ -147,7 +147,7 @@ type PutFirewallConfigRulesActionMitigate struct {
 	Redirect       *NullableValue[PutFirewallConfigRulesActionMitigateRedirectVariant0]  `json:"redirect,omitempty"`
 	ActionDuration *NullableValue[string]                                                `json:"actionDuration,omitempty"`
 	BypassSystem   *NullableValue[bool]                                                  `json:"bypassSystem,omitempty"`
-	LogHeaders     *PutFirewallConfigRulesActionMitigateLogHeaders                       `json:"logHeaders,omitempty"`
+	LogHeaders     []string                                                              `json:"logHeaders,omitempty"`
 }
 
 func (value *PutFirewallConfigRulesActionMitigate) UnmarshalJSON(data []byte) error {
@@ -284,100 +284,6 @@ func (value *PutFirewallConfigRulesActionMitigateRedirectVariant0) UnmarshalJSON
 // reported as *SdkValidationError.
 func NewPutFirewallConfigRulesActionMitigateRedirectVariant0(fields PutFirewallConfigRulesActionMitigateRedirectVariant0) (*PutFirewallConfigRulesActionMitigateRedirectVariant0, error) {
 	return ConstructModel(fields)
-}
-
-// PutFirewallConfigRulesActionMitigateLogHeaders represents a union type.
-type PutFirewallConfigRulesActionMitigateLogHeaders struct {
-	String       *string
-	ListOfString *[]string
-}
-
-func (u *PutFirewallConfigRulesActionMitigateLogHeaders) UnmarshalJSON(data []byte) error {
-	*u = PutFirewallConfigRulesActionMitigateLogHeaders{}
-	var refusal error
-	var s string
-	if err := json.Unmarshal(data, &s); err == nil {
-		u.String = &s
-		return nil
-	}
-	var listofstring []string
-	if err := json.Unmarshal(data, &listofstring); err == nil && isNonEmptyPutFirewallConfigRulesActionMitigateLogHeadersListOfString(listofstring) {
-		u.ListOfString = &listofstring
-		return nil
-	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
-		refusal = err
-	}
-	return refusal
-}
-
-func (u PutFirewallConfigRulesActionMitigateLogHeaders) MarshalJSON() ([]byte, error) {
-	if u.String != nil {
-		return json.Marshal(u.String)
-	}
-	if u.ListOfString != nil {
-		return json.Marshal(u.ListOfString)
-	}
-	return []byte("null"), nil
-}
-
-func isNonEmptyPutFirewallConfigRulesActionMitigateLogHeadersListOfString(v []string) bool {
-	b, _ := json.Marshal(v)
-	return string(b) != "{}" && string(b) != "null"
-}
-
-// UnmarshalPutFirewallConfigRulesActionMitigateLogHeaders converts an untyped value to PutFirewallConfigRulesActionMitigateLogHeaders.
-func UnmarshalPutFirewallConfigRulesActionMitigateLogHeaders(v any) PutFirewallConfigRulesActionMitigateLogHeaders {
-	b, _ := json.Marshal(v)
-	var result PutFirewallConfigRulesActionMitigateLogHeaders
-	_ = json.Unmarshal(b, &result)
-	return result
-}
-
-// PutFirewallConfigRulesValidationErrors represents a union type.
-type PutFirewallConfigRulesValidationErrors struct {
-	ListOfString *[]string
-	String       *string
-}
-
-func (u *PutFirewallConfigRulesValidationErrors) UnmarshalJSON(data []byte) error {
-	*u = PutFirewallConfigRulesValidationErrors{}
-	var refusal error
-	var s string
-	if err := json.Unmarshal(data, &s); err == nil {
-		u.String = &s
-		return nil
-	}
-	var listofstring []string
-	if err := json.Unmarshal(data, &listofstring); err == nil && isNonEmptyPutFirewallConfigRulesValidationErrorsListOfString(listofstring) {
-		u.ListOfString = &listofstring
-		return nil
-	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
-		refusal = err
-	}
-	return refusal
-}
-
-func (u PutFirewallConfigRulesValidationErrors) MarshalJSON() ([]byte, error) {
-	if u.ListOfString != nil {
-		return json.Marshal(u.ListOfString)
-	}
-	if u.String != nil {
-		return json.Marshal(u.String)
-	}
-	return []byte("null"), nil
-}
-
-func isNonEmptyPutFirewallConfigRulesValidationErrorsListOfString(v []string) bool {
-	b, _ := json.Marshal(v)
-	return string(b) != "{}" && string(b) != "null"
-}
-
-// UnmarshalPutFirewallConfigRulesValidationErrors converts an untyped value to PutFirewallConfigRulesValidationErrors.
-func UnmarshalPutFirewallConfigRulesValidationErrors(v any) PutFirewallConfigRulesValidationErrors {
-	b, _ := json.Marshal(v)
-	var result PutFirewallConfigRulesValidationErrors
-	_ = json.Unmarshal(b, &result)
-	return result
 }
 
 type PutFirewallConfigIps struct {
@@ -689,4 +595,89 @@ func (u *PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue)
 		refusal = err
 	}
 	return refusal
+}
+
+func (u PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue) MarshalJSON() ([]byte, error) {
+	if u.String != nil {
+		return json.Marshal(u.String)
+	}
+	if u.Float64 != nil {
+		return json.Marshal(u.Float64)
+	}
+	if u.ListOfString != nil {
+		return json.Marshal(u.ListOfString)
+	}
+	return []byte("null"), nil
+}
+
+func isNonEmptyPutFirewallConfigResponseActiveConditionsConditionGroupConditionsValueListOfString(v []string) bool {
+	b, _ := json.Marshal(v)
+	return string(b) != "{}" && string(b) != "null"
+}
+
+// UnmarshalPutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue converts an untyped value to PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue.
+func UnmarshalPutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue(v any) PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue {
+	b, _ := json.Marshal(v)
+	var result PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue
+	_ = json.Unmarshal(b, &result)
+	return result
+}
+
+// PutFirewallConfigResponseActiveCrs Custom Ruleset
+type PutFirewallConfigResponseActiveCrs struct {
+	// Gen Generic Attack - Provide broad protection from various undefined or novel attack vectors.
+	Gen PutFirewallConfigResponseActiveCrsGen `json:"gen"`
+	// Java Java Attack - Mitigate risks of exploitation targeting Java-based applications or components.
+	Java PutFirewallConfigResponseActiveCrsJava `json:"java"`
+	// Lfi Local File Inclusion Attack - Prevent unauthorized access to local files through web applications.
+	Lfi PutFirewallConfigResponseActiveCrsLfi `json:"lfi"`
+	// Ma Multipart Attack - Block attempts to bypass security controls using multipart/form-data encoding.
+	Ma PutFirewallConfigResponseActiveCrsMa `json:"ma"`
+	// Php PHP Attack - Safeguard against vulnerability exploits in PHP-based applications.
+	Php PutFirewallConfigResponseActiveCrsPhp `json:"php"`
+	// Rce Remote Execution Attack - Prevent unauthorized execution of remote scripts or commands.
+	Rce PutFirewallConfigResponseActiveCrsRce `json:"rce"`
+	// Rfi Remote File Inclusion Attack - Prohibit unauthorized upload or execution of remote files.
+	Rfi PutFirewallConfigResponseActiveCrsRfi `json:"rfi"`
+	// Sd Scanner Detection - Detect and prevent reconnaissance activities from network scanning tools.
+	Sd PutFirewallConfigResponseActiveCrsSd `json:"sd"`
+	// Sf Session Fixation Attack - Prevent unauthorized takeover of user sessions by enforcing unique session IDs.
+	Sf PutFirewallConfigResponseActiveCrsSf `json:"sf"`
+	// Sqli SQL Injection Attack - Prohibit unauthorized use of SQL commands to manipulate databases.
+	Sqli PutFirewallConfigResponseActiveCrsSqli `json:"sqli"`
+	// Xss XSS Attack - Prevent injection of malicious scripts into trusted webpages.
+	Xss PutFirewallConfigResponseActiveCrsXss `json:"xss"`
+}
+
+func (value *PutFirewallConfigResponseActiveCrs) UnmarshalJSON(data []byte) error {
+	type PutFirewallConfigResponseActiveCrsAlias PutFirewallConfigResponseActiveCrs
+	var decoded PutFirewallConfigResponseActiveCrsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = PutFirewallConfigResponseActiveCrs(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"gen", "java", "lfi", "ma", "php", "rce", "rfi", "sd", "sf", "sqli", "xss"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"gen", "java", "lfi", "ma", "php", "rce", "rfi", "sd", "sf", "sqli", "xss"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewPutFirewallConfigResponseActiveCrs returns a validated PutFirewallConfigResponseActiveCrs built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewPutFirewallConfigResponseActiveCrs(fields PutFirewallConfigResponseActiveCrs) (*PutFirewallConfigResponseActiveCrs, error) {
+	return ConstructModel(fields)
+}
+
+// PutFirewallConfigResponseActiveCrsGen Generic Attack - Provide broad protection from various undefined or novel attack vectors.
+type PutFirewallConfigResponseActiveCrsGen struct {
+	Action PutFirewallConfigResponseActiveCrsGenActionEnum `json:"action"`
+	Active bool                                            `json:"active"`
 }

@@ -573,14 +573,14 @@ const (
 )
 
 type PutFirewallConfigRules struct {
-	Id               *string                                 `json:"id,omitempty"`
-	Name             string                                  `json:"name"`
-	Description      *string                                 `json:"description,omitempty"`
-	Active           bool                                    `json:"active"`
-	ConditionGroup   []PutFirewallConfigRulesConditionGroup  `json:"conditionGroup"`
-	Action           PutFirewallConfigRulesAction            `json:"action"`
-	Valid            *bool                                   `json:"valid,omitempty"`
-	ValidationErrors *PutFirewallConfigRulesValidationErrors `json:"validationErrors,omitempty"`
+	Id               *string                                `json:"id,omitempty"`
+	Name             string                                 `json:"name"`
+	Description      *string                                `json:"description,omitempty"`
+	Active           bool                                   `json:"active"`
+	ConditionGroup   []PutFirewallConfigRulesConditionGroup `json:"conditionGroup"`
+	Action           PutFirewallConfigRulesAction           `json:"action"`
+	Valid            *bool                                  `json:"valid,omitempty"`
+	ValidationErrors []string                               `json:"validationErrors,omitempty"`
 }
 
 func (value *PutFirewallConfigRules) UnmarshalJSON(data []byte) error {

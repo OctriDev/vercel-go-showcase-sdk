@@ -260,7 +260,7 @@ type CreateProjectEnvironmentVariables struct {
 	// Key Name of the ENV variable
 	Key string `json:"key"`
 	// Target Deployment Target or Targets in which the ENV variable will be used
-	Target CreateProjectEnvironmentVariablesTarget `json:"target"`
+	Target []CreateProjectEnvironmentVariablesTargetEnum `json:"target"`
 	// GitBranch If defined, the git branch of the environment variable (must have target=preview)
 	GitBranch *string `json:"gitBranch,omitempty"`
 	// Type Type of the ENV variable
@@ -301,88 +301,13 @@ func NewCreateProjectEnvironmentVariables(fields CreateProjectEnvironmentVariabl
 	return ConstructModel(fields)
 }
 
-type CreateProjectEnvironmentVariablesTargetVariant0Enum string
+type CreateProjectEnvironmentVariablesTargetEnum string
 
 const (
-	CreateProjectEnvironmentVariablesTargetVariant0EnumProduction  CreateProjectEnvironmentVariablesTargetVariant0Enum = "production"
-	CreateProjectEnvironmentVariablesTargetVariant0EnumPreview     CreateProjectEnvironmentVariablesTargetVariant0Enum = "preview"
-	CreateProjectEnvironmentVariablesTargetVariant0EnumDevelopment CreateProjectEnvironmentVariablesTargetVariant0Enum = "development"
+	CreateProjectEnvironmentVariablesTargetEnumProduction  CreateProjectEnvironmentVariablesTargetEnum = "production"
+	CreateProjectEnvironmentVariablesTargetEnumPreview     CreateProjectEnvironmentVariablesTargetEnum = "preview"
+	CreateProjectEnvironmentVariablesTargetEnumDevelopment CreateProjectEnvironmentVariablesTargetEnum = "development"
 )
-
-type CreateProjectEnvironmentVariablesTargetVariant1Enum string
-
-const (
-	CreateProjectEnvironmentVariablesTargetVariant1EnumProduction  CreateProjectEnvironmentVariablesTargetVariant1Enum = "production"
-	CreateProjectEnvironmentVariablesTargetVariant1EnumPreview     CreateProjectEnvironmentVariablesTargetVariant1Enum = "preview"
-	CreateProjectEnvironmentVariablesTargetVariant1EnumDevelopment CreateProjectEnvironmentVariablesTargetVariant1Enum = "development"
-)
-
-// CreateProjectEnvironmentVariablesTarget represents a union type.
-type CreateProjectEnvironmentVariablesTarget struct {
-	CreateProjectEnvironmentVariablesTargetVariant0Enum       *CreateProjectEnvironmentVariablesTargetVariant0Enum
-	ListOfCreateProjectEnvironmentVariablesTargetVariant1Enum *[]CreateProjectEnvironmentVariablesTargetVariant1Enum
-}
-
-func (u *CreateProjectEnvironmentVariablesTarget) UnmarshalJSON(data []byte) error {
-	*u = CreateProjectEnvironmentVariablesTarget{}
-	var refusal error
-	var raw map[string]json.RawMessage
-	if json.Unmarshal(data, &raw) == nil {
-		var lossless0 CreateProjectEnvironmentVariablesTargetVariant0Enum
-		if json.Unmarshal(data, &lossless0) == nil && keepsEveryKey(raw, lossless0) {
-			u.CreateProjectEnvironmentVariablesTargetVariant0Enum = &lossless0
-			return nil
-		}
-		var lossless1 []CreateProjectEnvironmentVariablesTargetVariant1Enum
-		if json.Unmarshal(data, &lossless1) == nil && keepsEveryKey(raw, lossless1) {
-			u.ListOfCreateProjectEnvironmentVariablesTargetVariant1Enum = &lossless1
-			return nil
-		}
-	}
-	var createprojectenvironmentvariablestargetvariant0enum CreateProjectEnvironmentVariablesTargetVariant0Enum
-	if err := json.Unmarshal(data, &createprojectenvironmentvariablestargetvariant0enum); err == nil && isNonEmptyCreateProjectEnvironmentVariablesTargetCreateProjectEnvironmentVariablesTargetVariant0Enum(createprojectenvironmentvariablestargetvariant0enum) {
-		u.CreateProjectEnvironmentVariablesTargetVariant0Enum = &createprojectenvironmentvariablestargetvariant0enum
-		return nil
-	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
-		refusal = err
-	}
-	var listofcreateprojectenvironmentvariablestargetvariant1enum []CreateProjectEnvironmentVariablesTargetVariant1Enum
-	if err := json.Unmarshal(data, &listofcreateprojectenvironmentvariablestargetvariant1enum); err == nil && isNonEmptyCreateProjectEnvironmentVariablesTargetListOfCreateProjectEnvironmentVariablesTargetVariant1Enum(listofcreateprojectenvironmentvariablestargetvariant1enum) {
-		u.ListOfCreateProjectEnvironmentVariablesTargetVariant1Enum = &listofcreateprojectenvironmentvariablestargetvariant1enum
-		return nil
-	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
-		refusal = err
-	}
-	return refusal
-}
-
-func (u CreateProjectEnvironmentVariablesTarget) MarshalJSON() ([]byte, error) {
-	if u.CreateProjectEnvironmentVariablesTargetVariant0Enum != nil {
-		return json.Marshal(u.CreateProjectEnvironmentVariablesTargetVariant0Enum)
-	}
-	if u.ListOfCreateProjectEnvironmentVariablesTargetVariant1Enum != nil {
-		return json.Marshal(u.ListOfCreateProjectEnvironmentVariablesTargetVariant1Enum)
-	}
-	return []byte("null"), nil
-}
-
-func isNonEmptyCreateProjectEnvironmentVariablesTargetCreateProjectEnvironmentVariablesTargetVariant0Enum(v CreateProjectEnvironmentVariablesTargetVariant0Enum) bool {
-	b, _ := json.Marshal(v)
-	return string(b) != "{}" && string(b) != "null"
-}
-
-func isNonEmptyCreateProjectEnvironmentVariablesTargetListOfCreateProjectEnvironmentVariablesTargetVariant1Enum(v []CreateProjectEnvironmentVariablesTargetVariant1Enum) bool {
-	b, _ := json.Marshal(v)
-	return string(b) != "{}" && string(b) != "null"
-}
-
-// UnmarshalCreateProjectEnvironmentVariablesTarget converts an untyped value to CreateProjectEnvironmentVariablesTarget.
-func UnmarshalCreateProjectEnvironmentVariablesTarget(v any) CreateProjectEnvironmentVariablesTarget {
-	b, _ := json.Marshal(v)
-	var result CreateProjectEnvironmentVariablesTarget
-	_ = json.Unmarshal(b, &result)
-	return result
-}
 
 // CreateProjectEnvironmentVariablesTypeEnum Type of the ENV variable
 type CreateProjectEnvironmentVariablesTypeEnum string
@@ -685,3 +610,55 @@ type CreateProjectResourceConfigBuildMachineElasticTransition struct {
 	Direction        CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum `json:"direction"`
 	AlgorithmVersion string                                                                `json:"algorithmVersion"`
 }
+
+func (value *CreateProjectResourceConfigBuildMachineElasticTransition) UnmarshalJSON(data []byte) error {
+	type CreateProjectResourceConfigBuildMachineElasticTransitionAlias CreateProjectResourceConfigBuildMachineElasticTransition
+	var decoded CreateProjectResourceConfigBuildMachineElasticTransitionAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateProjectResourceConfigBuildMachineElasticTransition(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"at", "direction", "algorithmVersion"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"at", "direction", "algorithmVersion"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewCreateProjectResourceConfigBuildMachineElasticTransition returns a validated CreateProjectResourceConfigBuildMachineElasticTransition built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResourceConfigBuildMachineElasticTransition(fields CreateProjectResourceConfigBuildMachineElasticTransition) (*CreateProjectResourceConfigBuildMachineElasticTransition, error) {
+	return ConstructModel(fields)
+}
+
+type CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum string
+
+const (
+	CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnumUpgrade   CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum = "upgrade"
+	CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnumDowngrade CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum = "downgrade"
+)
+
+type CreateProjectResourceConfigBuildQueue struct {
+	Configuration *CreateProjectResourceConfigBuildQueueConfigurationEnum `json:"configuration,omitempty"`
+}
+
+// NewCreateProjectResourceConfigBuildQueue returns a validated CreateProjectResourceConfigBuildQueue built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResourceConfigBuildQueue(fields CreateProjectResourceConfigBuildQueue) (*CreateProjectResourceConfigBuildQueue, error) {
+	return ConstructModel(fields)
+}
+
+type CreateProjectResourceConfigBuildQueueConfigurationEnum string
+
+const (
+	CreateProjectResourceConfigBuildQueueConfigurationEnumSkipNamespaceQueue    CreateProjectResourceConfigBuildQueueConfigurationEnum = "SKIP_NAMESPACE_QUEUE"
+	CreateProjectResourceConfigBuildQueueConfigurationEnumWaitForNamespaceQueue CreateProjectResourceConfigBuildQueueConfigurationEnum = "WAIT_FOR_NAMESPACE_QUEUE"
+)
