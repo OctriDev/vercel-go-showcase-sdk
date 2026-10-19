@@ -7,7 +7,7 @@ import "context"
 
 type InvalidateByTagsParams struct {
 	ProjectIdOrName string
-	Tags            any
+	Tags            []string
 	TeamId          *string
 	Slug            *string
 	Target          *string
@@ -27,6 +27,10 @@ func InvalidateByTags(ctx context.Context, clientConfig ClientConfig, params Inv
 	teamId := params.TeamId
 	slug := params.Slug
 	target := params.Target
+
+	if err := ValidateItems("tags", tags, LengthOpts{Min: Ptr[int](1), Max: Ptr[int](16)}); err != nil {
+		return nil, err
+	}
 
 	_, err := DoEmptyCfg(ctx, &clientConfig, "POST", "/v1/edge-cache/invalidate-by-tags", &RequestOpts{
 		Query: map[string]any{
@@ -49,7 +53,7 @@ func InvalidateByTags(ctx context.Context, clientConfig ClientConfig, params Inv
 
 type DangerouslyDeleteByTagsParams struct {
 	ProjectIdOrName             string
-	Tags                        any
+	Tags                        []string
 	TeamId                      *string
 	Slug                        *string
 	RevalidationDeadlineSeconds *int64
@@ -71,6 +75,10 @@ func DangerouslyDeleteByTags(ctx context.Context, clientConfig ClientConfig, par
 	slug := params.Slug
 	revalidationDeadlineSeconds := params.RevalidationDeadlineSeconds
 	target := params.Target
+
+	if err := ValidateItems("tags", tags, LengthOpts{Min: Ptr[int](1), Max: Ptr[int](16)}); err != nil {
+		return nil, err
+	}
 
 	if revalidationDeadlineSeconds != nil {
 		if err := ValidateRange("revalidationDeadlineSeconds", *revalidationDeadlineSeconds, RangeOpts{Min: Ptr[float64](0), Max: Ptr[float64](31536000)}); err != nil {

@@ -8,58 +8,6 @@ import (
 	"encoding/json"
 )
 
-func (value *CreateProjectResourceConfigBuildMachineElasticTransition) UnmarshalJSON(data []byte) error {
-	type CreateProjectResourceConfigBuildMachineElasticTransitionAlias CreateProjectResourceConfigBuildMachineElasticTransition
-	var decoded CreateProjectResourceConfigBuildMachineElasticTransitionAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateProjectResourceConfigBuildMachineElasticTransition(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"at", "direction", "algorithmVersion"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"at", "direction", "algorithmVersion"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateProjectResourceConfigBuildMachineElasticTransition returns a validated CreateProjectResourceConfigBuildMachineElasticTransition built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResourceConfigBuildMachineElasticTransition(fields CreateProjectResourceConfigBuildMachineElasticTransition) (*CreateProjectResourceConfigBuildMachineElasticTransition, error) {
-	return ConstructModel(fields)
-}
-
-type CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum string
-
-const (
-	CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnumUpgrade   CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum = "upgrade"
-	CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnumDowngrade CreateProjectResourceConfigBuildMachineElasticTransitionDirectionEnum = "downgrade"
-)
-
-type CreateProjectResourceConfigBuildQueue struct {
-	Configuration *CreateProjectResourceConfigBuildQueueConfigurationEnum `json:"configuration,omitempty"`
-}
-
-// NewCreateProjectResourceConfigBuildQueue returns a validated CreateProjectResourceConfigBuildQueue built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResourceConfigBuildQueue(fields CreateProjectResourceConfigBuildQueue) (*CreateProjectResourceConfigBuildQueue, error) {
-	return ConstructModel(fields)
-}
-
-type CreateProjectResourceConfigBuildQueueConfigurationEnum string
-
-const (
-	CreateProjectResourceConfigBuildQueueConfigurationEnumSkipNamespaceQueue    CreateProjectResourceConfigBuildQueueConfigurationEnum = "SKIP_NAMESPACE_QUEUE"
-	CreateProjectResourceConfigBuildQueueConfigurationEnumWaitForNamespaceQueue CreateProjectResourceConfigBuildQueueConfigurationEnum = "WAIT_FOR_NAMESPACE_QUEUE"
-)
-
 type CreateProjectResponse struct {
 	AccountId                        string                                                       `json:"accountId"`
 	Alias                            []CreateProjectResponseAlias                                 `json:"alias"`
@@ -705,3 +653,57 @@ const (
 	CreateProjectResponseAliasEnvironmentEnumPreview    CreateProjectResponseAliasEnvironmentEnum = "preview"
 	CreateProjectResponseAliasEnvironmentEnumProduction CreateProjectResponseAliasEnvironmentEnum = "production"
 )
+
+type CreateProjectResponseAliasTargetEnum string
+
+const (
+	CreateProjectResponseAliasTargetEnumPreview    CreateProjectResponseAliasTargetEnum = "PREVIEW"
+	CreateProjectResponseAliasTargetEnumProduction CreateProjectResponseAliasTargetEnum = "PRODUCTION"
+	CreateProjectResponseAliasTargetEnumStaging    CreateProjectResponseAliasTargetEnum = "STAGING"
+)
+
+type CreateProjectResponseAnalytics struct {
+	CanceledAt          *NullableValue[float64] `json:"canceledAt,omitempty"`
+	DisabledAt          float64                 `json:"disabledAt"`
+	EnabledAt           float64                 `json:"enabledAt"`
+	Id                  string                  `json:"id"`
+	PaidAt              *float64                `json:"paidAt,omitempty"`
+	SampleRatePercent   *NullableValue[float64] `json:"sampleRatePercent,omitempty"`
+	SpendLimitInDollars *NullableValue[float64] `json:"spendLimitInDollars,omitempty"`
+}
+
+func (value *CreateProjectResponseAnalytics) UnmarshalJSON(data []byte) error {
+	type CreateProjectResponseAnalyticsAlias CreateProjectResponseAnalytics
+	var decoded CreateProjectResponseAnalyticsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateProjectResponseAnalytics(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"disabledAt", "enabledAt", "id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"disabledAt", "enabledAt", "id"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["canceledAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.CanceledAt = &NullableValue[float64]{}
+	}
+	if raw, ok := rawFields["sampleRatePercent"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.SampleRatePercent = &NullableValue[float64]{}
+	}
+	if raw, ok := rawFields["spendLimitInDollars"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.SpendLimitInDollars = &NullableValue[float64]{}
+	}
+	return nil
+}
+
+// NewCreateProjectResponseAnalytics returns a validated CreateProjectResponseAnalytics built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResponseAnalytics(fields CreateProjectResponseAnalytics) (*CreateProjectResponseAnalytics, error) {
+	return ConstructModel(fields)
+}
