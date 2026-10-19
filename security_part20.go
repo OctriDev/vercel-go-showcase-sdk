@@ -5,134 +5,8 @@ package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 )
-
-type GenerateFirewallRuleResponseRuleConditionGroupConditions struct {
-	Key   *string                                                        `json:"key,omitempty"`
-	Neg   *bool                                                          `json:"neg,omitempty"`
-	Op    string                                                         `json:"op"`
-	Type  string                                                         `json:"type"`
-	Value *GenerateFirewallRuleResponseRuleConditionGroupConditionsValue `json:"value,omitempty"`
-}
-
-func (value *GenerateFirewallRuleResponseRuleConditionGroupConditions) UnmarshalJSON(data []byte) error {
-	type GenerateFirewallRuleResponseRuleConditionGroupConditionsAlias GenerateFirewallRuleResponseRuleConditionGroupConditions
-	var decoded GenerateFirewallRuleResponseRuleConditionGroupConditionsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GenerateFirewallRuleResponseRuleConditionGroupConditions(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"op", "type"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"op", "type"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGenerateFirewallRuleResponseRuleConditionGroupConditions returns a validated GenerateFirewallRuleResponseRuleConditionGroupConditions built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGenerateFirewallRuleResponseRuleConditionGroupConditions(fields GenerateFirewallRuleResponseRuleConditionGroupConditions) (*GenerateFirewallRuleResponseRuleConditionGroupConditions, error) {
-	return ConstructModel(fields)
-}
-
-// GenerateFirewallRuleResponseRuleConditionGroupConditionsValue represents a union type.
-type GenerateFirewallRuleResponseRuleConditionGroupConditionsValue struct {
-	String       *string
-	Float64      *float64
-	ListOfString *[]string
-}
-
-func (u *GenerateFirewallRuleResponseRuleConditionGroupConditionsValue) UnmarshalJSON(data []byte) error {
-	*u = GenerateFirewallRuleResponseRuleConditionGroupConditionsValue{}
-	var refusal error
-	var s string
-	if err := json.Unmarshal(data, &s); err == nil {
-		u.String = &s
-		return nil
-	}
-	var float642 float64
-	if err := json.Unmarshal(data, &float642); err == nil {
-		u.Float64 = &float642
-		return nil
-	}
-	var listofstring []string
-	if err := json.Unmarshal(data, &listofstring); err == nil && isNonEmptyGenerateFirewallRuleResponseRuleConditionGroupConditionsValueListOfString(listofstring) {
-		u.ListOfString = &listofstring
-		return nil
-	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
-		refusal = err
-	}
-	return refusal
-}
-
-func (u GenerateFirewallRuleResponseRuleConditionGroupConditionsValue) MarshalJSON() ([]byte, error) {
-	if u.String != nil {
-		return json.Marshal(u.String)
-	}
-	if u.Float64 != nil {
-		return json.Marshal(u.Float64)
-	}
-	if u.ListOfString != nil {
-		return json.Marshal(u.ListOfString)
-	}
-	return []byte("null"), nil
-}
-
-func isNonEmptyGenerateFirewallRuleResponseRuleConditionGroupConditionsValueListOfString(v []string) bool {
-	b, _ := json.Marshal(v)
-	return string(b) != "{}" && string(b) != "null"
-}
-
-// UnmarshalGenerateFirewallRuleResponseRuleConditionGroupConditionsValue converts an untyped value to GenerateFirewallRuleResponseRuleConditionGroupConditionsValue.
-func UnmarshalGenerateFirewallRuleResponseRuleConditionGroupConditionsValue(v any) GenerateFirewallRuleResponseRuleConditionGroupConditionsValue {
-	b, _ := json.Marshal(v)
-	var result GenerateFirewallRuleResponseRuleConditionGroupConditionsValue
-	_ = json.Unmarshal(b, &result)
-	return result
-}
-
-type UpdateAttackChallengeModeParams struct {
-	Body   map[string]any
-	TeamId *string
-	Slug   *string
-}
-
-// UpdateAttackChallengeMode updates whether Attack Challenge mode is enabled for a project. Supply `projectId` and `attackModeEnabled`; include `attackModeActiveUntil` when using the request variant that sets an active-until time. The response includes the updated setting and its update timestamp.
-//
-// Update the setting for determining if the project has Attack Challenge mode enabled.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func UpdateAttackChallengeMode(ctx context.Context, clientConfig ClientConfig, params UpdateAttackChallengeModeParams, opts ...RequestOption) (*UpdateAttackChallengeModeResponse, error) {
-	body := params.Body
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[UpdateAttackChallengeModeResponse](ctx, &clientConfig, "POST", "/v1/security/attack-mode", &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body:        body,
-		OperationID: "UpdateAttackChallengeMode",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
 
 // GetSecurityFirewallConfig retrieves the active and draft firewall configurations for a project, along with its configuration versions. Use this operation to inspect the current WAF settings and review available versions before changing or activating a configuration.
 //
@@ -160,7 +34,7 @@ type PutFirewallConfigParams struct {
 	Rulesets        *any
 	Ips             *[]PutFirewallConfigIps
 	BotIdEnabled    *bool
-	LogHeaders      *any
+	LogHeaders      *[]string
 }
 
 // PutFirewallConfig replaces the firewall configuration for a project, creating a configuration if one does not already exist. Supply `firewallEnabled` and any firewall settings you want applied, including rules, rulesets, IP rules, or managed rules.
@@ -706,4 +580,154 @@ type DeleteConditionalBypassParams struct {
 	Domain    string
 	Slug      *string
 	TeamId    *string
+}
+
+// DeleteConditionalBypass deletes a conditional firewall bypass rule for a project domain. Specify the project with `projectId` and the rule's domain with `domain`. You can use `slug` or `teamId` to perform the request in a team context.
+//
+// Delete a conditional firewall bypass rule from a project domain.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+func DeleteConditionalBypass(ctx context.Context, clientConfig ClientConfig, params DeleteConditionalBypassParams, opts ...RequestOption) (*DeleteConditionalBypassResponse, error) {
+	projectId := params.ProjectId
+	domain := params.Domain
+	slug := params.Slug
+	teamId := params.TeamId
+
+	resp, err := DoCfg[DeleteConditionalBypassResponse](ctx, &clientConfig, "DELETE", "/v1/security/firewall/bypass/rules", &RequestOpts{
+		Query: map[string]any{
+			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
+			"domain":    QueryValue{Value: domain, Style: "form", Explode: true},
+			"slug":      QueryValue{Value: slug, Style: "form", Explode: true},
+			"teamId":    QueryValue{Value: teamId, Style: "form", Explode: true},
+		},
+		OperationID: "DeleteConditionalBypass",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type GetSecurityFirewallEventsParams struct {
+	ProjectId      string
+	Sort           *string
+	Limit          *float64
+	Cursor         *string
+	StartTimestamp *float64
+	EndTimestamp   *float64
+	Hosts          *string
+	Ip             *[]string
+	IsActive       *bool
+	Action         *[]string
+	ActionType     *[]string
+	RuleKind       *string
+	RuleId         *[]string
+	TeamId         *string
+	Slug           *string
+}
+
+// GetSecurityFirewallEvents lists firewall actions for a project, with optional filters for time, host, IP address, activity, action, and rule. Filters are combined across parameters and matched as alternatives within repeated parameters; use the returned pagination cursor to fetch subsequent results. Rule names reflect the project's current active firewall configuration and active team rulesets.
+//
+// Retrieve firewall actions for a project Rule names are resolved against the project's *current* active firewall configuration and the team's active rulesets, so a rule that has since been renamed reports its new name and one that has been deleted reports `null`. System rules such as `sys_dos_mitigation` and `ip_blocking` have no configured name and always report `null`. Filters (`ip`, `isActive`, `action`, `actionType`, `ruleKind`, `ruleId`, `hosts`) are ANDed across params and ORed within a repeated param. They are applied to the policies before `limit`/`cursor`, so pages only count matching policies. A policy with no matching requests yields no action row, so a page can hold fewer than `limit` actions; only `pagination.next` signals the end. A `cursor` is only valid with the filters it was issued for.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetSecurityFirewallEvents(ctx context.Context, clientConfig ClientConfig, params GetSecurityFirewallEventsParams, opts ...RequestOption) (*GetSecurityFirewallEventsResponse, error) {
+	projectId := params.ProjectId
+	sort := params.Sort
+	limit := params.Limit
+	cursor := params.Cursor
+	startTimestamp := params.StartTimestamp
+	endTimestamp := params.EndTimestamp
+	hosts := params.Hosts
+	ip := params.Ip
+	isActive := params.IsActive
+	action := params.Action
+	actionType := params.ActionType
+	ruleKind := params.RuleKind
+	ruleId := params.RuleId
+	teamId := params.TeamId
+	slug := params.Slug
+
+	if limit != nil {
+		if err := ValidateRange("limit", *limit, RangeOpts{Min: Ptr[float64](1), Max: Ptr[float64](5000)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if hosts != nil {
+		if err := ValidateLength("hosts", *hosts, LengthOpts{Max: Ptr[int](10000)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if ip != nil {
+		if err := ValidateItems("ip", *ip, LengthOpts{Max: Ptr[int](100)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if action != nil {
+		if err := ValidateItems("action", *action, LengthOpts{Max: Ptr[int](5)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if actionType != nil {
+		if err := ValidateItems("actionType", *actionType, LengthOpts{Max: Ptr[int](2)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if ruleId != nil {
+		if err := ValidateItems("ruleId", *ruleId, LengthOpts{Max: Ptr[int](100)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[GetSecurityFirewallEventsResponse](ctx, &clientConfig, "GET", "/v1/security/firewall/events", &RequestOpts{
+		Query: map[string]any{
+			"projectId":      QueryValue{Value: projectId, Style: "form", Explode: true},
+			"sort":           QueryValue{Value: sort, Style: "form", Explode: true},
+			"limit":          QueryValue{Value: limit, Style: "form", Explode: true},
+			"cursor":         QueryValue{Value: cursor, Style: "form", Explode: true},
+			"startTimestamp": QueryValue{Value: startTimestamp, Style: "form", Explode: true},
+			"endTimestamp":   QueryValue{Value: endTimestamp, Style: "form", Explode: true},
+			"hosts":          QueryValue{Value: hosts, Style: "form", Explode: true},
+			"ip":             QueryValue{Value: ip, Style: "form", Explode: true},
+			"isActive":       QueryValue{Value: isActive, Style: "form", Explode: true},
+			"action":         QueryValue{Value: action, Style: "form", Explode: true},
+			"actionType":     QueryValue{Value: actionType, Style: "form", Explode: true},
+			"ruleKind":       QueryValue{Value: ruleKind, Style: "form", Explode: true},
+			"ruleId":         QueryValue{Value: ruleId, Style: "form", Explode: true},
+			"teamId":         QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":           QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetSecurityFirewallEvents",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type GetSecurityFirewallEventsSummaryParams struct {
+	ProjectId      string
+	StartTimestamp *float64
+	EndTimestamp   *float64
+	Hosts          *string
+	Ip             *[]string
+	IsActive       *bool
+	Action         *[]string
+	ActionType     *[]string
+	RuleKind       *string
+	RuleId         *[]string
+	TeamId         *string
+	Slug           *string
 }

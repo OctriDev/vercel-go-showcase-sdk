@@ -5476,7 +5476,9 @@
         "EnvironmentVariables": [
           {
             "key": "key",
-            "target": "production",
+            "target": [
+              "production"
+            ],
             "gitBranch": "gitBranch",
             "type": "system",
             "value": "value"
@@ -33161,7 +33163,9 @@
                 },
                 "actionDuration": "actionDuration",
                 "bypassSystem": false,
-                "logHeaders": "logHeaders"
+                "logHeaders": [
+                  "logHeaders"
+                ]
               }
             },
             "valid": false,
@@ -33210,7 +33214,9 @@
           }
         ],
         "BotIdEnabled": false,
-        "LogHeaders": "logHeaders"
+        "LogHeaders": [
+          "logHeaders"
+        ]
       },
       "wireNames": {
         "ProjectId": "projectId",

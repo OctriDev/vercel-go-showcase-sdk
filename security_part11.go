@@ -5,91 +5,6 @@ package sdk
 
 import "encoding/json"
 
-func (u PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue) MarshalJSON() ([]byte, error) {
-	if u.String != nil {
-		return json.Marshal(u.String)
-	}
-	if u.Float64 != nil {
-		return json.Marshal(u.Float64)
-	}
-	if u.ListOfString != nil {
-		return json.Marshal(u.ListOfString)
-	}
-	return []byte("null"), nil
-}
-
-func isNonEmptyPutFirewallConfigResponseActiveConditionsConditionGroupConditionsValueListOfString(v []string) bool {
-	b, _ := json.Marshal(v)
-	return string(b) != "{}" && string(b) != "null"
-}
-
-// UnmarshalPutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue converts an untyped value to PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue.
-func UnmarshalPutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue(v any) PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue {
-	b, _ := json.Marshal(v)
-	var result PutFirewallConfigResponseActiveConditionsConditionGroupConditionsValue
-	_ = json.Unmarshal(b, &result)
-	return result
-}
-
-// PutFirewallConfigResponseActiveCrs Custom Ruleset
-type PutFirewallConfigResponseActiveCrs struct {
-	// Gen Generic Attack - Provide broad protection from various undefined or novel attack vectors.
-	Gen PutFirewallConfigResponseActiveCrsGen `json:"gen"`
-	// Java Java Attack - Mitigate risks of exploitation targeting Java-based applications or components.
-	Java PutFirewallConfigResponseActiveCrsJava `json:"java"`
-	// Lfi Local File Inclusion Attack - Prevent unauthorized access to local files through web applications.
-	Lfi PutFirewallConfigResponseActiveCrsLfi `json:"lfi"`
-	// Ma Multipart Attack - Block attempts to bypass security controls using multipart/form-data encoding.
-	Ma PutFirewallConfigResponseActiveCrsMa `json:"ma"`
-	// Php PHP Attack - Safeguard against vulnerability exploits in PHP-based applications.
-	Php PutFirewallConfigResponseActiveCrsPhp `json:"php"`
-	// Rce Remote Execution Attack - Prevent unauthorized execution of remote scripts or commands.
-	Rce PutFirewallConfigResponseActiveCrsRce `json:"rce"`
-	// Rfi Remote File Inclusion Attack - Prohibit unauthorized upload or execution of remote files.
-	Rfi PutFirewallConfigResponseActiveCrsRfi `json:"rfi"`
-	// Sd Scanner Detection - Detect and prevent reconnaissance activities from network scanning tools.
-	Sd PutFirewallConfigResponseActiveCrsSd `json:"sd"`
-	// Sf Session Fixation Attack - Prevent unauthorized takeover of user sessions by enforcing unique session IDs.
-	Sf PutFirewallConfigResponseActiveCrsSf `json:"sf"`
-	// Sqli SQL Injection Attack - Prohibit unauthorized use of SQL commands to manipulate databases.
-	Sqli PutFirewallConfigResponseActiveCrsSqli `json:"sqli"`
-	// Xss XSS Attack - Prevent injection of malicious scripts into trusted webpages.
-	Xss PutFirewallConfigResponseActiveCrsXss `json:"xss"`
-}
-
-func (value *PutFirewallConfigResponseActiveCrs) UnmarshalJSON(data []byte) error {
-	type PutFirewallConfigResponseActiveCrsAlias PutFirewallConfigResponseActiveCrs
-	var decoded PutFirewallConfigResponseActiveCrsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = PutFirewallConfigResponseActiveCrs(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"gen", "java", "lfi", "ma", "php", "rce", "rfi", "sd", "sf", "sqli", "xss"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"gen", "java", "lfi", "ma", "php", "rce", "rfi", "sd", "sf", "sqli", "xss"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewPutFirewallConfigResponseActiveCrs returns a validated PutFirewallConfigResponseActiveCrs built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewPutFirewallConfigResponseActiveCrs(fields PutFirewallConfigResponseActiveCrs) (*PutFirewallConfigResponseActiveCrs, error) {
-	return ConstructModel(fields)
-}
-
-// PutFirewallConfigResponseActiveCrsGen Generic Attack - Provide broad protection from various undefined or novel attack vectors.
-type PutFirewallConfigResponseActiveCrsGen struct {
-	Action PutFirewallConfigResponseActiveCrsGenActionEnum `json:"action"`
-	Active bool                                            `json:"active"`
-}
-
 func (value *PutFirewallConfigResponseActiveCrsGen) UnmarshalJSON(data []byte) error {
 	type PutFirewallConfigResponseActiveCrsGenAlias PutFirewallConfigResponseActiveCrsGen
 	var decoded PutFirewallConfigResponseActiveCrsGenAlias
@@ -662,4 +577,90 @@ type PutFirewallConfigResponseActiveManagedRulesAiBots struct {
 	UpdatedAt *string                                                      `json:"updatedAt,omitempty"`
 	UserId    *string                                                      `json:"userId,omitempty"`
 	Username  *string                                                      `json:"username,omitempty"`
+}
+
+func (value *PutFirewallConfigResponseActiveManagedRulesAiBots) UnmarshalJSON(data []byte) error {
+	type PutFirewallConfigResponseActiveManagedRulesAiBotsAlias PutFirewallConfigResponseActiveManagedRulesAiBots
+	var decoded PutFirewallConfigResponseActiveManagedRulesAiBotsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = PutFirewallConfigResponseActiveManagedRulesAiBots(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"active"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"active"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewPutFirewallConfigResponseActiveManagedRulesAiBots returns a validated PutFirewallConfigResponseActiveManagedRulesAiBots built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewPutFirewallConfigResponseActiveManagedRulesAiBots(fields PutFirewallConfigResponseActiveManagedRulesAiBots) (*PutFirewallConfigResponseActiveManagedRulesAiBots, error) {
+	return ConstructModel(fields)
+}
+
+type PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum string
+
+const (
+	PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnumChallenge PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum = "challenge"
+	PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnumDeny      PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum = "deny"
+	PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnumLog       PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum = "log"
+)
+
+type PutFirewallConfigResponseActiveManagedRulesBotProtection struct {
+	Action    *PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum `json:"action,omitempty"`
+	Active    bool                                                                `json:"active"`
+	UpdatedAt *string                                                             `json:"updatedAt,omitempty"`
+	UserId    *string                                                             `json:"userId,omitempty"`
+	Username  *string                                                             `json:"username,omitempty"`
+}
+
+func (value *PutFirewallConfigResponseActiveManagedRulesBotProtection) UnmarshalJSON(data []byte) error {
+	type PutFirewallConfigResponseActiveManagedRulesBotProtectionAlias PutFirewallConfigResponseActiveManagedRulesBotProtection
+	var decoded PutFirewallConfigResponseActiveManagedRulesBotProtectionAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = PutFirewallConfigResponseActiveManagedRulesBotProtection(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"active"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"active"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewPutFirewallConfigResponseActiveManagedRulesBotProtection returns a validated PutFirewallConfigResponseActiveManagedRulesBotProtection built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewPutFirewallConfigResponseActiveManagedRulesBotProtection(fields PutFirewallConfigResponseActiveManagedRulesBotProtection) (*PutFirewallConfigResponseActiveManagedRulesBotProtection, error) {
+	return ConstructModel(fields)
+}
+
+type PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum string
+
+const (
+	PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnumChallenge PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum = "challenge"
+	PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnumDeny      PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum = "deny"
+	PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnumLog       PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum = "log"
+)
+
+type PutFirewallConfigResponseActiveManagedRulesOwasp struct {
+	Action    *PutFirewallConfigResponseActiveManagedRulesOwaspActionEnum `json:"action,omitempty"`
+	Active    bool                                                        `json:"active"`
+	UpdatedAt *string                                                     `json:"updatedAt,omitempty"`
+	UserId    *string                                                     `json:"userId,omitempty"`
+	Username  *string                                                     `json:"username,omitempty"`
 }

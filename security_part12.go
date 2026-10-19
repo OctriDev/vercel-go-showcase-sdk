@@ -8,92 +8,6 @@ import (
 	"encoding/json"
 )
 
-func (value *PutFirewallConfigResponseActiveManagedRulesAiBots) UnmarshalJSON(data []byte) error {
-	type PutFirewallConfigResponseActiveManagedRulesAiBotsAlias PutFirewallConfigResponseActiveManagedRulesAiBots
-	var decoded PutFirewallConfigResponseActiveManagedRulesAiBotsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = PutFirewallConfigResponseActiveManagedRulesAiBots(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"active"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"active"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewPutFirewallConfigResponseActiveManagedRulesAiBots returns a validated PutFirewallConfigResponseActiveManagedRulesAiBots built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewPutFirewallConfigResponseActiveManagedRulesAiBots(fields PutFirewallConfigResponseActiveManagedRulesAiBots) (*PutFirewallConfigResponseActiveManagedRulesAiBots, error) {
-	return ConstructModel(fields)
-}
-
-type PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum string
-
-const (
-	PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnumChallenge PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum = "challenge"
-	PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnumDeny      PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum = "deny"
-	PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnumLog       PutFirewallConfigResponseActiveManagedRulesAiBotsActionEnum = "log"
-)
-
-type PutFirewallConfigResponseActiveManagedRulesBotProtection struct {
-	Action    *PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum `json:"action,omitempty"`
-	Active    bool                                                                `json:"active"`
-	UpdatedAt *string                                                             `json:"updatedAt,omitempty"`
-	UserId    *string                                                             `json:"userId,omitempty"`
-	Username  *string                                                             `json:"username,omitempty"`
-}
-
-func (value *PutFirewallConfigResponseActiveManagedRulesBotProtection) UnmarshalJSON(data []byte) error {
-	type PutFirewallConfigResponseActiveManagedRulesBotProtectionAlias PutFirewallConfigResponseActiveManagedRulesBotProtection
-	var decoded PutFirewallConfigResponseActiveManagedRulesBotProtectionAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = PutFirewallConfigResponseActiveManagedRulesBotProtection(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"active"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"active"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewPutFirewallConfigResponseActiveManagedRulesBotProtection returns a validated PutFirewallConfigResponseActiveManagedRulesBotProtection built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewPutFirewallConfigResponseActiveManagedRulesBotProtection(fields PutFirewallConfigResponseActiveManagedRulesBotProtection) (*PutFirewallConfigResponseActiveManagedRulesBotProtection, error) {
-	return ConstructModel(fields)
-}
-
-type PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum string
-
-const (
-	PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnumChallenge PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum = "challenge"
-	PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnumDeny      PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum = "deny"
-	PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnumLog       PutFirewallConfigResponseActiveManagedRulesBotProtectionActionEnum = "log"
-)
-
-type PutFirewallConfigResponseActiveManagedRulesOwasp struct {
-	Action    *PutFirewallConfigResponseActiveManagedRulesOwaspActionEnum `json:"action,omitempty"`
-	Active    bool                                                        `json:"active"`
-	UpdatedAt *string                                                     `json:"updatedAt,omitempty"`
-	UserId    *string                                                     `json:"userId,omitempty"`
-	Username  *string                                                     `json:"username,omitempty"`
-}
-
 func (value *PutFirewallConfigResponseActiveManagedRulesOwasp) UnmarshalJSON(data []byte) error {
 	type PutFirewallConfigResponseActiveManagedRulesOwaspAlias PutFirewallConfigResponseActiveManagedRulesOwasp
 	var decoded PutFirewallConfigResponseActiveManagedRulesOwaspAlias
@@ -669,4 +583,110 @@ type PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8 struct {
 	LogHeaders     *PutFirewallConfigResponseActiveRulesetsVariant1LogHeaders               `json:"logHeaders,omitempty"`
 	RateLimit      *NullableValue[PutFirewallConfigResponseActiveRulesetsVariant1RateLimit] `json:"rateLimit,omitempty"`
 	Redirect       *NullableValue[PutFirewallConfigResponseActiveRulesetsVariant1Redirect]  `json:"redirect,omitempty"`
+}
+
+func (value *PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8) UnmarshalJSON(data []byte) error {
+	type PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8Alias PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8
+	var decoded PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8Alias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"action"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"action"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["actionDuration"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.ActionDuration = &NullableValue[string]{}
+	}
+	if raw, ok := rawFields["bypassSystem"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.BypassSystem = &NullableValue[bool]{}
+	}
+	if raw, ok := rawFields["rateLimit"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.RateLimit = &NullableValue[PutFirewallConfigResponseActiveRulesetsVariant1RateLimit]{}
+	}
+	if raw, ok := rawFields["redirect"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.Redirect = &NullableValue[PutFirewallConfigResponseActiveRulesetsVariant1Redirect]{}
+	}
+	return nil
+}
+
+// NewPutFirewallConfigResponseActiveRulesetsVariant1_54568ef8 returns a validated PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8 built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewPutFirewallConfigResponseActiveRulesetsVariant1_54568ef8(fields PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8) (*PutFirewallConfigResponseActiveRulesetsVariant1_54568ef8, error) {
+	return ConstructModel(fields)
+}
+
+type PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum string
+
+const (
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumAllow     PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "allow"
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumBypass    PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "bypass"
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumChallenge PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "challenge"
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumDeny      PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "deny"
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumLog       PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "log"
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumRateLimit PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "rate_limit"
+	PutFirewallConfigResponseActiveRulesetsVariant1ActionEnumRedirect  PutFirewallConfigResponseActiveRulesetsVariant1ActionEnum = "redirect"
+)
+
+type PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum string
+
+const (
+	PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1EnumUnknown PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum = "*"
+)
+
+// PutFirewallConfigResponseActiveRulesetsVariant1LogHeaders represents a union type.
+type PutFirewallConfigResponseActiveRulesetsVariant1LogHeaders struct {
+	ListOfString                                                          *[]string
+	PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum *PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum
+}
+
+func (u *PutFirewallConfigResponseActiveRulesetsVariant1LogHeaders) UnmarshalJSON(data []byte) error {
+	*u = PutFirewallConfigResponseActiveRulesetsVariant1LogHeaders{}
+	var refusal error
+	var raw map[string]json.RawMessage
+	if json.Unmarshal(data, &raw) == nil {
+		var lossless0 []string
+		if json.Unmarshal(data, &lossless0) == nil && keepsEveryKey(raw, lossless0) {
+			u.ListOfString = &lossless0
+			return nil
+		}
+		var lossless1 PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum
+		if json.Unmarshal(data, &lossless1) == nil && keepsEveryKey(raw, lossless1) {
+			u.PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum = &lossless1
+			return nil
+		}
+	}
+	var listofstring []string
+	if err := json.Unmarshal(data, &listofstring); err == nil && isNonEmptyPutFirewallConfigResponseActiveRulesetsVariant1LogHeadersListOfString(listofstring) {
+		u.ListOfString = &listofstring
+		return nil
+	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
+		refusal = err
+	}
+	var putfirewallconfigresponseactiverulesetsvariant1logheadersvariant1enum PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum
+	if err := json.Unmarshal(data, &putfirewallconfigresponseactiverulesetsvariant1logheadersvariant1enum); err == nil && isNonEmptyPutFirewallConfigResponseActiveRulesetsVariant1LogHeadersPutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum(putfirewallconfigresponseactiverulesetsvariant1logheadersvariant1enum) {
+		u.PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum = &putfirewallconfigresponseactiverulesetsvariant1logheadersvariant1enum
+		return nil
+	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
+		refusal = err
+	}
+	return refusal
+}
+
+func (u PutFirewallConfigResponseActiveRulesetsVariant1LogHeaders) MarshalJSON() ([]byte, error) {
+	if u.ListOfString != nil {
+		return json.Marshal(u.ListOfString)
+	}
+	if u.PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum != nil {
+		return json.Marshal(u.PutFirewallConfigResponseActiveRulesetsVariant1LogHeadersVariant1Enum)
+	}
+	return []byte("null"), nil
 }

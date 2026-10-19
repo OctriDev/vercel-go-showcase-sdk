@@ -8,67 +8,6 @@ import (
 	"encoding/json"
 )
 
-func (value *CreateProjectResponseDeploymentPolicy) UnmarshalJSON(data []byte) error {
-	type CreateProjectResponseDeploymentPolicyAlias CreateProjectResponseDeploymentPolicy
-	var decoded CreateProjectResponseDeploymentPolicyAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateProjectResponseDeploymentPolicy(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["deploymentSources"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.DeploymentSources = &NullableValue[[]CreateProjectResponseDeploymentPolicyDeploymentSources]{}
-	}
-	if raw, ok := rawFields["gitSources"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.GitSources = &NullableValue[[]CreateProjectResponseDeploymentPolicyGitSources]{}
-	}
-	return nil
-}
-
-// NewCreateProjectResponseDeploymentPolicy returns a validated CreateProjectResponseDeploymentPolicy built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResponseDeploymentPolicy(fields CreateProjectResponseDeploymentPolicy) (*CreateProjectResponseDeploymentPolicy, error) {
-	return ConstructModel(fields)
-}
-
-// CreateProjectResponseDeploymentPolicyDeploymentSources `enabled: true` with empty `sources` is deny-all.
-type CreateProjectResponseDeploymentPolicyDeploymentSources struct {
-	Enabled      bool                                                                         `json:"enabled"`
-	Environments []CreateProjectResponseDeploymentPolicyDeploymentSourcesItemEnvironmentsItem `json:"environments"`
-	Sources      []CreateProjectResponseDeploymentPolicyDeploymentSourcesSourcesEnum          `json:"sources"`
-}
-
-func (value *CreateProjectResponseDeploymentPolicyDeploymentSources) UnmarshalJSON(data []byte) error {
-	type CreateProjectResponseDeploymentPolicyDeploymentSourcesAlias CreateProjectResponseDeploymentPolicyDeploymentSources
-	var decoded CreateProjectResponseDeploymentPolicyDeploymentSourcesAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateProjectResponseDeploymentPolicyDeploymentSources(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"enabled", "environments", "sources"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"enabled", "environments", "sources"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateProjectResponseDeploymentPolicyDeploymentSources returns a validated CreateProjectResponseDeploymentPolicyDeploymentSources built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResponseDeploymentPolicyDeploymentSources(fields CreateProjectResponseDeploymentPolicyDeploymentSources) (*CreateProjectResponseDeploymentPolicyDeploymentSources, error) {
-	return ConstructModel(fields)
-}
-
 // CreateProjectResponseDeploymentPolicyDeploymentSourcesSourcesEnum Customer-configurable deployment sources. Every deploy classifies to exactly one. JSON schema in `packages/deployment-policy/schemas/body.ts` enumerates exactly these values. - `'git'` — git provider webhook. - `'cli'` — Vercel CLI (legacy classic-token CLI and SIWV CLI both). - `'rest-api'` — direct user/team-token REST upload. Does NOT cover deploy hooks, Marketplace integrations, or first-party app tokens. - `'deploy-hook'` — project deploy-hook URL. The URL is the credential. - `'integration'` — third-party Marketplace actor: Marketplace integration token, user-delegated OAuth from a Marketplace app, or an unrecognized third-party Vercel App. First-party Vercel Apps are never `'integration'`. - `'v0'` — the v0 product surface (entitlement-gated). v0 deploys through the CLI under the hood, but classifies as its own source so a team can allow or deny v0 independently of `'cli'`. First-party Vercel apps (Toolbar, etc.) classify as `'first-party'` — see `ClassifiedSource` in `./checks`. They're not in this union because they aren't customer-configurable; they bypass `checkDeploymentSources` entirely. v0 is intentionally NOT among them: like the CLI, it's a real product surface and is policy-controllable.
 type CreateProjectResponseDeploymentPolicyDeploymentSourcesSourcesEnum string
 
@@ -690,5 +629,67 @@ func (value *CreateProjectResponseJobsLint) UnmarshalJSON(data []byte) error {
 // Optional fields may be left unset; a value that violates the schema is
 // reported as *SdkValidationError.
 func NewCreateProjectResponseJobsLint(fields CreateProjectResponseJobsLint) (*CreateProjectResponseJobsLint, error) {
+	return ConstructModel(fields)
+}
+
+type CreateProjectResponseJobsMfeConfigPresent struct {
+	Targets []string `json:"targets"`
+}
+
+func (value *CreateProjectResponseJobsMfeConfigPresent) UnmarshalJSON(data []byte) error {
+	type CreateProjectResponseJobsMfeConfigPresentAlias CreateProjectResponseJobsMfeConfigPresent
+	var decoded CreateProjectResponseJobsMfeConfigPresentAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateProjectResponseJobsMfeConfigPresent(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"targets"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"targets"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewCreateProjectResponseJobsMfeConfigPresent returns a validated CreateProjectResponseJobsMfeConfigPresent built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResponseJobsMfeConfigPresent(fields CreateProjectResponseJobsMfeConfigPresent) (*CreateProjectResponseJobsMfeConfigPresent, error) {
+	return ConstructModel(fields)
+}
+
+type CreateProjectResponseJobsTypecheck struct {
+	Targets []string `json:"targets"`
+}
+
+func (value *CreateProjectResponseJobsTypecheck) UnmarshalJSON(data []byte) error {
+	type CreateProjectResponseJobsTypecheckAlias CreateProjectResponseJobsTypecheck
+	var decoded CreateProjectResponseJobsTypecheckAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateProjectResponseJobsTypecheck(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"targets"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"targets"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewCreateProjectResponseJobsTypecheck returns a validated CreateProjectResponseJobsTypecheck built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResponseJobsTypecheck(fields CreateProjectResponseJobsTypecheck) (*CreateProjectResponseJobsTypecheck, error) {
 	return ConstructModel(fields)
 }

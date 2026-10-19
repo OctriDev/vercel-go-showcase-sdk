@@ -8,60 +8,6 @@ import (
 	"encoding/json"
 )
 
-type CreateProjectResponseAliasTargetEnum string
-
-const (
-	CreateProjectResponseAliasTargetEnumPreview    CreateProjectResponseAliasTargetEnum = "PREVIEW"
-	CreateProjectResponseAliasTargetEnumProduction CreateProjectResponseAliasTargetEnum = "PRODUCTION"
-	CreateProjectResponseAliasTargetEnumStaging    CreateProjectResponseAliasTargetEnum = "STAGING"
-)
-
-type CreateProjectResponseAnalytics struct {
-	CanceledAt          *NullableValue[float64] `json:"canceledAt,omitempty"`
-	DisabledAt          float64                 `json:"disabledAt"`
-	EnabledAt           float64                 `json:"enabledAt"`
-	Id                  string                  `json:"id"`
-	PaidAt              *float64                `json:"paidAt,omitempty"`
-	SampleRatePercent   *NullableValue[float64] `json:"sampleRatePercent,omitempty"`
-	SpendLimitInDollars *NullableValue[float64] `json:"spendLimitInDollars,omitempty"`
-}
-
-func (value *CreateProjectResponseAnalytics) UnmarshalJSON(data []byte) error {
-	type CreateProjectResponseAnalyticsAlias CreateProjectResponseAnalytics
-	var decoded CreateProjectResponseAnalyticsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateProjectResponseAnalytics(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"disabledAt", "enabledAt", "id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"disabledAt", "enabledAt", "id"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["canceledAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.CanceledAt = &NullableValue[float64]{}
-	}
-	if raw, ok := rawFields["sampleRatePercent"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.SampleRatePercent = &NullableValue[float64]{}
-	}
-	if raw, ok := rawFields["spendLimitInDollars"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.SpendLimitInDollars = &NullableValue[float64]{}
-	}
-	return nil
-}
-
-// NewCreateProjectResponseAnalytics returns a validated CreateProjectResponseAnalytics built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateProjectResponseAnalytics(fields CreateProjectResponseAnalytics) (*CreateProjectResponseAnalytics, error) {
-	return ConstructModel(fields)
-}
-
 type CreateProjectResponseBlobs struct {
 	// IsDefaultApp Marks the team-level, Vercel-managed default blob project (`vercel-blob-default-project`) that orphan blob stores are scoped to when connected without an explicit project. Set only by internal storage flows and immutable after creation — guards rely on it to protect the connected stores from being lost when the project is deleted or transferred.
 	IsDefaultApp *bool `json:"isDefaultApp,omitempty"`
@@ -680,4 +626,65 @@ func NewCreateProjectResponseDeploymentExpiration(fields CreateProjectResponseDe
 type CreateProjectResponseDeploymentPolicy struct {
 	DeploymentSources *NullableValue[[]CreateProjectResponseDeploymentPolicyDeploymentSources] `json:"deploymentSources,omitempty"`
 	GitSources        *NullableValue[[]CreateProjectResponseDeploymentPolicyGitSources]        `json:"gitSources,omitempty"`
+}
+
+func (value *CreateProjectResponseDeploymentPolicy) UnmarshalJSON(data []byte) error {
+	type CreateProjectResponseDeploymentPolicyAlias CreateProjectResponseDeploymentPolicy
+	var decoded CreateProjectResponseDeploymentPolicyAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateProjectResponseDeploymentPolicy(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["deploymentSources"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.DeploymentSources = &NullableValue[[]CreateProjectResponseDeploymentPolicyDeploymentSources]{}
+	}
+	if raw, ok := rawFields["gitSources"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.GitSources = &NullableValue[[]CreateProjectResponseDeploymentPolicyGitSources]{}
+	}
+	return nil
+}
+
+// NewCreateProjectResponseDeploymentPolicy returns a validated CreateProjectResponseDeploymentPolicy built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResponseDeploymentPolicy(fields CreateProjectResponseDeploymentPolicy) (*CreateProjectResponseDeploymentPolicy, error) {
+	return ConstructModel(fields)
+}
+
+// CreateProjectResponseDeploymentPolicyDeploymentSources `enabled: true` with empty `sources` is deny-all.
+type CreateProjectResponseDeploymentPolicyDeploymentSources struct {
+	Enabled      bool                                                                         `json:"enabled"`
+	Environments []CreateProjectResponseDeploymentPolicyDeploymentSourcesItemEnvironmentsItem `json:"environments"`
+	Sources      []CreateProjectResponseDeploymentPolicyDeploymentSourcesSourcesEnum          `json:"sources"`
+}
+
+func (value *CreateProjectResponseDeploymentPolicyDeploymentSources) UnmarshalJSON(data []byte) error {
+	type CreateProjectResponseDeploymentPolicyDeploymentSourcesAlias CreateProjectResponseDeploymentPolicyDeploymentSources
+	var decoded CreateProjectResponseDeploymentPolicyDeploymentSourcesAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateProjectResponseDeploymentPolicyDeploymentSources(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"enabled", "environments", "sources"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"enabled", "environments", "sources"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewCreateProjectResponseDeploymentPolicyDeploymentSources returns a validated CreateProjectResponseDeploymentPolicyDeploymentSources built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateProjectResponseDeploymentPolicyDeploymentSources(fields CreateProjectResponseDeploymentPolicyDeploymentSources) (*CreateProjectResponseDeploymentPolicyDeploymentSources, error) {
+	return ConstructModel(fields)
 }

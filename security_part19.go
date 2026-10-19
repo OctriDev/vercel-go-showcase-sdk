@@ -5,135 +5,9 @@ package sdk
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 )
-
-type RemoveBypassIpResponse struct {
-	Ok bool `json:"ok"`
-}
-
-func (value *RemoveBypassIpResponse) UnmarshalJSON(data []byte) error {
-	type RemoveBypassIpResponseAlias RemoveBypassIpResponse
-	var decoded RemoveBypassIpResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = RemoveBypassIpResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"ok"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"ok"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewRemoveBypassIpResponse returns a validated RemoveBypassIpResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewRemoveBypassIpResponse(fields RemoveBypassIpResponse) (*RemoveBypassIpResponse, error) {
-	return ConstructModel(fields)
-}
-
-type CreateConditionalBypassConditionGroup struct {
-	Conditions []CreateConditionalBypassRequestConditionGroupItemConditionsItem `json:"conditions"`
-}
-
-func (value *CreateConditionalBypassConditionGroup) UnmarshalJSON(data []byte) error {
-	type CreateConditionalBypassConditionGroupAlias CreateConditionalBypassConditionGroup
-	var decoded CreateConditionalBypassConditionGroupAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateConditionalBypassConditionGroup(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"conditions"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"conditions"}); err != nil {
-		return err
-	}
-	if err := ValidateItems("conditions", value.Conditions, LengthOpts{Min: Ptr[int](1), Max: Ptr[int](65)}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateConditionalBypassConditionGroup returns a validated CreateConditionalBypassConditionGroup built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateConditionalBypassConditionGroup(fields CreateConditionalBypassConditionGroup) (*CreateConditionalBypassConditionGroup, error) {
-	return ConstructModel(fields)
-}
-
-type CreateConditionalBypassResponse struct {
-	Result CreateConditionalBypassResponseResult `json:"result"`
-}
-
-func (value *CreateConditionalBypassResponse) UnmarshalJSON(data []byte) error {
-	type CreateConditionalBypassResponseAlias CreateConditionalBypassResponse
-	var decoded CreateConditionalBypassResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateConditionalBypassResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"result"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"result"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateConditionalBypassResponse returns a validated CreateConditionalBypassResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateConditionalBypassResponse(fields CreateConditionalBypassResponse) (*CreateConditionalBypassResponse, error) {
-	return ConstructModel(fields)
-}
-
-type CreateConditionalBypassResponseResult struct {
-	Condition      string                                                `json:"condition"`
-	ConditionGroup []CreateConditionalBypassResponseResultConditionGroup `json:"conditionGroup"`
-	CreatedAt      string                                                `json:"createdAt"`
-	Domain         string                                                `json:"domain"`
-	Id             string                                                `json:"id"`
-	Note           *string                                               `json:"note,omitempty"`
-	ProjectId      string                                                `json:"projectId"`
-	UpdatedAt      string                                                `json:"updatedAt"`
-}
-
-func (value *CreateConditionalBypassResponseResult) UnmarshalJSON(data []byte) error {
-	type CreateConditionalBypassResponseResultAlias CreateConditionalBypassResponseResult
-	var decoded CreateConditionalBypassResponseResultAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateConditionalBypassResponseResult(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"condition", "conditionGroup", "createdAt", "domain", "id", "projectId", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"condition", "conditionGroup", "createdAt", "domain", "id", "projectId", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
 
 // NewCreateConditionalBypassResponseResult returns a validated CreateConditionalBypassResponseResult built from named fields.
 // Optional fields may be left unset; a value that violates the schema is
@@ -695,4 +569,129 @@ func (value *GenerateFirewallRuleResponseRuleConditionGroup) UnmarshalJSON(data 
 // reported as *SdkValidationError.
 func NewGenerateFirewallRuleResponseRuleConditionGroup(fields GenerateFirewallRuleResponseRuleConditionGroup) (*GenerateFirewallRuleResponseRuleConditionGroup, error) {
 	return ConstructModel(fields)
+}
+
+type GenerateFirewallRuleResponseRuleConditionGroupConditions struct {
+	Key   *string                                                        `json:"key,omitempty"`
+	Neg   *bool                                                          `json:"neg,omitempty"`
+	Op    string                                                         `json:"op"`
+	Type  string                                                         `json:"type"`
+	Value *GenerateFirewallRuleResponseRuleConditionGroupConditionsValue `json:"value,omitempty"`
+}
+
+func (value *GenerateFirewallRuleResponseRuleConditionGroupConditions) UnmarshalJSON(data []byte) error {
+	type GenerateFirewallRuleResponseRuleConditionGroupConditionsAlias GenerateFirewallRuleResponseRuleConditionGroupConditions
+	var decoded GenerateFirewallRuleResponseRuleConditionGroupConditionsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GenerateFirewallRuleResponseRuleConditionGroupConditions(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"op", "type"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"op", "type"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGenerateFirewallRuleResponseRuleConditionGroupConditions returns a validated GenerateFirewallRuleResponseRuleConditionGroupConditions built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGenerateFirewallRuleResponseRuleConditionGroupConditions(fields GenerateFirewallRuleResponseRuleConditionGroupConditions) (*GenerateFirewallRuleResponseRuleConditionGroupConditions, error) {
+	return ConstructModel(fields)
+}
+
+// GenerateFirewallRuleResponseRuleConditionGroupConditionsValue represents a union type.
+type GenerateFirewallRuleResponseRuleConditionGroupConditionsValue struct {
+	String       *string
+	Float64      *float64
+	ListOfString *[]string
+}
+
+func (u *GenerateFirewallRuleResponseRuleConditionGroupConditionsValue) UnmarshalJSON(data []byte) error {
+	*u = GenerateFirewallRuleResponseRuleConditionGroupConditionsValue{}
+	var refusal error
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		u.String = &s
+		return nil
+	}
+	var float642 float64
+	if err := json.Unmarshal(data, &float642); err == nil {
+		u.Float64 = &float642
+		return nil
+	}
+	var listofstring []string
+	if err := json.Unmarshal(data, &listofstring); err == nil && isNonEmptyGenerateFirewallRuleResponseRuleConditionGroupConditionsValueListOfString(listofstring) {
+		u.ListOfString = &listofstring
+		return nil
+	} else if _, refused := err.(*SdkValidationError); refused && refusal == nil {
+		refusal = err
+	}
+	return refusal
+}
+
+func (u GenerateFirewallRuleResponseRuleConditionGroupConditionsValue) MarshalJSON() ([]byte, error) {
+	if u.String != nil {
+		return json.Marshal(u.String)
+	}
+	if u.Float64 != nil {
+		return json.Marshal(u.Float64)
+	}
+	if u.ListOfString != nil {
+		return json.Marshal(u.ListOfString)
+	}
+	return []byte("null"), nil
+}
+
+func isNonEmptyGenerateFirewallRuleResponseRuleConditionGroupConditionsValueListOfString(v []string) bool {
+	b, _ := json.Marshal(v)
+	return string(b) != "{}" && string(b) != "null"
+}
+
+// UnmarshalGenerateFirewallRuleResponseRuleConditionGroupConditionsValue converts an untyped value to GenerateFirewallRuleResponseRuleConditionGroupConditionsValue.
+func UnmarshalGenerateFirewallRuleResponseRuleConditionGroupConditionsValue(v any) GenerateFirewallRuleResponseRuleConditionGroupConditionsValue {
+	b, _ := json.Marshal(v)
+	var result GenerateFirewallRuleResponseRuleConditionGroupConditionsValue
+	_ = json.Unmarshal(b, &result)
+	return result
+}
+
+type UpdateAttackChallengeModeParams struct {
+	Body   map[string]any
+	TeamId *string
+	Slug   *string
+}
+
+// UpdateAttackChallengeMode updates whether Attack Challenge mode is enabled for a project. Supply `projectId` and `attackModeEnabled`; include `attackModeActiveUntil` when using the request variant that sets an active-until time. The response includes the updated setting and its update timestamp.
+//
+// Update the setting for determining if the project has Attack Challenge mode enabled.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func UpdateAttackChallengeMode(ctx context.Context, clientConfig ClientConfig, params UpdateAttackChallengeModeParams, opts ...RequestOption) (*UpdateAttackChallengeModeResponse, error) {
+	body := params.Body
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[UpdateAttackChallengeModeResponse](ctx, &clientConfig, "POST", "/v1/security/attack-mode", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body:        body,
+		OperationID: "UpdateAttackChallengeMode",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
 }
