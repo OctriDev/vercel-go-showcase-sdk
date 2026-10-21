@@ -9,69 +9,6 @@ import (
 	"fmt"
 )
 
-// AddProjectMemberResponse Responds with the project ID on success.
-type AddProjectMemberResponse struct {
-	Id string `json:"id"`
-}
-
-func (value *AddProjectMemberResponse) UnmarshalJSON(data []byte) error {
-	type AddProjectMemberResponseAlias AddProjectMemberResponse
-	var decoded AddProjectMemberResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = AddProjectMemberResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"id"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewAddProjectMemberResponse returns a validated AddProjectMemberResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewAddProjectMemberResponse(fields AddProjectMemberResponse) (*AddProjectMemberResponse, error) {
-	return ConstructModel(fields)
-}
-
-type RemoveProjectMemberResponse struct {
-	Id string `json:"id"`
-}
-
-func (value *RemoveProjectMemberResponse) UnmarshalJSON(data []byte) error {
-	type RemoveProjectMemberResponseAlias RemoveProjectMemberResponse
-	var decoded RemoveProjectMemberResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = RemoveProjectMemberResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"id"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewRemoveProjectMemberResponse returns a validated RemoveProjectMemberResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewRemoveProjectMemberResponse(fields RemoveProjectMemberResponse) (*RemoveProjectMemberResponse, error) {
-	return ConstructModel(fields)
-}
-
 type GetProjectMembersParams struct {
 	IdOrName string
 	Limit    *int64
@@ -234,4 +171,67 @@ func RemoveProjectMember(ctx context.Context, clientConfig ClientConfig, params 
 		return nil, err
 	}
 	return &resp.Data, nil
+}
+
+// AddProjectMemberResponse Responds with the project ID on success.
+type AddProjectMemberResponse struct {
+	Id string `json:"id"`
+}
+
+func (value *AddProjectMemberResponse) UnmarshalJSON(data []byte) error {
+	type AddProjectMemberResponseAlias AddProjectMemberResponse
+	var decoded AddProjectMemberResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = AddProjectMemberResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"id"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewAddProjectMemberResponse returns a validated AddProjectMemberResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewAddProjectMemberResponse(fields AddProjectMemberResponse) (*AddProjectMemberResponse, error) {
+	return ConstructModel(fields)
+}
+
+type RemoveProjectMemberResponse struct {
+	Id string `json:"id"`
+}
+
+func (value *RemoveProjectMemberResponse) UnmarshalJSON(data []byte) error {
+	type RemoveProjectMemberResponseAlias RemoveProjectMemberResponse
+	var decoded RemoveProjectMemberResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = RemoveProjectMemberResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"id"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewRemoveProjectMemberResponse returns a validated RemoveProjectMemberResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewRemoveProjectMemberResponse(fields RemoveProjectMemberResponse) (*RemoveProjectMemberResponse, error) {
+	return ConstructModel(fields)
 }

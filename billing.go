@@ -8,6 +8,90 @@ import (
 	"encoding/json"
 )
 
+// ListBillingCharges lists billing charges for a Vercel team in FOCUS v1.3 JSONL format. Set `from` and `to` to define the UTC date-time range; results use one-day granularity and the range can span at most one year. The response is streamed as newline-delimited JSON, and you can request gzip compression with the `Accept-Encoding: gzip` header.
+//
+// Returns the billing charge data in FOCUS v1.3 JSONL format for a specified Vercel team, within a date range specified by `from` and `to` query parameters. Supports 1-day granularity with a maximum date range of 1 year. The response is streamed as newline-delimited JSON (JSONL) and can be optionally compressed with gzip if the `Accept-Encoding: gzip` header is provided. `SkuId` is the stable product ID. For unmapped items, it is derived from the item identifier. This is only available for Owner, Member, Developer, Security, Billing, and Enterprise Viewer roles for the supplied team.
+//
+// Parameters:
+//
+//	from: Inclusive start of the date range as an ISO 8601 date-time string in
+//	UTC.
+//	to: Exclusive end of the date range as an ISO 8601 date-time string in UTC.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func ListBillingCharges(ctx context.Context, clientConfig ClientConfig, from string, to string, teamId *string, slug *string, opts ...RequestOption) (<-chan ListBillingChargesResponse, <-chan error) {
+	return StreamTypedCfgWithFormat[ListBillingChargesResponse](ctx, &clientConfig, "GET", "/v1/billing/charges", &RequestOpts{
+		Query: map[string]any{
+			"from":   QueryValue{Value: from, Style: "form", Explode: true},
+			"to":     QueryValue{Value: to, Style: "form", Explode: true},
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "ListBillingCharges",
+		Options:     opts,
+	}, "ndjson", "application/jsonl", "bytes")
+}
+
+// ListContractCommitments lists a Vercel team's contract commitments in FOCUS v1.3 JSONL format. Use this endpoint for Enterprise contract commitment allocations by contract period. Non-Enterprise customers receive an empty response.
+//
+// Returns commitment allocations per contract period in FOCUS v1.3 JSONL format for a specified Vercel team. The response is streamed as newline-delimited JSON (JSONL). This endpoint is only applicable to Enterprise Vercel customers. An empty response is returned for non-Enterprise (Pro/Flex) customers.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func ListContractCommitments(ctx context.Context, clientConfig ClientConfig, teamId *string, slug *string, opts ...RequestOption) (<-chan ListContractCommitmentsResponse, <-chan error) {
+	return StreamTypedCfgWithFormat[ListContractCommitmentsResponse](ctx, &clientConfig, "GET", "/v1/billing/contract-commitments", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "ListContractCommitments",
+		Options:     opts,
+	}, "ndjson", "application/jsonl", "bytes")
+}
+
+type BuyCreditsParams struct {
+	Item   BuyCreditsItem
+	Source *string
+	TeamId *string
+	Slug   *string
+}
+
+// BuyCredits submits a credit purchase for a Vercel team using the default payment method on file; the purchase is charged immediately through a Stripe invoice. Set `item.creditType` to `v0`, `gateway`, or `agent` and provide a positive integer `item.amount`. You can use the `source` query parameter to identify the caller; it defaults to `api` when omitted.
+//
+// Purchases credits for a Vercel team using the default payment method on file. The purchase is charged immediately via Stripe invoice. Supported credit types are `v0`, `gateway`, and `agent`. The `amount` field specifies the number of credits to purchase and must be a positive integer. An optional `source` query parameter can be provided to identify the caller. Defaults to `api` if not specified. This is only available for Owner, Member, Developer, Security, and Billing roles for the supplied team.
+//
+// Parameters:
+//
+//	source: The source of the purchase request. Defaults to `api` if not
+//	specified.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func BuyCredits(ctx context.Context, clientConfig ClientConfig, params BuyCreditsParams, opts ...RequestOption) (*BuyCreditsResponse, error) {
+	item := params.Item
+	source := params.Source
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[BuyCreditsResponse](ctx, &clientConfig, "POST", "/v1/billing/buy", &RequestOpts{
+		Query: map[string]any{
+			"source": QueryValue{Value: source, Style: "form", Explode: true},
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"item": item,
+		},
+		OperationID: "BuyCredits",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 // ListBillingChargesResponse Extension of the base schema for Focus charges. Includes pricing information for all customers.
 type ListBillingChargesResponse struct {
 	// BilledCost Charge amount serving as the basis for invoicing
@@ -251,87 +335,3 @@ const (
 	BuyCreditsItemCreditTypeEnumGateway BuyCreditsItemCreditTypeEnum = "gateway"
 	BuyCreditsItemCreditTypeEnumAgent   BuyCreditsItemCreditTypeEnum = "agent"
 )
-
-// ListBillingCharges lists billing charges for a Vercel team in FOCUS v1.3 JSONL format. Set `from` and `to` to define the UTC date-time range; results use one-day granularity and the range can span at most one year. The response is streamed as newline-delimited JSON, and you can request gzip compression with the `Accept-Encoding: gzip` header.
-//
-// Returns the billing charge data in FOCUS v1.3 JSONL format for a specified Vercel team, within a date range specified by `from` and `to` query parameters. Supports 1-day granularity with a maximum date range of 1 year. The response is streamed as newline-delimited JSON (JSONL) and can be optionally compressed with gzip if the `Accept-Encoding: gzip` header is provided. `SkuId` is the stable product ID. For unmapped items, it is derived from the item identifier. This is only available for Owner, Member, Developer, Security, Billing, and Enterprise Viewer roles for the supplied team.
-//
-// Parameters:
-//
-//	from: Inclusive start of the date range as an ISO 8601 date-time string in
-//	UTC.
-//	to: Exclusive end of the date range as an ISO 8601 date-time string in UTC.
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func ListBillingCharges(ctx context.Context, clientConfig ClientConfig, from string, to string, teamId *string, slug *string, opts ...RequestOption) (<-chan ListBillingChargesResponse, <-chan error) {
-	return StreamTypedCfgWithFormat[ListBillingChargesResponse](ctx, &clientConfig, "GET", "/v1/billing/charges", &RequestOpts{
-		Query: map[string]any{
-			"from":   QueryValue{Value: from, Style: "form", Explode: true},
-			"to":     QueryValue{Value: to, Style: "form", Explode: true},
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "ListBillingCharges",
-		Options:     opts,
-	}, "ndjson", "application/jsonl", "bytes")
-}
-
-// ListContractCommitments lists a Vercel team's contract commitments in FOCUS v1.3 JSONL format. Use this endpoint for Enterprise contract commitment allocations by contract period. Non-Enterprise customers receive an empty response.
-//
-// Returns commitment allocations per contract period in FOCUS v1.3 JSONL format for a specified Vercel team. The response is streamed as newline-delimited JSON (JSONL). This endpoint is only applicable to Enterprise Vercel customers. An empty response is returned for non-Enterprise (Pro/Flex) customers.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func ListContractCommitments(ctx context.Context, clientConfig ClientConfig, teamId *string, slug *string, opts ...RequestOption) (<-chan ListContractCommitmentsResponse, <-chan error) {
-	return StreamTypedCfgWithFormat[ListContractCommitmentsResponse](ctx, &clientConfig, "GET", "/v1/billing/contract-commitments", &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "ListContractCommitments",
-		Options:     opts,
-	}, "ndjson", "application/jsonl", "bytes")
-}
-
-type BuyCreditsParams struct {
-	Item   BuyCreditsItem
-	Source *string
-	TeamId *string
-	Slug   *string
-}
-
-// BuyCredits submits a credit purchase for a Vercel team using the default payment method on file; the purchase is charged immediately through a Stripe invoice. Set `item.creditType` to `v0`, `gateway`, or `agent` and provide a positive integer `item.amount`. You can use the `source` query parameter to identify the caller; it defaults to `api` when omitted.
-//
-// Purchases credits for a Vercel team using the default payment method on file. The purchase is charged immediately via Stripe invoice. Supported credit types are `v0`, `gateway`, and `agent`. The `amount` field specifies the number of credits to purchase and must be a positive integer. An optional `source` query parameter can be provided to identify the caller. Defaults to `api` if not specified. This is only available for Owner, Member, Developer, Security, and Billing roles for the supplied team.
-//
-// Parameters:
-//
-//	source: The source of the purchase request. Defaults to `api` if not
-//	specified.
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func BuyCredits(ctx context.Context, clientConfig ClientConfig, params BuyCreditsParams, opts ...RequestOption) (*BuyCreditsResponse, error) {
-	item := params.Item
-	source := params.Source
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[BuyCreditsResponse](ctx, &clientConfig, "POST", "/v1/billing/buy", &RequestOpts{
-		Query: map[string]any{
-			"source": QueryValue{Value: source, Style: "form", Explode: true},
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"item": item,
-		},
-		OperationID: "BuyCredits",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}

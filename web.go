@@ -8,6 +8,32 @@ import (
 	"encoding/json"
 )
 
+type CreateWebInsightsToggleParams struct {
+	ProjectId string
+	Value     bool
+}
+
+// CreateWebInsightsToggle updates the Web Insights setting for a project. Supply `projectId` and the `value` to set the toggle to true or false. The response returns the resulting toggle value.
+func CreateWebInsightsToggle(ctx context.Context, clientConfig ClientConfig, params CreateWebInsightsToggleParams, opts ...RequestOption) (*CreateWebInsightsToggleResponse, error) {
+	projectId := params.ProjectId
+	value := params.Value
+
+	resp, err := DoCfg[CreateWebInsightsToggleResponse](ctx, &clientConfig, "POST", "/web/insights/toggle", &RequestOpts{
+		Query: map[string]any{
+			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"value": value,
+		},
+		OperationID: "CreateWebInsightsToggle",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 type CreateWebInsightsToggleResponse struct {
 	Value bool `json:"value"`
 }
@@ -37,30 +63,4 @@ func (value *CreateWebInsightsToggleResponse) UnmarshalJSON(data []byte) error {
 // reported as *SdkValidationError.
 func NewCreateWebInsightsToggleResponse(fields CreateWebInsightsToggleResponse) (*CreateWebInsightsToggleResponse, error) {
 	return ConstructModel(fields)
-}
-
-type CreateWebInsightsToggleParams struct {
-	ProjectId string
-	Value     bool
-}
-
-// CreateWebInsightsToggle updates the Web Insights setting for a project. Supply `projectId` and the `value` to set the toggle to true or false. The response returns the resulting toggle value.
-func CreateWebInsightsToggle(ctx context.Context, clientConfig ClientConfig, params CreateWebInsightsToggleParams, opts ...RequestOption) (*CreateWebInsightsToggleResponse, error) {
-	projectId := params.ProjectId
-	value := params.Value
-
-	resp, err := DoCfg[CreateWebInsightsToggleResponse](ctx, &clientConfig, "POST", "/web/insights/toggle", &RequestOpts{
-		Query: map[string]any{
-			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"value": value,
-		},
-		OperationID: "CreateWebInsightsToggle",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
 }

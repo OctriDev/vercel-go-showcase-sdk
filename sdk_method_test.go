@@ -916,10 +916,10 @@ func sdkMethodByName(name string) any {
 		return UpdateSharedEnvVariable
 	case "UpdateStaticIps":
 		return UpdateStaticIps
+	case "UpdateTeam":
+		return UpdateTeam
 	case "UpdateTeamMember":
 		return UpdateTeamMember
-	case "UpdateTeams":
-		return UpdateTeams
 	case "UpdateVercelCiRepositorySettings":
 		return UpdateVercelCiRepositorySettings
 	case "UpdateVersion":

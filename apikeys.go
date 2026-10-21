@@ -8,6 +8,54 @@ import (
 	"encoding/json"
 )
 
+type CreateApiKeysParams struct {
+	Purpose        string
+	ProjectId      *string
+	Name           *string
+	ExpiresAt      *float64
+	AiGatewayQuota *CreateApiKeysAiGatewayQuota
+	Metadata       *map[string]any
+}
+
+// CreateApiKeys creates an API key with a purpose that restricts how the key can be used. Set `purpose` and optionally scope the key to a project, assign a name or expiration, or configure AI Gateway quota settings. Save the returned `apiKeyString` securely because it is provided only in this response and cannot be retrieved again.
+//
+// Parameters:
+//
+//	purpose: The API key's purpose, which restricts how it can be used.
+//	projectId: An optional project to restrict the API key to.
+//	name: An optional name for the API key.
+//	expiresAt: The API key's expiration, expressed as a UNIX timestamp in
+//	milliseconds.
+//	aiGatewayQuota: Optional AI Gateway quota configuration for the API key.
+//	metadata: Optional generic metadata for the API key. The accepted shape
+//	depends on the key's `purpose` and is validated on creation; for
+//	`ai-gateway` keys this accepts `environment`.
+func CreateApiKeys(ctx context.Context, clientConfig ClientConfig, params CreateApiKeysParams, opts ...RequestOption) (*CreateApiKeysResponse, error) {
+	purpose := params.Purpose
+	projectId := params.ProjectId
+	name := params.Name
+	expiresAt := params.ExpiresAt
+	aiGatewayQuota := params.AiGatewayQuota
+	metadata := params.Metadata
+
+	resp, err := DoCfg[CreateApiKeysResponse](ctx, &clientConfig, "POST", "/api-keys", &RequestOpts{
+		Body: map[string]any{
+			"purpose":        purpose,
+			"projectId":      projectId,
+			"name":           name,
+			"expiresAt":      expiresAt,
+			"aiGatewayQuota": aiGatewayQuota,
+			"metadata":       metadata,
+		},
+		OperationID: "CreateApiKeys",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 // CreateApiKeysAiGatewayQuota Optional AI Gateway quota configuration for the API key.
 type CreateApiKeysAiGatewayQuota struct {
 	// LimitAmount The quota limit amount.
@@ -92,52 +140,4 @@ func (value *CreateApiKeysResponse) UnmarshalJSON(data []byte) error {
 // reported as *SdkValidationError.
 func NewCreateApiKeysResponse(fields CreateApiKeysResponse) (*CreateApiKeysResponse, error) {
 	return ConstructModel(fields)
-}
-
-type CreateApiKeysParams struct {
-	Purpose        string
-	ProjectId      *string
-	Name           *string
-	ExpiresAt      *float64
-	AiGatewayQuota *CreateApiKeysAiGatewayQuota
-	Metadata       *map[string]any
-}
-
-// CreateApiKeys creates an API key with a purpose that restricts how the key can be used. Set `purpose` and optionally scope the key to a project, assign a name or expiration, or configure AI Gateway quota settings. Save the returned `apiKeyString` securely because it is provided only in this response and cannot be retrieved again.
-//
-// Parameters:
-//
-//	purpose: The API key's purpose, which restricts how it can be used.
-//	projectId: An optional project to restrict the API key to.
-//	name: An optional name for the API key.
-//	expiresAt: The API key's expiration, expressed as a UNIX timestamp in
-//	milliseconds.
-//	aiGatewayQuota: Optional AI Gateway quota configuration for the API key.
-//	metadata: Optional generic metadata for the API key. The accepted shape
-//	depends on the key's `purpose` and is validated on creation; for
-//	`ai-gateway` keys this accepts `environment`.
-func CreateApiKeys(ctx context.Context, clientConfig ClientConfig, params CreateApiKeysParams, opts ...RequestOption) (*CreateApiKeysResponse, error) {
-	purpose := params.Purpose
-	projectId := params.ProjectId
-	name := params.Name
-	expiresAt := params.ExpiresAt
-	aiGatewayQuota := params.AiGatewayQuota
-	metadata := params.Metadata
-
-	resp, err := DoCfg[CreateApiKeysResponse](ctx, &clientConfig, "POST", "/api-keys", &RequestOpts{
-		Body: map[string]any{
-			"purpose":        purpose,
-			"projectId":      projectId,
-			"name":           name,
-			"expiresAt":      expiresAt,
-			"aiGatewayQuota": aiGatewayQuota,
-			"metadata":       metadata,
-		},
-		OperationID: "CreateApiKeys",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
 }

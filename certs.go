@@ -9,179 +9,6 @@ import (
 	"fmt"
 )
 
-type GetCertByIdResponse struct {
-	AutoRenew bool     `json:"autoRenew"`
-	Cns       []string `json:"cns"`
-	CreatedAt float64  `json:"createdAt"`
-	ExpiresAt float64  `json:"expiresAt"`
-	Id        string   `json:"id"`
-}
-
-func (value *GetCertByIdResponse) UnmarshalJSON(data []byte) error {
-	type GetCertByIdResponseAlias GetCertByIdResponse
-	var decoded GetCertByIdResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetCertByIdResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetCertByIdResponse returns a validated GetCertByIdResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetCertByIdResponse(fields GetCertByIdResponse) (*GetCertByIdResponse, error) {
-	return ConstructModel(fields)
-}
-
-type GetCertsResponse struct {
-	Certs []GetCertsResponseCerts `json:"certs"`
-	// Pagination This object contains information related to the pagination of the current request, including the necessary parameters to get the next or previous page of data.
-	Pagination Pagination `json:"pagination"`
-}
-
-func (value *GetCertsResponse) UnmarshalJSON(data []byte) error {
-	type GetCertsResponseAlias GetCertsResponse
-	var decoded GetCertsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetCertsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"certs", "pagination"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"certs", "pagination"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetCertsResponse returns a validated GetCertsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetCertsResponse(fields GetCertsResponse) (*GetCertsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type GetCertsResponseCerts struct {
-	AutoRenew bool     `json:"autoRenew"`
-	Cns       []string `json:"cns"`
-	CreatedAt float64  `json:"createdAt"`
-	ExpiresAt float64  `json:"expiresAt"`
-	Id        string   `json:"id"`
-}
-
-func (value *GetCertsResponseCerts) UnmarshalJSON(data []byte) error {
-	type GetCertsResponseCertsAlias GetCertsResponseCerts
-	var decoded GetCertsResponseCertsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetCertsResponseCerts(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetCertsResponseCerts returns a validated GetCertsResponseCerts built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetCertsResponseCerts(fields GetCertsResponseCerts) (*GetCertsResponseCerts, error) {
-	return ConstructModel(fields)
-}
-
-type IssueCertResponse struct {
-	AutoRenew bool     `json:"autoRenew"`
-	Cns       []string `json:"cns"`
-	CreatedAt float64  `json:"createdAt"`
-	ExpiresAt float64  `json:"expiresAt"`
-	Id        string   `json:"id"`
-}
-
-func (value *IssueCertResponse) UnmarshalJSON(data []byte) error {
-	type IssueCertResponseAlias IssueCertResponse
-	var decoded IssueCertResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = IssueCertResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewIssueCertResponse returns a validated IssueCertResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewIssueCertResponse(fields IssueCertResponse) (*IssueCertResponse, error) {
-	return ConstructModel(fields)
-}
-
-type UploadCertResponse struct {
-	AutoRenew bool     `json:"autoRenew"`
-	Cns       []string `json:"cns"`
-	CreatedAt float64  `json:"createdAt"`
-	ExpiresAt float64  `json:"expiresAt"`
-	Id        string   `json:"id"`
-}
-
-func (value *UploadCertResponse) UnmarshalJSON(data []byte) error {
-	type UploadCertResponseAlias UploadCertResponse
-	var decoded UploadCertResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UploadCertResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUploadCertResponse returns a validated UploadCertResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUploadCertResponse(fields UploadCertResponse) (*UploadCertResponse, error) {
-	return ConstructModel(fields)
-}
-
 type GetCertByIdParams struct {
 	Id     string
 	TeamId *string
@@ -365,4 +192,177 @@ func UploadCert(ctx context.Context, clientConfig ClientConfig, params UploadCer
 		return nil, err
 	}
 	return &resp.Data, nil
+}
+
+type GetCertByIdResponse struct {
+	AutoRenew bool     `json:"autoRenew"`
+	Cns       []string `json:"cns"`
+	CreatedAt float64  `json:"createdAt"`
+	ExpiresAt float64  `json:"expiresAt"`
+	Id        string   `json:"id"`
+}
+
+func (value *GetCertByIdResponse) UnmarshalJSON(data []byte) error {
+	type GetCertByIdResponseAlias GetCertByIdResponse
+	var decoded GetCertByIdResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GetCertByIdResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGetCertByIdResponse returns a validated GetCertByIdResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetCertByIdResponse(fields GetCertByIdResponse) (*GetCertByIdResponse, error) {
+	return ConstructModel(fields)
+}
+
+type GetCertsResponse struct {
+	Certs []GetCertsResponseCerts `json:"certs"`
+	// Pagination This object contains information related to the pagination of the current request, including the necessary parameters to get the next or previous page of data.
+	Pagination Pagination `json:"pagination"`
+}
+
+func (value *GetCertsResponse) UnmarshalJSON(data []byte) error {
+	type GetCertsResponseAlias GetCertsResponse
+	var decoded GetCertsResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GetCertsResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"certs", "pagination"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"certs", "pagination"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGetCertsResponse returns a validated GetCertsResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetCertsResponse(fields GetCertsResponse) (*GetCertsResponse, error) {
+	return ConstructModel(fields)
+}
+
+type GetCertsResponseCerts struct {
+	AutoRenew bool     `json:"autoRenew"`
+	Cns       []string `json:"cns"`
+	CreatedAt float64  `json:"createdAt"`
+	ExpiresAt float64  `json:"expiresAt"`
+	Id        string   `json:"id"`
+}
+
+func (value *GetCertsResponseCerts) UnmarshalJSON(data []byte) error {
+	type GetCertsResponseCertsAlias GetCertsResponseCerts
+	var decoded GetCertsResponseCertsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GetCertsResponseCerts(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGetCertsResponseCerts returns a validated GetCertsResponseCerts built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetCertsResponseCerts(fields GetCertsResponseCerts) (*GetCertsResponseCerts, error) {
+	return ConstructModel(fields)
+}
+
+type IssueCertResponse struct {
+	AutoRenew bool     `json:"autoRenew"`
+	Cns       []string `json:"cns"`
+	CreatedAt float64  `json:"createdAt"`
+	ExpiresAt float64  `json:"expiresAt"`
+	Id        string   `json:"id"`
+}
+
+func (value *IssueCertResponse) UnmarshalJSON(data []byte) error {
+	type IssueCertResponseAlias IssueCertResponse
+	var decoded IssueCertResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = IssueCertResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewIssueCertResponse returns a validated IssueCertResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewIssueCertResponse(fields IssueCertResponse) (*IssueCertResponse, error) {
+	return ConstructModel(fields)
+}
+
+type UploadCertResponse struct {
+	AutoRenew bool     `json:"autoRenew"`
+	Cns       []string `json:"cns"`
+	CreatedAt float64  `json:"createdAt"`
+	ExpiresAt float64  `json:"expiresAt"`
+	Id        string   `json:"id"`
+}
+
+func (value *UploadCertResponse) UnmarshalJSON(data []byte) error {
+	type UploadCertResponseAlias UploadCertResponse
+	var decoded UploadCertResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UploadCertResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"autoRenew", "cns", "createdAt", "expiresAt", "id"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewUploadCertResponse returns a validated UploadCertResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUploadCertResponse(fields UploadCertResponse) (*UploadCertResponse, error) {
+	return ConstructModel(fields)
 }

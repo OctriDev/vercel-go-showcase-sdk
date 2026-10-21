@@ -5,543 +5,194 @@ package sdk
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"fmt"
 )
 
-type ReplaceDomainsByDomainRecordsResponse struct {
-	RecordIds []string `json:"recordIds"`
+type GetDomainsParams struct {
+	Domain string
+	TeamId *string
+	Slug   *string
 }
 
-func (value *ReplaceDomainsByDomainRecordsResponse) UnmarshalJSON(data []byte) error {
-	type ReplaceDomainsByDomainRecordsResponseAlias ReplaceDomainsByDomainRecordsResponse
-	var decoded ReplaceDomainsByDomainRecordsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
+// GetDomains retrieves information about a domain registered to an account or team. Use `teamId` or `slug` to make the request on behalf of a team.
+//
+// Get information for a single domain in an account or team.
+//
+// Parameters:
+//
+//	domain: The name of the domain.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetDomains(ctx context.Context, clientConfig ClientConfig, params GetDomainsParams, opts ...RequestOption) (*GetDomainsResponse, error) {
+	domain := params.Domain
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[GetDomainsResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v5/domains/%s", EncodePathSegment(domain)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetDomains",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
 	}
-	*value = ReplaceDomainsByDomainRecordsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"recordIds"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"recordIds"}); err != nil {
-		return err
-	}
-	return nil
+	return &resp.Data, nil
 }
 
-// NewReplaceDomainsByDomainRecordsResponse returns a validated ReplaceDomainsByDomainRecordsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewReplaceDomainsByDomainRecordsResponse(fields ReplaceDomainsByDomainRecordsResponse) (*ReplaceDomainsByDomainRecordsResponse, error) {
-	return ConstructModel(fields)
+type ListDomainsParams struct {
+	Limit  *float64
+	Since  *float64
+	Until  *float64
+	TeamId *string
+	Slug   *string
 }
 
-type GetDomainsRecordsByRecordIdResponse struct {
-	Comment    *string                                           `json:"comment,omitempty"`
-	CreatedAt  *NullableValue[float64]                           `json:"createdAt,omitempty"`
-	Creator    string                                            `json:"creator"`
-	Domain     string                                            `json:"domain"`
-	Id         string                                            `json:"id"`
-	Name       string                                            `json:"name"`
-	RecordType GetDomainsRecordsByRecordIdResponseRecordTypeEnum `json:"recordType"`
-	Ttl        *float64                                          `json:"ttl,omitempty"`
-	Type       GetDomainsRecordsByRecordIdResponseTypeEnum       `json:"type"`
-	Value      string                                            `json:"value"`
+// ListDomains lists domains registered to the authenticated user or team. Use `since` and `until` to filter by creation time, and `limit` to control the number of domains returned; the response includes pagination metadata.
+//
+// Retrieves a list of domains registered for the authenticated user or team. By default it returns the last 20 domains if no limit is provided.
+//
+// Parameters:
+//
+//	limit: Maximum number of domains to list from a request.
+//	since: Get domains created after this JavaScript timestamp.
+//	until: Get domains created before this JavaScript timestamp.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func ListDomains(ctx context.Context, clientConfig ClientConfig, params ListDomainsParams, opts ...RequestOption) (*ListDomainsResponse, error) {
+	limit := params.Limit
+	since := params.Since
+	until := params.Until
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[ListDomainsResponse](ctx, &clientConfig, "GET", "/v5/domains", &RequestOpts{
+		Query: map[string]any{
+			"limit":  QueryValue{Value: limit, Style: "form", Explode: true},
+			"since":  QueryValue{Value: since, Style: "form", Explode: true},
+			"until":  QueryValue{Value: until, Style: "form", Explode: true},
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "ListDomains",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
 }
 
-func (value *GetDomainsRecordsByRecordIdResponse) UnmarshalJSON(data []byte) error {
-	type GetDomainsRecordsByRecordIdResponseAlias GetDomainsRecordsByRecordIdResponse
-	var decoded GetDomainsRecordsByRecordIdResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetDomainsRecordsByRecordIdResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"creator", "domain", "id", "name", "recordType", "type", "value"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"creator", "domain", "id", "name", "recordType", "type", "value"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["createdAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.CreatedAt = &NullableValue[float64]{}
-	}
-	return nil
+type CreateOrTransferDomainParams struct {
+	TeamId *string
+	Slug   *string
+	Method *string
 }
 
-// NewGetDomainsRecordsByRecordIdResponse returns a validated GetDomainsRecordsByRecordIdResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainsRecordsByRecordIdResponse(fields GetDomainsRecordsByRecordIdResponse) (*GetDomainsRecordsByRecordIdResponse, error) {
-	return ConstructModel(fields)
+// CreateOrTransferDomain adds an apex domain to the authenticated user's account or team. Supply `name` and use the `method` field to select the add or move-in operation; a move-in request can also include its transfer token. Use the transfer-in endpoint for transfers from external registrars.
+//
+// This endpoint is used for adding a new apex domain name with Vercel for the authenticating user. Note: This endpoint is no longer used for initiating domain transfers from external registrars to Vercel. For this, please use the endpoint [Transfer-in a domain](https://vercel.com/docs/rest-api/reference/endpoints/domains-registrar/transfer-in-a-domain).
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+//	method: The domain operation to perform. It can be either `add` or
+//	`move-in`.
+func CreateOrTransferDomain(ctx context.Context, clientConfig ClientConfig, params CreateOrTransferDomainParams, opts ...RequestOption) (*CreateOrTransferDomainResponse, error) {
+	teamId := params.TeamId
+	slug := params.Slug
+	method := params.Method
+
+	resp, err := DoCfg[CreateOrTransferDomainResponse](ctx, &clientConfig, "POST", "/v7/domains", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"method": method,
+		},
+		OperationID: "CreateOrTransferDomain",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
 }
 
-type GetDomainsRecordsByRecordIdResponseRecordTypeEnum string
-
-const (
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumA     GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "A"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumAaaa  GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "AAAA"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumAlias GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "ALIAS"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumCaa   GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "CAA"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumCname GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "CNAME"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumHttps GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "HTTPS"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumMx    GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "MX"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumNs    GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "NS"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumSrv   GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "SRV"
-	GetDomainsRecordsByRecordIdResponseRecordTypeEnumTxt   GetDomainsRecordsByRecordIdResponseRecordTypeEnum = "TXT"
-)
-
-type GetDomainsRecordsByRecordIdResponseTypeEnum string
-
-const (
-	GetDomainsRecordsByRecordIdResponseTypeEnumA     GetDomainsRecordsByRecordIdResponseTypeEnum = "A"
-	GetDomainsRecordsByRecordIdResponseTypeEnumAaaa  GetDomainsRecordsByRecordIdResponseTypeEnum = "AAAA"
-	GetDomainsRecordsByRecordIdResponseTypeEnumAlias GetDomainsRecordsByRecordIdResponseTypeEnum = "ALIAS"
-	GetDomainsRecordsByRecordIdResponseTypeEnumCaa   GetDomainsRecordsByRecordIdResponseTypeEnum = "CAA"
-	GetDomainsRecordsByRecordIdResponseTypeEnumCname GetDomainsRecordsByRecordIdResponseTypeEnum = "CNAME"
-	GetDomainsRecordsByRecordIdResponseTypeEnumHttps GetDomainsRecordsByRecordIdResponseTypeEnum = "HTTPS"
-	GetDomainsRecordsByRecordIdResponseTypeEnumMx    GetDomainsRecordsByRecordIdResponseTypeEnum = "MX"
-	GetDomainsRecordsByRecordIdResponseTypeEnumNs    GetDomainsRecordsByRecordIdResponseTypeEnum = "NS"
-	GetDomainsRecordsByRecordIdResponseTypeEnumSrv   GetDomainsRecordsByRecordIdResponseTypeEnum = "SRV"
-	GetDomainsRecordsByRecordIdResponseTypeEnumTxt   GetDomainsRecordsByRecordIdResponseTypeEnum = "TXT"
-)
-
-type GetDomainConfigResponse struct {
-	// AcceptedChallenges Which challenge types the domain can use for issuing certs.
-	AcceptedChallenges []GetDomainConfigResponseAcceptedChallengesEnum `json:"acceptedChallenges"`
-	// ConfiguredBy How we see the domain's configuration. - `CNAME`: Domain has a CNAME pointing to Vercel. - `A`: Domain's A record is resolving to Vercel. - `http`: Domain is resolving to Vercel but may be behind a Proxy. - `dns-01`: Domain is not resolving to Vercel but dns-01 challenge is enabled. - `null`: Domain is not resolving to Vercel.
-	ConfiguredBy NullableValue[GetDomainConfigResponseConfiguredByEnum] `json:"configuredBy"`
-	// RecommendedCNAME Recommended CNAMEs for the domain. rank=1 is the preferred value to use.
-	RecommendedCNAME []GetDomainConfigResponseRecommendedCNAME `json:"recommendedCNAME"`
-	// RecommendedIPv4 Recommended IPv4s for the domain. rank=1 is the preferred value(s) to use. Only using 1 ip value is acceptable.
-	RecommendedIPv4 []GetDomainConfigResponseRecommendedIPv4 `json:"recommendedIPv4"`
-	// Misconfigured Whether or not the domain is configured AND we can automatically generate a TLS certificate.
-	Misconfigured bool `json:"misconfigured"`
+type UpdateDomainsParams struct {
+	Domain string
+	Body   map[string]any
+	TeamId *string
+	Slug   *string
 }
 
-func (value *GetDomainConfigResponse) UnmarshalJSON(data []byte) error {
-	type GetDomainConfigResponseAlias GetDomainConfigResponse
-	var decoded GetDomainConfigResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
+// UpdateDomains updates settings for an apex domain or moves the domain to another user or team. Use the update operation for domain settings, or the move-out operation to specify a `destination`; use the dedicated registrar endpoints to change auto-renew or nameservers.
+//
+// Update or move apex domain. Note: This endpoint is no longer used for updating auto-renew or nameservers. For this, please use the endpoints [Update auto-renew for a domain](https://vercel.com/docs/rest-api/reference/endpoints/domains-registrar/update-auto-renew-for-a-domain) and [Update nameservers for a domain](https://vercel.com/docs/rest-api/reference/endpoints/domains-registrar/update-nameservers-for-a-domain).
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func UpdateDomains(ctx context.Context, clientConfig ClientConfig, params UpdateDomainsParams, opts ...RequestOption) (*UpdateDomainsResponse, error) {
+	domain := params.Domain
+	body := params.Body
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[UpdateDomainsResponse](ctx, &clientConfig, "PATCH", fmt.Sprintf("/v3/domains/%s", EncodePathSegment(domain)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body:        body,
+		OperationID: "UpdateDomains",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
 	}
-	*value = GetDomainConfigResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"acceptedChallenges", "configuredBy", "misconfigured", "recommendedCNAME", "recommendedIPv4"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"acceptedChallenges", "misconfigured", "recommendedCNAME", "recommendedIPv4"}); err != nil {
-		return err
-	}
-	return nil
+	return &resp.Data, nil
 }
 
-// NewGetDomainConfigResponse returns a validated GetDomainConfigResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainConfigResponse(fields GetDomainConfigResponse) (*GetDomainConfigResponse, error) {
-	return ConstructModel(fields)
+type DeleteDomainParams struct {
+	Domain string
+	TeamId *string
+	Slug   *string
 }
 
-// GetDomainConfigResponseAcceptedChallengesEnum Which challenge types the domain can use for issuing certs.
-type GetDomainConfigResponseAcceptedChallengesEnum string
+// DeleteDomain deletes a registered domain from Vercel. Use `domain` to identify the domain to remove; deleting it also removes any aliases associated with it.
+//
+// Delete a previously registered domain name from Vercel. Deleting a domain will automatically remove any associated aliases.
+//
+// Parameters:
+//
+//	domain: The name of the domain.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func DeleteDomain(ctx context.Context, clientConfig ClientConfig, params DeleteDomainParams, opts ...RequestOption) (*DeleteDomainResponse, error) {
+	domain := params.Domain
+	teamId := params.TeamId
+	slug := params.Slug
 
-const (
-	GetDomainConfigResponseAcceptedChallengesEnumDns01  GetDomainConfigResponseAcceptedChallengesEnum = "dns-01"
-	GetDomainConfigResponseAcceptedChallengesEnumHttp01 GetDomainConfigResponseAcceptedChallengesEnum = "http-01"
-)
-
-// GetDomainConfigResponseConfiguredByEnum How we see the domain's configuration. - `CNAME`: Domain has a CNAME pointing to Vercel. - `A`: Domain's A record is resolving to Vercel. - `http`: Domain is resolving to Vercel but may be behind a Proxy. - `dns-01`: Domain is not resolving to Vercel but dns-01 challenge is enabled. - `null`: Domain is not resolving to Vercel.
-type GetDomainConfigResponseConfiguredByEnum string
-
-const (
-	GetDomainConfigResponseConfiguredByEnumA     GetDomainConfigResponseConfiguredByEnum = "A"
-	GetDomainConfigResponseConfiguredByEnumCname GetDomainConfigResponseConfiguredByEnum = "CNAME"
-	GetDomainConfigResponseConfiguredByEnumDns01 GetDomainConfigResponseConfiguredByEnum = "dns-01"
-	GetDomainConfigResponseConfiguredByEnumHttp  GetDomainConfigResponseConfiguredByEnum = "http"
-)
-
-// GetDomainConfigResponseRecommendedCNAME Recommended CNAMEs for the domain. rank=1 is the preferred value to use.
-type GetDomainConfigResponseRecommendedCNAME struct {
-	Rank  float64 `json:"rank"`
-	Value string  `json:"value"`
-}
-
-func (value *GetDomainConfigResponseRecommendedCNAME) UnmarshalJSON(data []byte) error {
-	type GetDomainConfigResponseRecommendedCNAMEAlias GetDomainConfigResponseRecommendedCNAME
-	var decoded GetDomainConfigResponseRecommendedCNAMEAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
+	resp, err := DoCfg[DeleteDomainResponse](ctx, &clientConfig, "DELETE", fmt.Sprintf("/v6/domains/%s", EncodePathSegment(domain)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "DeleteDomain",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
 	}
-	*value = GetDomainConfigResponseRecommendedCNAME(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"rank", "value"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"rank", "value"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetDomainConfigResponseRecommendedCNAME returns a validated GetDomainConfigResponseRecommendedCNAME built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainConfigResponseRecommendedCNAME(fields GetDomainConfigResponseRecommendedCNAME) (*GetDomainConfigResponseRecommendedCNAME, error) {
-	return ConstructModel(fields)
-}
-
-// GetDomainConfigResponseRecommendedIPv4 Recommended IPv4s for the domain. rank=1 is the preferred value(s) to use. Only using 1 ip value is acceptable.
-type GetDomainConfigResponseRecommendedIPv4 struct {
-	Rank  float64  `json:"rank"`
-	Value []string `json:"value"`
-}
-
-func (value *GetDomainConfigResponseRecommendedIPv4) UnmarshalJSON(data []byte) error {
-	type GetDomainConfigResponseRecommendedIPv4Alias GetDomainConfigResponseRecommendedIPv4
-	var decoded GetDomainConfigResponseRecommendedIPv4Alias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetDomainConfigResponseRecommendedIPv4(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"rank", "value"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"rank", "value"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetDomainConfigResponseRecommendedIPv4 returns a validated GetDomainConfigResponseRecommendedIPv4 built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainConfigResponseRecommendedIPv4(fields GetDomainConfigResponseRecommendedIPv4) (*GetDomainConfigResponseRecommendedIPv4, error) {
-	return ConstructModel(fields)
-}
-
-type GetDomainVerificationRecordResponse struct {
-	TxtRecord          string `json:"txtRecord"`
-	VerificationDomain string `json:"verificationDomain"`
-}
-
-func (value *GetDomainVerificationRecordResponse) UnmarshalJSON(data []byte) error {
-	type GetDomainVerificationRecordResponseAlias GetDomainVerificationRecordResponse
-	var decoded GetDomainVerificationRecordResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetDomainVerificationRecordResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"txtRecord", "verificationDomain"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"txtRecord", "verificationDomain"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetDomainVerificationRecordResponse returns a validated GetDomainVerificationRecordResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainVerificationRecordResponse(fields GetDomainVerificationRecordResponse) (*GetDomainVerificationRecordResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ClaimDomainOwnershipResponse struct {
-	Domain ClaimDomainOwnershipResponseDomain `json:"domain"`
-}
-
-func (value *ClaimDomainOwnershipResponse) UnmarshalJSON(data []byte) error {
-	type ClaimDomainOwnershipResponseAlias ClaimDomainOwnershipResponse
-	var decoded ClaimDomainOwnershipResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ClaimDomainOwnershipResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"domain"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"domain"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewClaimDomainOwnershipResponse returns a validated ClaimDomainOwnershipResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewClaimDomainOwnershipResponse(fields ClaimDomainOwnershipResponse) (*ClaimDomainOwnershipResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ClaimDomainOwnershipResponseDomain struct {
-	// BoughtAt If it was purchased through Vercel, the timestamp in milliseconds when it was purchased.
-	BoughtAt NullableValue[float64] `json:"boughtAt"`
-	// CreatedAt Timestamp in milliseconds when the domain was created in the registry.
-	CreatedAt float64 `json:"createdAt"`
-	// Creator An object containing information of the domain creator, including the user's id, username, and email.
-	Creator ClaimDomainOwnershipResponseDomainCreator `json:"creator"`
-	// CustomNameservers A list of custom nameservers for the domain to point to. Only applies to domains purchased with Vercel.
-	CustomNameservers []string `json:"customNameservers,omitempty"`
-	// EchMode Whether the domain is enrolled in Encrypted Client Hello. `auto` leaves the decision to Vercel, `enabled` always enrolls, and `disabled` never enrolls and opts out of automatic enrollment.
-	EchMode ClaimDomainOwnershipResponseDomainEchModeEnum `json:"echMode"`
-	// ExpiresAt Timestamp in milliseconds at which the domain is set to expire. null if not bought with Vercel.
-	ExpiresAt NullableValue[float64] `json:"expiresAt"`
-	// Id The unique identifier of the domain.
-	Id string `json:"id"`
-	// IntendedNameservers A list of the intended nameservers for the domain to point to Vercel DNS.
-	IntendedNameservers []string `json:"intendedNameservers"`
-	// Name The domain name.
-	Name string `json:"name"`
-	// Nameservers A list of the current nameservers of the domain.
-	Nameservers []string `json:"nameservers"`
-	// Renew Indicates whether the domain is set to automatically renew.
-	Renew *bool `json:"renew,omitempty"`
-	// ServiceType The type of service the domain is handled by. `external` if the DNS is externally handled, `zeit.world` if handled with Vercel, or `na` if the service is not available.
-	ServiceType ClaimDomainOwnershipResponseDomainServiceTypeEnum `json:"serviceType"`
-	TeamId      NullableValue[string]                             `json:"teamId"`
-	// TransferredAt Timestamp in milliseconds at which the domain was successfully transferred into Vercel. `null` if the transfer is still processing or was never transferred in.
-	TransferredAt *NullableValue[float64] `json:"transferredAt,omitempty"`
-	// TransferStartedAt If transferred into Vercel, timestamp in milliseconds when the domain transfer was initiated.
-	TransferStartedAt *float64 `json:"transferStartedAt,omitempty"`
-	UserId            string   `json:"userId"`
-	// Verified If the domain has the ownership verified.
-	Verified bool `json:"verified"`
-}
-
-func (value *ClaimDomainOwnershipResponseDomain) UnmarshalJSON(data []byte) error {
-	type ClaimDomainOwnershipResponseDomainAlias ClaimDomainOwnershipResponseDomain
-	var decoded ClaimDomainOwnershipResponseDomainAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ClaimDomainOwnershipResponseDomain(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"boughtAt", "createdAt", "creator", "echMode", "expiresAt", "id", "intendedNameservers", "name", "nameservers", "serviceType", "teamId", "userId", "verified"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdAt", "creator", "echMode", "id", "intendedNameservers", "name", "nameservers", "serviceType", "userId", "verified"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["transferredAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.TransferredAt = &NullableValue[float64]{}
-	}
-	return nil
-}
-
-// NewClaimDomainOwnershipResponseDomain returns a validated ClaimDomainOwnershipResponseDomain built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewClaimDomainOwnershipResponseDomain(fields ClaimDomainOwnershipResponseDomain) (*ClaimDomainOwnershipResponseDomain, error) {
-	return ConstructModel(fields)
-}
-
-// ClaimDomainOwnershipResponseDomainCreator An object containing information of the domain creator, including the user's id, username, and email.
-type ClaimDomainOwnershipResponseDomainCreator struct {
-	CustomerId       *NullableValue[string] `json:"customerId,omitempty"`
-	Email            string                 `json:"email"`
-	Id               string                 `json:"id"`
-	IsDomainReseller *bool                  `json:"isDomainReseller,omitempty"`
-	Username         string                 `json:"username"`
-}
-
-func (value *ClaimDomainOwnershipResponseDomainCreator) UnmarshalJSON(data []byte) error {
-	type ClaimDomainOwnershipResponseDomainCreatorAlias ClaimDomainOwnershipResponseDomainCreator
-	var decoded ClaimDomainOwnershipResponseDomainCreatorAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ClaimDomainOwnershipResponseDomainCreator(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"email", "id", "username"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"email", "id", "username"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["customerId"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.CustomerId = &NullableValue[string]{}
-	}
-	return nil
-}
-
-// NewClaimDomainOwnershipResponseDomainCreator returns a validated ClaimDomainOwnershipResponseDomainCreator built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewClaimDomainOwnershipResponseDomainCreator(fields ClaimDomainOwnershipResponseDomainCreator) (*ClaimDomainOwnershipResponseDomainCreator, error) {
-	return ConstructModel(fields)
-}
-
-// ClaimDomainOwnershipResponseDomainEchModeEnum Whether the domain is enrolled in Encrypted Client Hello. `auto` leaves the decision to Vercel, `enabled` always enrolls, and `disabled` never enrolls and opts out of automatic enrollment.
-type ClaimDomainOwnershipResponseDomainEchModeEnum string
-
-const (
-	ClaimDomainOwnershipResponseDomainEchModeEnumAuto     ClaimDomainOwnershipResponseDomainEchModeEnum = "auto"
-	ClaimDomainOwnershipResponseDomainEchModeEnumDisabled ClaimDomainOwnershipResponseDomainEchModeEnum = "disabled"
-	ClaimDomainOwnershipResponseDomainEchModeEnumEnabled  ClaimDomainOwnershipResponseDomainEchModeEnum = "enabled"
-)
-
-// ClaimDomainOwnershipResponseDomainServiceTypeEnum The type of service the domain is handled by. `external` if the DNS is externally handled, `zeit.world` if handled with Vercel, or `na` if the service is not available.
-type ClaimDomainOwnershipResponseDomainServiceTypeEnum string
-
-const (
-	ClaimDomainOwnershipResponseDomainServiceTypeEnumExternal  ClaimDomainOwnershipResponseDomainServiceTypeEnum = "external"
-	ClaimDomainOwnershipResponseDomainServiceTypeEnumNa        ClaimDomainOwnershipResponseDomainServiceTypeEnum = "na"
-	ClaimDomainOwnershipResponseDomainServiceTypeEnumZeitWorld ClaimDomainOwnershipResponseDomainServiceTypeEnum = "zeit.world"
-)
-
-type GetDomainProjectDomainsResponse struct {
-	// Pagination This object contains information related to the pagination of the current request, including the necessary parameters to get the next or previous page of data.
-	Pagination     Pagination                                      `json:"pagination"`
-	ProjectDomains []GetDomainProjectDomainsResponseProjectDomains `json:"projectDomains"`
-}
-
-func (value *GetDomainProjectDomainsResponse) UnmarshalJSON(data []byte) error {
-	type GetDomainProjectDomainsResponseAlias GetDomainProjectDomainsResponse
-	var decoded GetDomainProjectDomainsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetDomainProjectDomainsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"pagination", "projectDomains"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"pagination", "projectDomains"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetDomainProjectDomainsResponse returns a validated GetDomainProjectDomainsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainProjectDomainsResponse(fields GetDomainProjectDomainsResponse) (*GetDomainProjectDomainsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type GetDomainProjectDomainsResponseProjectDomains struct {
-	ApexName            string                  `json:"apexName"`
-	CreatedAt           *float64                `json:"createdAt,omitempty"`
-	CustomEnvironmentId *NullableValue[string]  `json:"customEnvironmentId,omitempty"`
-	GitBranch           *NullableValue[string]  `json:"gitBranch,omitempty"`
-	Name                string                  `json:"name"`
-	ProjectId           string                  `json:"projectId"`
-	Redirect            *NullableValue[string]  `json:"redirect,omitempty"`
-	RedirectStatusCode  *NullableValue[float64] `json:"redirectStatusCode,omitempty"`
-	UpdatedAt           *float64                `json:"updatedAt,omitempty"`
-	// Verification A list of verification challenges, one of which must be completed to verify the domain for use on the project. After the challenge is complete `POST /projects/:idOrName/domains/:domain/verify` to verify the domain. Possible challenges: - If `verification.type = TXT` the `verification.domain` will be checked for a TXT record matching `verification.value`.
-	Verification []GetDomainProjectDomainsResponseProjectDomainsVerification `json:"verification,omitempty"`
-	// Verified `true` if the domain is verified for use with the project. If `false` it will not be used as an alias on this project until the challenge in `verification` is completed.
-	Verified bool `json:"verified"`
-}
-
-func (value *GetDomainProjectDomainsResponseProjectDomains) UnmarshalJSON(data []byte) error {
-	type GetDomainProjectDomainsResponseProjectDomainsAlias GetDomainProjectDomainsResponseProjectDomains
-	var decoded GetDomainProjectDomainsResponseProjectDomainsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetDomainProjectDomainsResponseProjectDomains(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"apexName", "name", "projectId", "verified"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"apexName", "name", "projectId", "verified"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["customEnvironmentId"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.CustomEnvironmentId = &NullableValue[string]{}
-	}
-	if raw, ok := rawFields["gitBranch"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.GitBranch = &NullableValue[string]{}
-	}
-	if raw, ok := rawFields["redirect"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.Redirect = &NullableValue[string]{}
-	}
-	if raw, ok := rawFields["redirectStatusCode"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.RedirectStatusCode = &NullableValue[float64]{}
-	}
-	return nil
-}
-
-// NewGetDomainProjectDomainsResponseProjectDomains returns a validated GetDomainProjectDomainsResponseProjectDomains built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainProjectDomainsResponseProjectDomains(fields GetDomainProjectDomainsResponseProjectDomains) (*GetDomainProjectDomainsResponseProjectDomains, error) {
-	return ConstructModel(fields)
-}
-
-// GetDomainProjectDomainsResponseProjectDomainsVerification A list of verification challenges, one of which must be completed to verify the domain for use on the project. After the challenge is complete `POST /projects/:idOrName/domains/:domain/verify` to verify the domain. Possible challenges: - If `verification.type = TXT` the `verification.domain` will be checked for a TXT record matching `verification.value`.
-type GetDomainProjectDomainsResponseProjectDomainsVerification struct {
-	Domain string `json:"domain"`
-	Reason string `json:"reason"`
-	Type   string `json:"type"`
-	Value  string `json:"value"`
-}
-
-func (value *GetDomainProjectDomainsResponseProjectDomainsVerification) UnmarshalJSON(data []byte) error {
-	type GetDomainProjectDomainsResponseProjectDomainsVerificationAlias GetDomainProjectDomainsResponseProjectDomainsVerification
-	var decoded GetDomainProjectDomainsResponseProjectDomainsVerificationAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetDomainProjectDomainsResponseProjectDomainsVerification(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"domain", "reason", "type", "value"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"domain", "reason", "type", "value"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetDomainProjectDomainsResponseProjectDomainsVerification returns a validated GetDomainProjectDomainsResponseProjectDomainsVerification built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetDomainProjectDomainsResponseProjectDomainsVerification(fields GetDomainProjectDomainsResponseProjectDomainsVerification) (*GetDomainProjectDomainsResponseProjectDomainsVerification, error) {
-	return ConstructModel(fields)
+	return &resp.Data, nil
 }
 
 type GetDomainsResponse struct {
@@ -697,3 +348,342 @@ const (
 	GetDomainsResponseDomainServiceTypeEnumNa        GetDomainsResponseDomainServiceTypeEnum = "na"
 	GetDomainsResponseDomainServiceTypeEnumZeitWorld GetDomainsResponseDomainServiceTypeEnum = "zeit.world"
 )
+
+type ListDomainsResponse struct {
+	Domains []ListDomainsResponseDomains `json:"domains"`
+	// Pagination This object contains information related to the pagination of the current request, including the necessary parameters to get the next or previous page of data.
+	Pagination Pagination `json:"pagination"`
+}
+
+func (value *ListDomainsResponse) UnmarshalJSON(data []byte) error {
+	type ListDomainsResponseAlias ListDomainsResponse
+	var decoded ListDomainsResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = ListDomainsResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"domains", "pagination"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"domains", "pagination"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewListDomainsResponse returns a validated ListDomainsResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewListDomainsResponse(fields ListDomainsResponse) (*ListDomainsResponse, error) {
+	return ConstructModel(fields)
+}
+
+type ListDomainsResponseDomains struct {
+	// BoughtAt If it was purchased through Vercel, the timestamp in milliseconds when it was purchased.
+	BoughtAt NullableValue[float64] `json:"boughtAt"`
+	// CreatedAt Timestamp in milliseconds when the domain was created in the registry.
+	CreatedAt float64 `json:"createdAt"`
+	// Creator An object containing information of the domain creator, including the user's id, username, and email.
+	Creator ListDomainsResponseDomainsCreator `json:"creator"`
+	// CustomNameservers A list of custom nameservers for the domain to point to. Only applies to domains purchased with Vercel.
+	CustomNameservers []string `json:"customNameservers,omitempty"`
+	// EchMode Whether the domain is enrolled in Encrypted Client Hello. `auto` leaves the decision to Vercel, `enabled` always enrolls, and `disabled` never enrolls and opts out of automatic enrollment.
+	EchMode ListDomainsResponseDomainsEchModeEnum `json:"echMode"`
+	// ExpiresAt Timestamp in milliseconds at which the domain is set to expire. null if not bought with Vercel.
+	ExpiresAt NullableValue[float64] `json:"expiresAt"`
+	// Id The unique identifier of the domain.
+	Id string `json:"id"`
+	// IntendedNameservers A list of the intended nameservers for the domain to point to Vercel DNS.
+	IntendedNameservers []string `json:"intendedNameservers"`
+	// Name The domain name.
+	Name string `json:"name"`
+	// Nameservers A list of the current nameservers of the domain.
+	Nameservers []string `json:"nameservers"`
+	// Renew Indicates whether the domain is set to automatically renew.
+	Renew *bool `json:"renew,omitempty"`
+	// ServiceType The type of service the domain is handled by. `external` if the DNS is externally handled, `zeit.world` if handled with Vercel, or `na` if the service is not available.
+	ServiceType ListDomainsResponseDomainsServiceTypeEnum `json:"serviceType"`
+	TeamId      NullableValue[string]                     `json:"teamId"`
+	// TransferredAt Timestamp in milliseconds at which the domain was successfully transferred into Vercel. `null` if the transfer is still processing or was never transferred in.
+	TransferredAt *NullableValue[float64] `json:"transferredAt,omitempty"`
+	// TransferStartedAt If transferred into Vercel, timestamp in milliseconds when the domain transfer was initiated.
+	TransferStartedAt *float64 `json:"transferStartedAt,omitempty"`
+	UserId            string   `json:"userId"`
+	// Verified If the domain has the ownership verified.
+	Verified bool `json:"verified"`
+}
+
+func (value *ListDomainsResponseDomains) UnmarshalJSON(data []byte) error {
+	type ListDomainsResponseDomainsAlias ListDomainsResponseDomains
+	var decoded ListDomainsResponseDomainsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = ListDomainsResponseDomains(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"boughtAt", "createdAt", "creator", "echMode", "expiresAt", "id", "intendedNameservers", "name", "nameservers", "serviceType", "teamId", "userId", "verified"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"createdAt", "creator", "echMode", "id", "intendedNameservers", "name", "nameservers", "serviceType", "userId", "verified"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["transferredAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.TransferredAt = &NullableValue[float64]{}
+	}
+	return nil
+}
+
+// NewListDomainsResponseDomains returns a validated ListDomainsResponseDomains built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewListDomainsResponseDomains(fields ListDomainsResponseDomains) (*ListDomainsResponseDomains, error) {
+	return ConstructModel(fields)
+}
+
+// ListDomainsResponseDomainsCreator An object containing information of the domain creator, including the user's id, username, and email.
+type ListDomainsResponseDomainsCreator struct {
+	CustomerId       *NullableValue[string] `json:"customerId,omitempty"`
+	Email            string                 `json:"email"`
+	Id               string                 `json:"id"`
+	IsDomainReseller *bool                  `json:"isDomainReseller,omitempty"`
+	Username         string                 `json:"username"`
+}
+
+func (value *ListDomainsResponseDomainsCreator) UnmarshalJSON(data []byte) error {
+	type ListDomainsResponseDomainsCreatorAlias ListDomainsResponseDomainsCreator
+	var decoded ListDomainsResponseDomainsCreatorAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = ListDomainsResponseDomainsCreator(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"email", "id", "username"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"email", "id", "username"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["customerId"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.CustomerId = &NullableValue[string]{}
+	}
+	return nil
+}
+
+// NewListDomainsResponseDomainsCreator returns a validated ListDomainsResponseDomainsCreator built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewListDomainsResponseDomainsCreator(fields ListDomainsResponseDomainsCreator) (*ListDomainsResponseDomainsCreator, error) {
+	return ConstructModel(fields)
+}
+
+// ListDomainsResponseDomainsEchModeEnum Whether the domain is enrolled in Encrypted Client Hello. `auto` leaves the decision to Vercel, `enabled` always enrolls, and `disabled` never enrolls and opts out of automatic enrollment.
+type ListDomainsResponseDomainsEchModeEnum string
+
+const (
+	ListDomainsResponseDomainsEchModeEnumAuto     ListDomainsResponseDomainsEchModeEnum = "auto"
+	ListDomainsResponseDomainsEchModeEnumDisabled ListDomainsResponseDomainsEchModeEnum = "disabled"
+	ListDomainsResponseDomainsEchModeEnumEnabled  ListDomainsResponseDomainsEchModeEnum = "enabled"
+)
+
+// ListDomainsResponseDomainsServiceTypeEnum The type of service the domain is handled by. `external` if the DNS is externally handled, `zeit.world` if handled with Vercel, or `na` if the service is not available.
+type ListDomainsResponseDomainsServiceTypeEnum string
+
+const (
+	ListDomainsResponseDomainsServiceTypeEnumExternal  ListDomainsResponseDomainsServiceTypeEnum = "external"
+	ListDomainsResponseDomainsServiceTypeEnumNa        ListDomainsResponseDomainsServiceTypeEnum = "na"
+	ListDomainsResponseDomainsServiceTypeEnumZeitWorld ListDomainsResponseDomainsServiceTypeEnum = "zeit.world"
+)
+
+type CreateOrTransferDomainResponse struct {
+	Domain CreateOrTransferDomainResponseDomain `json:"domain"`
+}
+
+func (value *CreateOrTransferDomainResponse) UnmarshalJSON(data []byte) error {
+	type CreateOrTransferDomainResponseAlias CreateOrTransferDomainResponse
+	var decoded CreateOrTransferDomainResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateOrTransferDomainResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"domain"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"domain"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewCreateOrTransferDomainResponse returns a validated CreateOrTransferDomainResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateOrTransferDomainResponse(fields CreateOrTransferDomainResponse) (*CreateOrTransferDomainResponse, error) {
+	return ConstructModel(fields)
+}
+
+type CreateOrTransferDomainResponseDomain struct {
+	// BoughtAt If it was purchased through Vercel, the timestamp in milliseconds when it was purchased.
+	BoughtAt NullableValue[float64] `json:"boughtAt"`
+	// CreatedAt Timestamp in milliseconds when the domain was created in the registry.
+	CreatedAt float64 `json:"createdAt"`
+	// Creator An object containing information of the domain creator, including the user's id, username, and email.
+	Creator CreateOrTransferDomainResponseDomainCreator `json:"creator"`
+	// CustomNameservers A list of custom nameservers for the domain to point to. Only applies to domains purchased with Vercel.
+	CustomNameservers []string `json:"customNameservers,omitempty"`
+	// EchMode Whether the domain is enrolled in Encrypted Client Hello. `auto` leaves the decision to Vercel, `enabled` always enrolls, and `disabled` never enrolls and opts out of automatic enrollment.
+	EchMode CreateOrTransferDomainResponseDomainEchModeEnum `json:"echMode"`
+	// ExpiresAt Timestamp in milliseconds at which the domain is set to expire. null if not bought with Vercel.
+	ExpiresAt NullableValue[float64] `json:"expiresAt"`
+	// Id The unique identifier of the domain.
+	Id string `json:"id"`
+	// IntendedNameservers A list of the intended nameservers for the domain to point to Vercel DNS.
+	IntendedNameservers []string `json:"intendedNameservers"`
+	// Name The domain name.
+	Name string `json:"name"`
+	// Nameservers A list of the current nameservers of the domain.
+	Nameservers []string `json:"nameservers"`
+	// Renew Indicates whether the domain is set to automatically renew.
+	Renew *bool `json:"renew,omitempty"`
+	// ServiceType The type of service the domain is handled by. `external` if the DNS is externally handled, `zeit.world` if handled with Vercel, or `na` if the service is not available.
+	ServiceType CreateOrTransferDomainResponseDomainServiceTypeEnum `json:"serviceType"`
+	TeamId      NullableValue[string]                               `json:"teamId"`
+	// TransferredAt Timestamp in milliseconds at which the domain was successfully transferred into Vercel. `null` if the transfer is still processing or was never transferred in.
+	TransferredAt *NullableValue[float64] `json:"transferredAt,omitempty"`
+	// TransferStartedAt If transferred into Vercel, timestamp in milliseconds when the domain transfer was initiated.
+	TransferStartedAt *float64 `json:"transferStartedAt,omitempty"`
+	UserId            string   `json:"userId"`
+	// Verified If the domain has the ownership verified.
+	Verified bool `json:"verified"`
+}
+
+func (value *CreateOrTransferDomainResponseDomain) UnmarshalJSON(data []byte) error {
+	type CreateOrTransferDomainResponseDomainAlias CreateOrTransferDomainResponseDomain
+	var decoded CreateOrTransferDomainResponseDomainAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateOrTransferDomainResponseDomain(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"boughtAt", "createdAt", "creator", "echMode", "expiresAt", "id", "intendedNameservers", "name", "nameservers", "serviceType", "teamId", "userId", "verified"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"createdAt", "creator", "echMode", "id", "intendedNameservers", "name", "nameservers", "serviceType", "userId", "verified"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["transferredAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.TransferredAt = &NullableValue[float64]{}
+	}
+	return nil
+}
+
+// NewCreateOrTransferDomainResponseDomain returns a validated CreateOrTransferDomainResponseDomain built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateOrTransferDomainResponseDomain(fields CreateOrTransferDomainResponseDomain) (*CreateOrTransferDomainResponseDomain, error) {
+	return ConstructModel(fields)
+}
+
+// CreateOrTransferDomainResponseDomainCreator An object containing information of the domain creator, including the user's id, username, and email.
+type CreateOrTransferDomainResponseDomainCreator struct {
+	CustomerId       *NullableValue[string] `json:"customerId,omitempty"`
+	Email            string                 `json:"email"`
+	Id               string                 `json:"id"`
+	IsDomainReseller *bool                  `json:"isDomainReseller,omitempty"`
+	Username         string                 `json:"username"`
+}
+
+func (value *CreateOrTransferDomainResponseDomainCreator) UnmarshalJSON(data []byte) error {
+	type CreateOrTransferDomainResponseDomainCreatorAlias CreateOrTransferDomainResponseDomainCreator
+	var decoded CreateOrTransferDomainResponseDomainCreatorAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateOrTransferDomainResponseDomainCreator(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"email", "id", "username"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"email", "id", "username"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["customerId"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.CustomerId = &NullableValue[string]{}
+	}
+	return nil
+}
+
+// NewCreateOrTransferDomainResponseDomainCreator returns a validated CreateOrTransferDomainResponseDomainCreator built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateOrTransferDomainResponseDomainCreator(fields CreateOrTransferDomainResponseDomainCreator) (*CreateOrTransferDomainResponseDomainCreator, error) {
+	return ConstructModel(fields)
+}
+
+// CreateOrTransferDomainResponseDomainEchModeEnum Whether the domain is enrolled in Encrypted Client Hello. `auto` leaves the decision to Vercel, `enabled` always enrolls, and `disabled` never enrolls and opts out of automatic enrollment.
+type CreateOrTransferDomainResponseDomainEchModeEnum string
+
+const (
+	CreateOrTransferDomainResponseDomainEchModeEnumAuto     CreateOrTransferDomainResponseDomainEchModeEnum = "auto"
+	CreateOrTransferDomainResponseDomainEchModeEnumDisabled CreateOrTransferDomainResponseDomainEchModeEnum = "disabled"
+	CreateOrTransferDomainResponseDomainEchModeEnumEnabled  CreateOrTransferDomainResponseDomainEchModeEnum = "enabled"
+)
+
+// CreateOrTransferDomainResponseDomainServiceTypeEnum The type of service the domain is handled by. `external` if the DNS is externally handled, `zeit.world` if handled with Vercel, or `na` if the service is not available.
+type CreateOrTransferDomainResponseDomainServiceTypeEnum string
+
+const (
+	CreateOrTransferDomainResponseDomainServiceTypeEnumExternal  CreateOrTransferDomainResponseDomainServiceTypeEnum = "external"
+	CreateOrTransferDomainResponseDomainServiceTypeEnumNa        CreateOrTransferDomainResponseDomainServiceTypeEnum = "na"
+	CreateOrTransferDomainResponseDomainServiceTypeEnumZeitWorld CreateOrTransferDomainResponseDomainServiceTypeEnum = "zeit.world"
+)
+
+type DeleteDomainResponse struct {
+	Uid string `json:"uid"`
+}
+
+func (value *DeleteDomainResponse) UnmarshalJSON(data []byte) error {
+	type DeleteDomainResponseAlias DeleteDomainResponse
+	var decoded DeleteDomainResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = DeleteDomainResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"uid"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"uid"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewDeleteDomainResponse returns a validated DeleteDomainResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewDeleteDomainResponse(fields DeleteDomainResponse) (*DeleteDomainResponse, error) {
+	return ConstructModel(fields)
+}

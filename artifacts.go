@@ -9,124 +9,6 @@ import (
 	"fmt"
 )
 
-type RecordEventsModel struct {
-	// SessionId A UUID (universally unique identifer) for the session that generated this event.
-	SessionId string `json:"sessionId"`
-	// Source One of `LOCAL` or `REMOTE`. `LOCAL` specifies that the cache event was from the user's filesystem cache. `REMOTE` specifies that the cache event is from a remote cache.
-	Source RecordEventsSourceEnum `json:"source"`
-	// Event One of `HIT` or `MISS`. `HIT` specifies that a cached artifact for `hash` was found in the cache. `MISS` specifies that a cached artifact with `hash` was not found.
-	Event RecordEventsEventEnum `json:"event"`
-	// Hash The artifact hash
-	Hash string `json:"hash"`
-	// Duration The time taken to generate the artifact. This should be sent as a body parameter on `HIT` events.
-	Duration *float64 `json:"duration,omitempty"`
-}
-
-func (value *RecordEventsModel) UnmarshalJSON(data []byte) error {
-	type RecordEventsModelAlias RecordEventsModel
-	var decoded RecordEventsModelAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = RecordEventsModel(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"sessionId", "source", "hash", "event"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"sessionId", "source", "hash", "event"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewRecordEventsModel returns a validated RecordEventsModel built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewRecordEventsModel(fields RecordEventsModel) (*RecordEventsModel, error) {
-	return ConstructModel(fields)
-}
-
-// RecordEventsSourceEnum One of `LOCAL` or `REMOTE`. `LOCAL` specifies that the cache event was from the user's filesystem cache. `REMOTE` specifies that the cache event is from a remote cache.
-type RecordEventsSourceEnum string
-
-const (
-	RecordEventsSourceEnumLocal  RecordEventsSourceEnum = "LOCAL"
-	RecordEventsSourceEnumRemote RecordEventsSourceEnum = "REMOTE"
-)
-
-// RecordEventsEventEnum One of `HIT` or `MISS`. `HIT` specifies that a cached artifact for `hash` was found in the cache. `MISS` specifies that a cached artifact with `hash` was not found.
-type RecordEventsEventEnum string
-
-const (
-	RecordEventsEventEnumHit  RecordEventsEventEnum = "HIT"
-	RecordEventsEventEnumMiss RecordEventsEventEnum = "MISS"
-)
-
-type UploadArtifactResponse struct {
-	Urls []string `json:"urls"`
-}
-
-func (value *UploadArtifactResponse) UnmarshalJSON(data []byte) error {
-	type UploadArtifactResponseAlias UploadArtifactResponse
-	var decoded UploadArtifactResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UploadArtifactResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"urls"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"urls"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUploadArtifactResponse returns a validated UploadArtifactResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUploadArtifactResponse(fields UploadArtifactResponse) (*UploadArtifactResponse, error) {
-	return ConstructModel(fields)
-}
-
-type DeleteAllArtifactsResponse struct {
-	DeletedCount float64 `json:"deletedCount"`
-}
-
-func (value *DeleteAllArtifactsResponse) UnmarshalJSON(data []byte) error {
-	type DeleteAllArtifactsResponseAlias DeleteAllArtifactsResponse
-	var decoded DeleteAllArtifactsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = DeleteAllArtifactsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"deletedCount"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"deletedCount"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewDeleteAllArtifactsResponse returns a validated DeleteAllArtifactsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewDeleteAllArtifactsResponse(fields DeleteAllArtifactsResponse) (*DeleteAllArtifactsResponse, error) {
-	return ConstructModel(fields)
-}
-
 type RecordEventsParams struct {
 	Body                       []RecordEventsModel
 	TeamId                     *string
@@ -475,4 +357,122 @@ func DeleteAllArtifacts(ctx context.Context, clientConfig ClientConfig, params D
 		return nil, err
 	}
 	return &resp.Data, nil
+}
+
+type RecordEventsModel struct {
+	// SessionId A UUID (universally unique identifer) for the session that generated this event.
+	SessionId string `json:"sessionId"`
+	// Source One of `LOCAL` or `REMOTE`. `LOCAL` specifies that the cache event was from the user's filesystem cache. `REMOTE` specifies that the cache event is from a remote cache.
+	Source RecordEventsSourceEnum `json:"source"`
+	// Event One of `HIT` or `MISS`. `HIT` specifies that a cached artifact for `hash` was found in the cache. `MISS` specifies that a cached artifact with `hash` was not found.
+	Event RecordEventsEventEnum `json:"event"`
+	// Hash The artifact hash
+	Hash string `json:"hash"`
+	// Duration The time taken to generate the artifact. This should be sent as a body parameter on `HIT` events.
+	Duration *float64 `json:"duration,omitempty"`
+}
+
+func (value *RecordEventsModel) UnmarshalJSON(data []byte) error {
+	type RecordEventsModelAlias RecordEventsModel
+	var decoded RecordEventsModelAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = RecordEventsModel(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"sessionId", "source", "hash", "event"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"sessionId", "source", "hash", "event"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewRecordEventsModel returns a validated RecordEventsModel built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewRecordEventsModel(fields RecordEventsModel) (*RecordEventsModel, error) {
+	return ConstructModel(fields)
+}
+
+// RecordEventsSourceEnum One of `LOCAL` or `REMOTE`. `LOCAL` specifies that the cache event was from the user's filesystem cache. `REMOTE` specifies that the cache event is from a remote cache.
+type RecordEventsSourceEnum string
+
+const (
+	RecordEventsSourceEnumLocal  RecordEventsSourceEnum = "LOCAL"
+	RecordEventsSourceEnumRemote RecordEventsSourceEnum = "REMOTE"
+)
+
+// RecordEventsEventEnum One of `HIT` or `MISS`. `HIT` specifies that a cached artifact for `hash` was found in the cache. `MISS` specifies that a cached artifact with `hash` was not found.
+type RecordEventsEventEnum string
+
+const (
+	RecordEventsEventEnumHit  RecordEventsEventEnum = "HIT"
+	RecordEventsEventEnumMiss RecordEventsEventEnum = "MISS"
+)
+
+type UploadArtifactResponse struct {
+	Urls []string `json:"urls"`
+}
+
+func (value *UploadArtifactResponse) UnmarshalJSON(data []byte) error {
+	type UploadArtifactResponseAlias UploadArtifactResponse
+	var decoded UploadArtifactResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UploadArtifactResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"urls"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"urls"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewUploadArtifactResponse returns a validated UploadArtifactResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUploadArtifactResponse(fields UploadArtifactResponse) (*UploadArtifactResponse, error) {
+	return ConstructModel(fields)
+}
+
+type DeleteAllArtifactsResponse struct {
+	DeletedCount float64 `json:"deletedCount"`
+}
+
+func (value *DeleteAllArtifactsResponse) UnmarshalJSON(data []byte) error {
+	type DeleteAllArtifactsResponseAlias DeleteAllArtifactsResponse
+	var decoded DeleteAllArtifactsResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = DeleteAllArtifactsResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"deletedCount"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"deletedCount"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewDeleteAllArtifactsResponse returns a validated DeleteAllArtifactsResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewDeleteAllArtifactsResponse(fields DeleteAllArtifactsResponse) (*DeleteAllArtifactsResponse, error) {
+	return ConstructModel(fields)
 }

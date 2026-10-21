@@ -1182,7 +1182,7 @@ var oauth2OperationScopes = map[string][]map[string][]string{
 	"GetTeams": []map[string][]string{
 		map[string][]string{},
 	},
-	"UpdateTeams": []map[string][]string{
+	"UpdateTeam": []map[string][]string{
 		map[string][]string{},
 	},
 	"ListTeams": []map[string][]string{

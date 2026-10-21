@@ -82,7 +82,7 @@ func (sdk *TeamsNamespace) Get(ctx context.Context, params GetTeamsParams, opts 
 //	projects.
 //	defaultPassport: Default Passport configuration for new projects.
 //	deploymentPolicy: Typed representation of the
-//	`UpdateTeamsRequestDeploymentPolicy` API schema.
+//	`UpdateTeamRequestDeploymentPolicy` API schema.
 //	strictDeploymentProtectionSettings: When enabled, deployment protection
 //	settings require stricter permissions (owner-only).
 //	strictShareableLinks: When enabled, creating shareable links requires Owner
@@ -91,13 +91,13 @@ func (sdk *TeamsNamespace) Get(ctx context.Context, params GetTeamsParams, opts 
 //	removing project password protection requires Owner role.
 //	strictConnectors: When enabled, creating and managing connectors requires
 //	Owner role.
-//	nsnbConfig: Typed representation of the `UpdateTeamsRequestNsnbConfig` API
+//	nsnbConfig: Typed representation of the `UpdateTeamRequestNsnbConfig` API
 //	schema.
 //	defaultProjectJobs: Typed representation of the
-//	`UpdateTeamsRequestDefaultProjectJobs` API schema.
+//	`UpdateTeamRequestDefaultProjectJobs` API schema.
 //	resourceConfig: Resource configuration for the team.
-func (sdk *TeamsNamespace) Update(ctx context.Context, params UpdateTeamsParams, opts ...RequestOption) (*Team, error) {
-	return UpdateTeams(ctx, sdk.config, params, opts...)
+func (sdk *TeamsNamespace) Update(ctx context.Context, params UpdateTeamParams, opts ...RequestOption) (*Team, error) {
+	return UpdateTeam(ctx, sdk.config, params, opts...)
 }
 
 // List lists teams that the authenticated user belongs to, with pagination metadata. Use `limit` to cap the number of teams and `since` or `until` to filter by creation time in milliseconds.
