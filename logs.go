@@ -9,6 +9,41 @@ import (
 	"fmt"
 )
 
+type GetRuntimeLogsParams struct {
+	ProjectId    string
+	DeploymentId string
+	TeamId       *string
+	Slug         *string
+}
+
+// GetRuntimeLogs retrieves a stream of runtime logs for a deployment in a project. Use `projectId` and `deploymentId` to identify the deployment, and optionally set `teamId` or `slug` to specify the team context.
+//
+// Returns a stream of logs for a given deployment.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetRuntimeLogs(ctx context.Context, clientConfig ClientConfig, params GetRuntimeLogsParams, opts ...RequestOption) (*GetRuntimeLogsResponse, error) {
+	projectId := params.ProjectId
+	deploymentId := params.DeploymentId
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[GetRuntimeLogsResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/projects/%s/deployments/%s/runtime-logs", EncodePathSegment(projectId), EncodePathSegment(deploymentId)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetRuntimeLogs",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 type GetRuntimeLogsResponse struct {
 	Domain             string                           `json:"domain"`
 	Level              GetRuntimeLogsResponseLevelEnum  `json:"level"`
@@ -69,38 +104,3 @@ const (
 	GetRuntimeLogsResponseSourceEnumRequest        GetRuntimeLogsResponseSourceEnum = "request"
 	GetRuntimeLogsResponseSourceEnumServerless     GetRuntimeLogsResponseSourceEnum = "serverless"
 )
-
-type GetRuntimeLogsParams struct {
-	ProjectId    string
-	DeploymentId string
-	TeamId       *string
-	Slug         *string
-}
-
-// GetRuntimeLogs retrieves a stream of runtime logs for a deployment in a project. Use `projectId` and `deploymentId` to identify the deployment, and optionally set `teamId` or `slug` to specify the team context.
-//
-// Returns a stream of logs for a given deployment.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetRuntimeLogs(ctx context.Context, clientConfig ClientConfig, params GetRuntimeLogsParams, opts ...RequestOption) (*GetRuntimeLogsResponse, error) {
-	projectId := params.ProjectId
-	deploymentId := params.DeploymentId
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[GetRuntimeLogsResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/projects/%s/deployments/%s/runtime-logs", EncodePathSegment(projectId), EncodePathSegment(deploymentId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetRuntimeLogs",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}

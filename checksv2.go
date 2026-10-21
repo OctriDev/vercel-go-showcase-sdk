@@ -9,6 +9,226 @@ import (
 	"fmt"
 )
 
+type ListProjectChecksParams struct {
+	ProjectIdOrName string
+	Blocks          *string
+	TeamId          *string
+	Slug            *string
+}
+
+// ListProjectChecks lists the checks configured for a project, with an optional filter for the deployment target that a check blocks. Use `blocks` to select a target, or omit it to retrieve checks without that filter.
+//
+// List all checks for a project, optionally filtered by target.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func ListProjectChecks(ctx context.Context, clientConfig ClientConfig, params ListProjectChecksParams, opts ...RequestOption) (*ListProjectChecksResponse, error) {
+	projectIdOrName := params.ProjectIdOrName
+	blocks := params.Blocks
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[ListProjectChecksResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/projects/%s/checks", EncodePathSegment(projectIdOrName)), &RequestOpts{
+		Query: map[string]any{
+			"blocks": QueryValue{Value: blocks, Style: "form", Explode: true},
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "ListProjectChecks",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type CreateProjectCheckParams struct {
+	ProjectIdOrName string
+	Name            string
+	Requires        string
+	TeamId          *string
+	Slug            *string
+	IsRerequestable *bool
+	Targets         *[]string
+	Blocks          *string
+	Source          *CreateProjectCheckRequestSource
+	Timeout         *float64
+}
+
+// CreateProjectCheck creates a check for a project. Provide `name` and `requires`, and configure its targets, source, blocking behavior, and timeout as needed. The check uses `deployment-url` for `requires`, `deployment-alias` for `blocks`, and 300 seconds for `timeout` when those fields are omitted.
+//
+// Creates a new check for a project.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+//	source: Typed representation of the `CreateProjectCheckRequestSource` API
+//	schema.
+func CreateProjectCheck(ctx context.Context, clientConfig ClientConfig, params CreateProjectCheckParams, opts ...RequestOption) (*CreateProjectCheckResponse, error) {
+	projectIdOrName := params.ProjectIdOrName
+	name := params.Name
+	requires := params.Requires
+	teamId := params.TeamId
+	slug := params.Slug
+	isRerequestable := params.IsRerequestable
+	targets := params.Targets
+	blocks := params.Blocks
+	source := params.Source
+	timeout := params.Timeout
+
+	resp, err := DoCfg[CreateProjectCheckResponse](ctx, &clientConfig, "POST", fmt.Sprintf("/v2/projects/%s/checks", EncodePathSegment(projectIdOrName)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"name":            name,
+			"requires":        requires,
+			"isRerequestable": isRerequestable,
+			"targets":         targets,
+			"blocks":          blocks,
+			"source":          source,
+			"timeout":         timeout,
+		},
+		OperationID: "CreateProjectCheck",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type GetProjectCheckParams struct {
+	ProjectIdOrName string
+	CheckId         string
+	TeamId          *string
+	Slug            *string
+}
+
+// GetProjectCheck retrieves the details of a single check configured for a project. Provide the project identifier or name and the check identifier to select the check you want to inspect.
+//
+// Return a detailed response for a single check.
+//
+// Parameters:
+//
+//	checkId: The ID of the resource that will be updated.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetProjectCheck(ctx context.Context, clientConfig ClientConfig, params GetProjectCheckParams, opts ...RequestOption) (*GetProjectCheckResponse, error) {
+	projectIdOrName := params.ProjectIdOrName
+	checkId := params.CheckId
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[GetProjectCheckResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/projects/%s/checks/%s", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetProjectCheck",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type UpdateProjectCheckParams struct {
+	ProjectIdOrName string
+	CheckId         string
+	TeamId          *string
+	Slug            *string
+	Name            *string
+	IsRerequestable *bool
+	Requires        *string
+	Targets         *[]string
+	Blocks          *string
+	Timeout         *float64
+}
+
+// UpdateProjectCheck updates a project check's configuration, including its name, targets, and deployment behavior. Supply only the properties you want to change; `requires`, `blocks`, and `timeout` have defaults when omitted. Use the project and check identifiers to select the check to update.
+//
+// Update an existing check.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func UpdateProjectCheck(ctx context.Context, clientConfig ClientConfig, params UpdateProjectCheckParams, opts ...RequestOption) (*UpdateProjectCheckResponse, error) {
+	projectIdOrName := params.ProjectIdOrName
+	checkId := params.CheckId
+	teamId := params.TeamId
+	slug := params.Slug
+	name := params.Name
+	isRerequestable := params.IsRerequestable
+	requires := params.Requires
+	targets := params.Targets
+	blocks := params.Blocks
+	timeout := params.Timeout
+
+	resp, err := DoCfg[UpdateProjectCheckResponse](ctx, &clientConfig, "PATCH", fmt.Sprintf("/v2/projects/%s/checks/%s", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"name":            name,
+			"isRerequestable": isRerequestable,
+			"requires":        requires,
+			"targets":         targets,
+			"blocks":          blocks,
+			"timeout":         timeout,
+		},
+		OperationID: "UpdateProjectCheck",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type DeleteProjectCheckParams struct {
+	ProjectIdOrName string
+	CheckId         string
+	TeamId          *string
+	Slug            *string
+}
+
+// DeleteProjectCheck deletes a project check and all of its runs. Use the project and check identifiers to select the check to remove. The response confirms whether the deletion succeeded.
+//
+// Delete an existing check and all of its runs.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func DeleteProjectCheck(ctx context.Context, clientConfig ClientConfig, params DeleteProjectCheckParams, opts ...RequestOption) (*DeleteProjectCheckResponse, error) {
+	projectIdOrName := params.ProjectIdOrName
+	checkId := params.CheckId
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[DeleteProjectCheckResponse](ctx, &clientConfig, "DELETE", fmt.Sprintf("/v2/projects/%s/checks/%s", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "DeleteProjectCheck",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 type ListProjectChecksResponse struct {
 	AvailableNativeChecks []string                          `json:"availableNativeChecks"`
 	Checks                []ListProjectChecksResponseChecks `json:"checks"`
@@ -362,328 +582,4 @@ func (value *DeleteProjectCheckResponse) UnmarshalJSON(data []byte) error {
 // reported as *SdkValidationError.
 func NewDeleteProjectCheckResponse(fields DeleteProjectCheckResponse) (*DeleteProjectCheckResponse, error) {
 	return ConstructModel(fields)
-}
-
-type ListCheckRunsResponse struct {
-	Runs []ListCheckRunsResponseRunsItem `json:"runs"`
-}
-
-func (value *ListCheckRunsResponse) UnmarshalJSON(data []byte) error {
-	type ListCheckRunsResponseAlias ListCheckRunsResponse
-	var decoded ListCheckRunsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListCheckRunsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"runs"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"runs"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListCheckRunsResponse returns a validated ListCheckRunsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListCheckRunsResponse(fields ListCheckRunsResponse) (*ListCheckRunsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ListDeploymentCheckRunsResponse struct {
-	Runs []ListDeploymentCheckRunsResponseRunsItem `json:"runs"`
-}
-
-func (value *ListDeploymentCheckRunsResponse) UnmarshalJSON(data []byte) error {
-	type ListDeploymentCheckRunsResponseAlias ListDeploymentCheckRunsResponse
-	var decoded ListDeploymentCheckRunsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListDeploymentCheckRunsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"runs"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"runs"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListDeploymentCheckRunsResponse returns a validated ListDeploymentCheckRunsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListDeploymentCheckRunsResponse(fields ListDeploymentCheckRunsResponse) (*ListDeploymentCheckRunsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ListProjectChecksParams struct {
-	ProjectIdOrName string
-	Blocks          *string
-	TeamId          *string
-	Slug            *string
-}
-
-// ListProjectChecks lists the checks configured for a project, with an optional filter for the deployment target that a check blocks. Use `blocks` to select a target, or omit it to retrieve checks without that filter.
-//
-// List all checks for a project, optionally filtered by target.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func ListProjectChecks(ctx context.Context, clientConfig ClientConfig, params ListProjectChecksParams, opts ...RequestOption) (*ListProjectChecksResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	blocks := params.Blocks
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[ListProjectChecksResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/projects/%s/checks", EncodePathSegment(projectIdOrName)), &RequestOpts{
-		Query: map[string]any{
-			"blocks": QueryValue{Value: blocks, Style: "form", Explode: true},
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "ListProjectChecks",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type CreateProjectCheckParams struct {
-	ProjectIdOrName string
-	Name            string
-	Requires        string
-	TeamId          *string
-	Slug            *string
-	IsRerequestable *bool
-	Targets         *[]string
-	Blocks          *string
-	Source          *CreateProjectCheckRequestSource
-	Timeout         *float64
-}
-
-// CreateProjectCheck creates a check for a project. Provide `name` and `requires`, and configure its targets, source, blocking behavior, and timeout as needed. The check uses `deployment-url` for `requires`, `deployment-alias` for `blocks`, and 300 seconds for `timeout` when those fields are omitted.
-//
-// Creates a new check for a project.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-//	source: Typed representation of the `CreateProjectCheckRequestSource` API
-//	schema.
-func CreateProjectCheck(ctx context.Context, clientConfig ClientConfig, params CreateProjectCheckParams, opts ...RequestOption) (*CreateProjectCheckResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	name := params.Name
-	requires := params.Requires
-	teamId := params.TeamId
-	slug := params.Slug
-	isRerequestable := params.IsRerequestable
-	targets := params.Targets
-	blocks := params.Blocks
-	source := params.Source
-	timeout := params.Timeout
-
-	resp, err := DoCfg[CreateProjectCheckResponse](ctx, &clientConfig, "POST", fmt.Sprintf("/v2/projects/%s/checks", EncodePathSegment(projectIdOrName)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"name":            name,
-			"requires":        requires,
-			"isRerequestable": isRerequestable,
-			"targets":         targets,
-			"blocks":          blocks,
-			"source":          source,
-			"timeout":         timeout,
-		},
-		OperationID: "CreateProjectCheck",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type GetProjectCheckParams struct {
-	ProjectIdOrName string
-	CheckId         string
-	TeamId          *string
-	Slug            *string
-}
-
-// GetProjectCheck retrieves the details of a single check configured for a project. Provide the project identifier or name and the check identifier to select the check you want to inspect.
-//
-// Return a detailed response for a single check.
-//
-// Parameters:
-//
-//	checkId: The ID of the resource that will be updated.
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetProjectCheck(ctx context.Context, clientConfig ClientConfig, params GetProjectCheckParams, opts ...RequestOption) (*GetProjectCheckResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	checkId := params.CheckId
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[GetProjectCheckResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/projects/%s/checks/%s", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetProjectCheck",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type UpdateProjectCheckParams struct {
-	ProjectIdOrName string
-	CheckId         string
-	TeamId          *string
-	Slug            *string
-	Name            *string
-	IsRerequestable *bool
-	Requires        *string
-	Targets         *[]string
-	Blocks          *string
-	Timeout         *float64
-}
-
-// UpdateProjectCheck updates a project check's configuration, including its name, targets, and deployment behavior. Supply only the properties you want to change; `requires`, `blocks`, and `timeout` have defaults when omitted. Use the project and check identifiers to select the check to update.
-//
-// Update an existing check.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func UpdateProjectCheck(ctx context.Context, clientConfig ClientConfig, params UpdateProjectCheckParams, opts ...RequestOption) (*UpdateProjectCheckResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	checkId := params.CheckId
-	teamId := params.TeamId
-	slug := params.Slug
-	name := params.Name
-	isRerequestable := params.IsRerequestable
-	requires := params.Requires
-	targets := params.Targets
-	blocks := params.Blocks
-	timeout := params.Timeout
-
-	resp, err := DoCfg[UpdateProjectCheckResponse](ctx, &clientConfig, "PATCH", fmt.Sprintf("/v2/projects/%s/checks/%s", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"name":            name,
-			"isRerequestable": isRerequestable,
-			"requires":        requires,
-			"targets":         targets,
-			"blocks":          blocks,
-			"timeout":         timeout,
-		},
-		OperationID: "UpdateProjectCheck",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type DeleteProjectCheckParams struct {
-	ProjectIdOrName string
-	CheckId         string
-	TeamId          *string
-	Slug            *string
-}
-
-// DeleteProjectCheck deletes a project check and all of its runs. Use the project and check identifiers to select the check to remove. The response confirms whether the deletion succeeded.
-//
-// Delete an existing check and all of its runs.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func DeleteProjectCheck(ctx context.Context, clientConfig ClientConfig, params DeleteProjectCheckParams, opts ...RequestOption) (*DeleteProjectCheckResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	checkId := params.CheckId
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[DeleteProjectCheckResponse](ctx, &clientConfig, "DELETE", fmt.Sprintf("/v2/projects/%s/checks/%s", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "DeleteProjectCheck",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type ListCheckRunsParams struct {
-	ProjectIdOrName string
-	CheckId         string
-	TeamId          *string
-	Slug            *string
-}
-
-// ListCheckRuns lists all runs associated with a project check. Use the project and check identifiers to select the check whose run history you need. The response groups the results in a `runs` array.
-//
-// List all runs associated with a given check.
-//
-// Parameters:
-//
-//	checkId: The ID of the resource that will be updated.
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func ListCheckRuns(ctx context.Context, clientConfig ClientConfig, params ListCheckRunsParams, opts ...RequestOption) (*ListCheckRunsResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	checkId := params.CheckId
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[ListCheckRunsResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/projects/%s/checks/%s/runs", EncodePathSegment(projectIdOrName), EncodePathSegment(checkId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "ListCheckRuns",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type ListDeploymentCheckRunsParams struct {
-	DeploymentId string
-	TeamId       *string
-	Slug         *string
 }

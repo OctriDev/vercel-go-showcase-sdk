@@ -9,388 +9,6 @@ import (
 	"fmt"
 )
 
-// GetEdgeConfigsResponse A Global Config
-type GetEdgeConfigsResponse struct {
-	CreatedAt float64 `json:"createdAt"`
-	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
-	CreatedBy   *string `json:"createdBy,omitempty"`
-	Digest      string  `json:"digest"`
-	Id          string  `json:"id"`
-	ItemCount   float64 `json:"itemCount"`
-	OwnerId     string  `json:"ownerId"`
-	SizeInBytes float64 `json:"sizeInBytes"`
-	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
-	Slug      string  `json:"slug"`
-	UpdatedAt float64 `json:"updatedAt"`
-}
-
-func (value *GetEdgeConfigsResponse) UnmarshalJSON(data []byte) error {
-	type GetEdgeConfigsResponseAlias GetEdgeConfigsResponse
-	var decoded GetEdgeConfigsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetEdgeConfigsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetEdgeConfigsResponse returns a validated GetEdgeConfigsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetEdgeConfigsResponse(fields GetEdgeConfigsResponse) (*GetEdgeConfigsResponse, error) {
-	return ConstructModel(fields)
-}
-
-// CreateEdgeConfigResponse A Global Config
-type CreateEdgeConfigResponse struct {
-	CreatedAt float64 `json:"createdAt"`
-	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
-	CreatedBy   *string `json:"createdBy,omitempty"`
-	Digest      string  `json:"digest"`
-	Id          string  `json:"id"`
-	ItemCount   float64 `json:"itemCount"`
-	OwnerId     string  `json:"ownerId"`
-	SizeInBytes float64 `json:"sizeInBytes"`
-	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
-	Slug      string  `json:"slug"`
-	UpdatedAt float64 `json:"updatedAt"`
-}
-
-func (value *CreateEdgeConfigResponse) UnmarshalJSON(data []byte) error {
-	type CreateEdgeConfigResponseAlias CreateEdgeConfigResponse
-	var decoded CreateEdgeConfigResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateEdgeConfigResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateEdgeConfigResponse returns a validated CreateEdgeConfigResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateEdgeConfigResponse(fields CreateEdgeConfigResponse) (*CreateEdgeConfigResponse, error) {
-	return ConstructModel(fields)
-}
-
-// GetEdgeConfigResponse The Global Config.
-type GetEdgeConfigResponse struct {
-	CreatedAt float64 `json:"createdAt"`
-	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
-	CreatedBy   *string `json:"createdBy,omitempty"`
-	Digest      string  `json:"digest"`
-	Id          string  `json:"id"`
-	ItemCount   float64 `json:"itemCount"`
-	OwnerId     string  `json:"ownerId"`
-	SizeInBytes float64 `json:"sizeInBytes"`
-	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
-	Slug      string  `json:"slug"`
-	UpdatedAt float64 `json:"updatedAt"`
-}
-
-func (value *GetEdgeConfigResponse) UnmarshalJSON(data []byte) error {
-	type GetEdgeConfigResponseAlias GetEdgeConfigResponse
-	var decoded GetEdgeConfigResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetEdgeConfigResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetEdgeConfigResponse returns a validated GetEdgeConfigResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetEdgeConfigResponse(fields GetEdgeConfigResponse) (*GetEdgeConfigResponse, error) {
-	return ConstructModel(fields)
-}
-
-// UpdateEdgeConfigResponse A Global Config
-type UpdateEdgeConfigResponse struct {
-	CreatedAt float64 `json:"createdAt"`
-	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
-	CreatedBy   *string `json:"createdBy,omitempty"`
-	Digest      string  `json:"digest"`
-	Id          string  `json:"id"`
-	ItemCount   float64 `json:"itemCount"`
-	OwnerId     string  `json:"ownerId"`
-	SizeInBytes float64 `json:"sizeInBytes"`
-	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
-	Slug      string  `json:"slug"`
-	UpdatedAt float64 `json:"updatedAt"`
-}
-
-func (value *UpdateEdgeConfigResponse) UnmarshalJSON(data []byte) error {
-	type UpdateEdgeConfigResponseAlias UpdateEdgeConfigResponse
-	var decoded UpdateEdgeConfigResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateEdgeConfigResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateEdgeConfigResponse returns a validated UpdateEdgeConfigResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateEdgeConfigResponse(fields UpdateEdgeConfigResponse) (*UpdateEdgeConfigResponse, error) {
-	return ConstructModel(fields)
-}
-
-type PatchEdgeConfigItemsResponse struct {
-	Status string `json:"status"`
-}
-
-func (value *PatchEdgeConfigItemsResponse) UnmarshalJSON(data []byte) error {
-	type PatchEdgeConfigItemsResponseAlias PatchEdgeConfigItemsResponse
-	var decoded PatchEdgeConfigItemsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = PatchEdgeConfigItemsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"status"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"status"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewPatchEdgeConfigItemsResponse returns a validated PatchEdgeConfigItemsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewPatchEdgeConfigItemsResponse(fields PatchEdgeConfigItemsResponse) (*PatchEdgeConfigItemsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type CreateEdgeConfigTokenResponse struct {
-	Id    string `json:"id"`
-	Token string `json:"token"`
-}
-
-func (value *CreateEdgeConfigTokenResponse) UnmarshalJSON(data []byte) error {
-	type CreateEdgeConfigTokenResponseAlias CreateEdgeConfigTokenResponse
-	var decoded CreateEdgeConfigTokenResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateEdgeConfigTokenResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"id", "token"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"id", "token"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateEdgeConfigTokenResponse returns a validated CreateEdgeConfigTokenResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateEdgeConfigTokenResponse(fields CreateEdgeConfigTokenResponse) (*CreateEdgeConfigTokenResponse, error) {
-	return ConstructModel(fields)
-}
-
-type RestoreEdgeConfigBackupResponse struct {
-	Digest         string                                    `json:"digest"`
-	PreviousDigest string                                    `json:"previousDigest"`
-	RestoredFrom   string                                    `json:"restoredFrom"`
-	Status         RestoreEdgeConfigBackupResponseStatusEnum `json:"status"`
-}
-
-func (value *RestoreEdgeConfigBackupResponse) UnmarshalJSON(data []byte) error {
-	type RestoreEdgeConfigBackupResponseAlias RestoreEdgeConfigBackupResponse
-	var decoded RestoreEdgeConfigBackupResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = RestoreEdgeConfigBackupResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"digest", "previousDigest", "restoredFrom", "status"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"digest", "previousDigest", "restoredFrom", "status"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewRestoreEdgeConfigBackupResponse returns a validated RestoreEdgeConfigBackupResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewRestoreEdgeConfigBackupResponse(fields RestoreEdgeConfigBackupResponse) (*RestoreEdgeConfigBackupResponse, error) {
-	return ConstructModel(fields)
-}
-
-type RestoreEdgeConfigBackupResponseStatusEnum string
-
-const (
-	RestoreEdgeConfigBackupResponseStatusEnumOk RestoreEdgeConfigBackupResponseStatusEnum = "ok"
-)
-
-type GetEdgeConfigBackupsResponse struct {
-	Backups    []GetEdgeConfigBackupsResponseBackups  `json:"backups"`
-	Pagination GetEdgeConfigBackupsResponsePagination `json:"pagination"`
-}
-
-func (value *GetEdgeConfigBackupsResponse) UnmarshalJSON(data []byte) error {
-	type GetEdgeConfigBackupsResponseAlias GetEdgeConfigBackupsResponse
-	var decoded GetEdgeConfigBackupsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetEdgeConfigBackupsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"backups", "pagination"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"backups", "pagination"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetEdgeConfigBackupsResponse returns a validated GetEdgeConfigBackupsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetEdgeConfigBackupsResponse(fields GetEdgeConfigBackupsResponse) (*GetEdgeConfigBackupsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type GetEdgeConfigBackupsResponseBackups struct {
-	Metadata     *GetEdgeConfigBackupsResponseBackupsMetadata `json:"metadata,omitempty"`
-	Id           string                                       `json:"id"`
-	LastModified float64                                      `json:"lastModified"`
-}
-
-func (value *GetEdgeConfigBackupsResponseBackups) UnmarshalJSON(data []byte) error {
-	type GetEdgeConfigBackupsResponseBackupsAlias GetEdgeConfigBackupsResponseBackups
-	var decoded GetEdgeConfigBackupsResponseBackupsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetEdgeConfigBackupsResponseBackups(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"id", "lastModified"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"id", "lastModified"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetEdgeConfigBackupsResponseBackups returns a validated GetEdgeConfigBackupsResponseBackups built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetEdgeConfigBackupsResponseBackups(fields GetEdgeConfigBackupsResponseBackups) (*GetEdgeConfigBackupsResponseBackups, error) {
-	return ConstructModel(fields)
-}
-
-type GetEdgeConfigBackupsResponseBackupsMetadata struct {
-	ItemsBytes *float64 `json:"itemsBytes,omitempty"`
-	ItemsCount *float64 `json:"itemsCount,omitempty"`
-	UpdatedAt  *string  `json:"updatedAt,omitempty"`
-	UpdatedBy  *string  `json:"updatedBy,omitempty"`
-}
-
-// NewGetEdgeConfigBackupsResponseBackupsMetadata returns a validated GetEdgeConfigBackupsResponseBackupsMetadata built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetEdgeConfigBackupsResponseBackupsMetadata(fields GetEdgeConfigBackupsResponseBackupsMetadata) (*GetEdgeConfigBackupsResponseBackupsMetadata, error) {
-	return ConstructModel(fields)
-}
-
-type GetEdgeConfigBackupsResponsePagination struct {
-	HasNext bool    `json:"hasNext"`
-	Next    *string `json:"next,omitempty"`
-}
-
-func (value *GetEdgeConfigBackupsResponsePagination) UnmarshalJSON(data []byte) error {
-	type GetEdgeConfigBackupsResponsePaginationAlias GetEdgeConfigBackupsResponsePagination
-	var decoded GetEdgeConfigBackupsResponsePaginationAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetEdgeConfigBackupsResponsePagination(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"hasNext"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"hasNext"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetEdgeConfigBackupsResponsePagination returns a validated GetEdgeConfigBackupsResponsePagination built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetEdgeConfigBackupsResponsePagination(fields GetEdgeConfigBackupsResponsePagination) (*GetEdgeConfigBackupsResponsePagination, error) {
-	return ConstructModel(fields)
-}
-
 type GetEdgeConfigsParams struct {
 	TeamId *string
 	Slug   *string
@@ -579,122 +197,170 @@ func DeleteEdgeConfig(ctx context.Context, clientConfig ClientConfig, params Del
 	return nil, nil
 }
 
-type GetEdgeConfigItemsParams struct {
-	EdgeConfigId string
-	TeamId       *string
-	Slug         *string
+// GetEdgeConfigsResponse A Global Config
+type GetEdgeConfigsResponse struct {
+	CreatedAt float64 `json:"createdAt"`
+	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
+	CreatedBy   *string `json:"createdBy,omitempty"`
+	Digest      string  `json:"digest"`
+	Id          string  `json:"id"`
+	ItemCount   float64 `json:"itemCount"`
+	OwnerId     string  `json:"ownerId"`
+	SizeInBytes float64 `json:"sizeInBytes"`
+	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
+	Slug      string  `json:"slug"`
+	UpdatedAt float64 `json:"updatedAt"`
 }
 
-// GetEdgeConfigItems lists all items in a Global Config. Use the `edgeConfigId` path parameter to select the config; it must begin with the `ecfg_` prefix.
-//
-// Returns all items of a Global Config.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetEdgeConfigItems(ctx context.Context, clientConfig ClientConfig, params GetEdgeConfigItemsParams, opts ...RequestOption) ([]GlobalConfigItem, error) {
-	edgeConfigId := params.EdgeConfigId
-	teamId := params.TeamId
-	slug := params.Slug
-
-	if err := ValidatePattern("edgeConfigId", edgeConfigId, "^ecfg_"); err != nil {
-		return nil, err
+func (value *GetEdgeConfigsResponse) UnmarshalJSON(data []byte) error {
+	type GetEdgeConfigsResponseAlias GetEdgeConfigsResponse
+	var decoded GetEdgeConfigsResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
 	}
-
-	resp, err := DoCfg[[]GlobalConfigItem](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/global-config/%s/items", EncodePathSegment(edgeConfigId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetEdgeConfigItems",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
+	*value = GetEdgeConfigsResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
 	}
-	return resp.Data, nil
-}
-
-type PatchEdgeConfigItemsParams struct {
-	EdgeConfigId string
-	Items        []PatchEdgeConfigItemsRequestItemsItem
-	TeamId       *string
-	Slug         *string
-}
-
-// PatchEdgeConfigItems updates multiple items in a Global Config in one request. Supply the required `items` array with the item operations to apply; the `edgeConfigId` must begin with the `ecfg_` prefix.
-//
-// Update multiple Global Config Items in batch.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func PatchEdgeConfigItems(ctx context.Context, clientConfig ClientConfig, params PatchEdgeConfigItemsParams, opts ...RequestOption) (*PatchEdgeConfigItemsResponse, error) {
-	edgeConfigId := params.EdgeConfigId
-	items := params.Items
-	teamId := params.TeamId
-	slug := params.Slug
-
-	if err := ValidatePattern("edgeConfigId", edgeConfigId, "^ecfg_"); err != nil {
-		return nil, err
+	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
 	}
-
-	resp, err := DoCfg[PatchEdgeConfigItemsResponse](ctx, &clientConfig, "PATCH", fmt.Sprintf("/v1/global-config/%s/items", EncodePathSegment(edgeConfigId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"items": items,
-		},
-		OperationID: "PatchEdgeConfigItems",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
+	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
 	}
-	return &resp.Data, nil
+	return nil
 }
 
-type GetEdgeConfigSchemaParams struct {
-	EdgeConfigId string
-	TeamId       *string
-	Slug         *string
+// NewGetEdgeConfigsResponse returns a validated GetEdgeConfigsResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetEdgeConfigsResponse(fields GetEdgeConfigsResponse) (*GetEdgeConfigsResponse, error) {
+	return ConstructModel(fields)
 }
 
-// GetEdgeConfigSchema retrieves the schema associated with a Global Config. Use `edgeConfigId` to select the config and `teamId` or `slug` to make the request on behalf of a team when needed.
-//
-// Returns the schema of a Global Config.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetEdgeConfigSchema(ctx context.Context, clientConfig ClientConfig, params GetEdgeConfigSchemaParams, opts ...RequestOption) (map[string]any, error) {
-	edgeConfigId := params.EdgeConfigId
-	teamId := params.TeamId
-	slug := params.Slug
+// CreateEdgeConfigResponse A Global Config
+type CreateEdgeConfigResponse struct {
+	CreatedAt float64 `json:"createdAt"`
+	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
+	CreatedBy   *string `json:"createdBy,omitempty"`
+	Digest      string  `json:"digest"`
+	Id          string  `json:"id"`
+	ItemCount   float64 `json:"itemCount"`
+	OwnerId     string  `json:"ownerId"`
+	SizeInBytes float64 `json:"sizeInBytes"`
+	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
+	Slug      string  `json:"slug"`
+	UpdatedAt float64 `json:"updatedAt"`
+}
 
-	resp, err := DoCfg[map[string]any](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/global-config/%s/schema", EncodePathSegment(edgeConfigId)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetEdgeConfigSchema",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
+func (value *CreateEdgeConfigResponse) UnmarshalJSON(data []byte) error {
+	type CreateEdgeConfigResponseAlias CreateEdgeConfigResponse
+	var decoded CreateEdgeConfigResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
 	}
-	return resp.Data, nil
+	*value = CreateEdgeConfigResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
+	}
+	return nil
 }
 
-type PatchEdgeConfigSchemaParams struct {
-	EdgeConfigId string
-	Definition   any
-	DryRun       *string
-	TeamId       *string
-	Slug         *string
+// NewCreateEdgeConfigResponse returns a validated CreateEdgeConfigResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateEdgeConfigResponse(fields CreateEdgeConfigResponse) (*CreateEdgeConfigResponse, error) {
+	return ConstructModel(fields)
+}
+
+// GetEdgeConfigResponse The Global Config.
+type GetEdgeConfigResponse struct {
+	CreatedAt float64 `json:"createdAt"`
+	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
+	CreatedBy   *string `json:"createdBy,omitempty"`
+	Digest      string  `json:"digest"`
+	Id          string  `json:"id"`
+	ItemCount   float64 `json:"itemCount"`
+	OwnerId     string  `json:"ownerId"`
+	SizeInBytes float64 `json:"sizeInBytes"`
+	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
+	Slug      string  `json:"slug"`
+	UpdatedAt float64 `json:"updatedAt"`
+}
+
+func (value *GetEdgeConfigResponse) UnmarshalJSON(data []byte) error {
+	type GetEdgeConfigResponseAlias GetEdgeConfigResponse
+	var decoded GetEdgeConfigResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GetEdgeConfigResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGetEdgeConfigResponse returns a validated GetEdgeConfigResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetEdgeConfigResponse(fields GetEdgeConfigResponse) (*GetEdgeConfigResponse, error) {
+	return ConstructModel(fields)
+}
+
+// UpdateEdgeConfigResponse A Global Config
+type UpdateEdgeConfigResponse struct {
+	CreatedAt float64 `json:"createdAt"`
+	// CreatedBy The ID of the user who created the Global Config, optional because it is not always set.
+	CreatedBy   *string `json:"createdBy,omitempty"`
+	Digest      string  `json:"digest"`
+	Id          string  `json:"id"`
+	ItemCount   float64 `json:"itemCount"`
+	OwnerId     string  `json:"ownerId"`
+	SizeInBytes float64 `json:"sizeInBytes"`
+	// Slug Name for the Global Config Names are not unique. Must start with an alphabetic character and can contain only alphanumeric characters and underscores).
+	Slug      string  `json:"slug"`
+	UpdatedAt float64 `json:"updatedAt"`
+}
+
+func (value *UpdateEdgeConfigResponse) UnmarshalJSON(data []byte) error {
+	type UpdateEdgeConfigResponseAlias UpdateEdgeConfigResponse
+	var decoded UpdateEdgeConfigResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UpdateEdgeConfigResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"createdAt", "digest", "id", "itemCount", "ownerId", "sizeInBytes", "slug", "updatedAt"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewUpdateEdgeConfigResponse returns a validated UpdateEdgeConfigResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUpdateEdgeConfigResponse(fields UpdateEdgeConfigResponse) (*UpdateEdgeConfigResponse, error) {
+	return ConstructModel(fields)
 }

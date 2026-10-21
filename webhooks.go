@@ -9,6 +9,171 @@ import (
 	"fmt"
 )
 
+type CreateWebhookParams struct {
+	Url        string
+	Events     []string
+	TeamId     *string
+	Slug       *string
+	ProjectIds *[]string
+}
+
+// CreateWebhook creates a webhook that sends selected events to a URL. Provide an HTTP or HTTPS `url` and at least one event in `events`; you can optionally associate the webhook with 1 to 50 `projectIds`. The response includes the webhook ID and secret used to sign payloads.
+//
+// # Creates a webhook
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func CreateWebhook(ctx context.Context, clientConfig ClientConfig, params CreateWebhookParams, opts ...RequestOption) (*CreateWebhookResponse, error) {
+	url := params.Url
+	events := params.Events
+	teamId := params.TeamId
+	slug := params.Slug
+	projectIds := params.ProjectIds
+
+	if err := ValidatePattern("url", url, "^https?://"); err != nil {
+		return nil, err
+	}
+	if err := ValidateUri("url", url); err != nil {
+		return nil, err
+	}
+
+	if err := ValidateItems("events", events, LengthOpts{Min: Ptr[int](1)}); err != nil {
+		return nil, err
+	}
+
+	if projectIds != nil {
+		if err := ValidateItems("projectIds", *projectIds, LengthOpts{Min: Ptr[int](1), Max: Ptr[int](50)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[CreateWebhookResponse](ctx, &clientConfig, "POST", "/v1/webhooks", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"url":        url,
+			"events":     events,
+			"projectIds": projectIds,
+		},
+		OperationID: "CreateWebhook",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type GetWebhooksParams struct {
+	ProjectId *string
+	TeamId    *string
+	Slug      *string
+}
+
+// GetWebhooks lists webhooks, optionally scoped to a project. Use `projectId` to retrieve webhooks associated with a specific project; omit it to list webhooks without that project filter. The project identifier must match the documented character pattern.
+//
+// # Get a list of webhooks
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetWebhooks(ctx context.Context, clientConfig ClientConfig, params GetWebhooksParams, opts ...RequestOption) ([]map[string]any, error) {
+	projectId := params.ProjectId
+	teamId := params.TeamId
+	slug := params.Slug
+
+	if projectId != nil {
+		if err := ValidatePattern("projectId", *projectId, "^[a-zA-z0-9_]+$"); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[[]map[string]any](ctx, &clientConfig, "GET", "/v1/webhooks", &RequestOpts{
+		Query: map[string]any{
+			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
+			"teamId":    QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":      QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetWebhooks",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
+}
+
+type GetWebhookParams struct {
+	Id     string
+	TeamId *string
+	Slug   *string
+}
+
+// GetWebhook retrieves a webhook by its identifier. Use `teamId` or `slug` to specify the team context for the request. The response includes the webhook URL, subscribed events, associated project IDs, and timestamps.
+//
+// # Get a webhook
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetWebhook(ctx context.Context, clientConfig ClientConfig, params GetWebhookParams, opts ...RequestOption) (*GetWebhookResponse, error) {
+	id := params.Id
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[GetWebhookResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/webhooks/%s", EncodePathSegment(id)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetWebhook",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type DeleteWebhookParams struct {
+	Id     string
+	TeamId *string
+	Slug   *string
+}
+
+// DeleteWebhook deletes a webhook by its identifier. Use `teamId` or `slug` to specify the team context for the request. The operation returns no response body when the deletion succeeds.
+//
+// # Deletes a webhook
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func DeleteWebhook(ctx context.Context, clientConfig ClientConfig, params DeleteWebhookParams, opts ...RequestOption) (any, error) {
+	id := params.Id
+	teamId := params.TeamId
+	slug := params.Slug
+
+	_, err := DoEmptyCfg(ctx, &clientConfig, "DELETE", fmt.Sprintf("/v1/webhooks/%s", EncodePathSegment(id)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "DeleteWebhook",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
 type CreateWebhookResponse struct {
 	AlertRuleIds []string `json:"alertRuleIds,omitempty"`
 	// CreatedAt A number containing the date when the webhook was created in in milliseconds
@@ -336,168 +501,3 @@ const (
 	GetWebhookResponseEventsEnumThreadResolved                                    GetWebhookResponseEventsEnum = "thread.resolved"
 	GetWebhookResponseEventsEnumThreadUnresolved                                  GetWebhookResponseEventsEnum = "thread.unresolved"
 )
-
-type CreateWebhookParams struct {
-	Url        string
-	Events     []string
-	TeamId     *string
-	Slug       *string
-	ProjectIds *[]string
-}
-
-// CreateWebhook creates a webhook that sends selected events to a URL. Provide an HTTP or HTTPS `url` and at least one event in `events`; you can optionally associate the webhook with 1 to 50 `projectIds`. The response includes the webhook ID and secret used to sign payloads.
-//
-// # Creates a webhook
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func CreateWebhook(ctx context.Context, clientConfig ClientConfig, params CreateWebhookParams, opts ...RequestOption) (*CreateWebhookResponse, error) {
-	url := params.Url
-	events := params.Events
-	teamId := params.TeamId
-	slug := params.Slug
-	projectIds := params.ProjectIds
-
-	if err := ValidatePattern("url", url, "^https?://"); err != nil {
-		return nil, err
-	}
-	if err := ValidateUri("url", url); err != nil {
-		return nil, err
-	}
-
-	if err := ValidateItems("events", events, LengthOpts{Min: Ptr[int](1)}); err != nil {
-		return nil, err
-	}
-
-	if projectIds != nil {
-		if err := ValidateItems("projectIds", *projectIds, LengthOpts{Min: Ptr[int](1), Max: Ptr[int](50)}); err != nil {
-			return nil, err
-		}
-	}
-
-	resp, err := DoCfg[CreateWebhookResponse](ctx, &clientConfig, "POST", "/v1/webhooks", &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"url":        url,
-			"events":     events,
-			"projectIds": projectIds,
-		},
-		OperationID: "CreateWebhook",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type GetWebhooksParams struct {
-	ProjectId *string
-	TeamId    *string
-	Slug      *string
-}
-
-// GetWebhooks lists webhooks, optionally scoped to a project. Use `projectId` to retrieve webhooks associated with a specific project; omit it to list webhooks without that project filter. The project identifier must match the documented character pattern.
-//
-// # Get a list of webhooks
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetWebhooks(ctx context.Context, clientConfig ClientConfig, params GetWebhooksParams, opts ...RequestOption) ([]map[string]any, error) {
-	projectId := params.ProjectId
-	teamId := params.TeamId
-	slug := params.Slug
-
-	if projectId != nil {
-		if err := ValidatePattern("projectId", *projectId, "^[a-zA-z0-9_]+$"); err != nil {
-			return nil, err
-		}
-	}
-
-	resp, err := DoCfg[[]map[string]any](ctx, &clientConfig, "GET", "/v1/webhooks", &RequestOpts{
-		Query: map[string]any{
-			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
-			"teamId":    QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":      QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetWebhooks",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return resp.Data, nil
-}
-
-type GetWebhookParams struct {
-	Id     string
-	TeamId *string
-	Slug   *string
-}
-
-// GetWebhook retrieves a webhook by its identifier. Use `teamId` or `slug` to specify the team context for the request. The response includes the webhook URL, subscribed events, associated project IDs, and timestamps.
-//
-// # Get a webhook
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetWebhook(ctx context.Context, clientConfig ClientConfig, params GetWebhookParams, opts ...RequestOption) (*GetWebhookResponse, error) {
-	id := params.Id
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[GetWebhookResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/webhooks/%s", EncodePathSegment(id)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetWebhook",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type DeleteWebhookParams struct {
-	Id     string
-	TeamId *string
-	Slug   *string
-}
-
-// DeleteWebhook deletes a webhook by its identifier. Use `teamId` or `slug` to specify the team context for the request. The operation returns no response body when the deletion succeeds.
-//
-// # Deletes a webhook
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func DeleteWebhook(ctx context.Context, clientConfig ClientConfig, params DeleteWebhookParams, opts ...RequestOption) (any, error) {
-	id := params.Id
-	teamId := params.TeamId
-	slug := params.Slug
-
-	_, err := DoEmptyCfg(ctx, &clientConfig, "DELETE", fmt.Sprintf("/v1/webhooks/%s", EncodePathSegment(id)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "DeleteWebhook",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return nil, nil
-}

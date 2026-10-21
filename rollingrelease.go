@@ -5,244 +5,47 @@ package sdk
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"fmt"
 )
 
-type GetRollingReleaseConfigResponse struct {
-	// RollingRelease Project-level rolling release configuration that defines how deployments should be gradually rolled out
-	RollingRelease NullableValue[GetRollingReleaseConfigResponseRollingRelease] `json:"rollingRelease"`
+type GetRollingReleaseParams struct {
+	IdOrName string
+	State    *string
+	TeamId   *string
+	Slug     *string
 }
 
-func (value *GetRollingReleaseConfigResponse) UnmarshalJSON(data []byte) error {
-	type GetRollingReleaseConfigResponseAlias GetRollingReleaseConfigResponse
-	var decoded GetRollingReleaseConfigResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetRollingReleaseConfigResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"rollingRelease"}); err != nil {
-		return err
-	}
-	return nil
-}
+// GetRollingRelease retrieves rolling release information for a project, whether its rollout is active, aborted, or complete. Use `state` to filter the result to ACTIVE, COMPLETE, or ABORTED. If rolling releases are enabled but no deployment has occurred, the response contains a null rolling release value.
+//
+// Return the Rolling Release for a project, regardless of whether the rollout is active, aborted, or completed. If the feature is enabled but no deployment has occurred yet, null will be returned.
+//
+// Parameters:
+//
+//	idOrName: Project ID or project name (URL-encoded)
+//	state: Filter by rolling release state
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetRollingRelease(ctx context.Context, clientConfig ClientConfig, params GetRollingReleaseParams, opts ...RequestOption) (*GetRollingReleaseResponse, error) {
+	idOrName := params.IdOrName
+	state := params.State
+	teamId := params.TeamId
+	slug := params.Slug
 
-// NewGetRollingReleaseConfigResponse returns a validated GetRollingReleaseConfigResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetRollingReleaseConfigResponse(fields GetRollingReleaseConfigResponse) (*GetRollingReleaseConfigResponse, error) {
-	return ConstructModel(fields)
-}
-
-// GetRollingReleaseConfigResponseRollingRelease Project-level rolling release configuration that defines how deployments should be gradually rolled out
-type GetRollingReleaseConfigResponseRollingRelease struct {
-	// CanaryResponseHeader Whether the request served by a canary deployment should return a header indicating a canary was served. Defaults to `false` when omitted.
-	CanaryResponseHeader *bool `json:"canaryResponseHeader,omitempty"`
-	// Gate Automated gating configuration. Omitted (the default) means no gating is configured, which is equivalent to `enabled: false`.
-	Gate *GetRollingReleaseConfigResponseRollingReleaseGate `json:"gate,omitempty"`
-	// Stages An array of all the stages required during a deployment release. Each stage defines a target percentage and advancement rules. The final stage must always have targetPercentage: 100.
-	Stages *NullableValue[[]GetRollingReleaseConfigResponseRollingReleaseStages] `json:"stages,omitempty"`
-	// Target The environment that the release targets, currently only supports production. Adding in case we want to configure with alias groups or custom environments.
-	Target string `json:"target"`
-}
-
-func (value *GetRollingReleaseConfigResponseRollingRelease) UnmarshalJSON(data []byte) error {
-	type GetRollingReleaseConfigResponseRollingReleaseAlias GetRollingReleaseConfigResponseRollingRelease
-	var decoded GetRollingReleaseConfigResponseRollingReleaseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
+	resp, err := DoCfg[GetRollingReleaseResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/projects/%s/rolling-release", EncodePathSegment(idOrName)), &RequestOpts{
+		Query: map[string]any{
+			"state":  QueryValue{Value: state, Style: "form", Explode: true},
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetRollingRelease",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
 	}
-	*value = GetRollingReleaseConfigResponseRollingRelease(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"target"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"target"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["stages"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.Stages = &NullableValue[[]GetRollingReleaseConfigResponseRollingReleaseStages]{}
-	}
-	return nil
-}
-
-// NewGetRollingReleaseConfigResponseRollingRelease returns a validated GetRollingReleaseConfigResponseRollingRelease built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetRollingReleaseConfigResponseRollingRelease(fields GetRollingReleaseConfigResponseRollingRelease) (*GetRollingReleaseConfigResponseRollingRelease, error) {
-	return ConstructModel(fields)
-}
-
-// GetRollingReleaseConfigResponseRollingReleaseGate Automated gating configuration. Omitted (the default) means no gating is configured, which is equivalent to `enabled: false`.
-type GetRollingReleaseConfigResponseRollingReleaseGate struct {
-	// Action What to do when the gate trips: pause the rollout, or roll it back.
-	Action GetRollingReleaseConfigResponseRollingReleaseGateActionEnum `json:"action"`
-	// Checks The checks to evaluate. An empty array means nothing is evaluated.
-	Checks []GetRollingReleaseConfigResponseRollingReleaseGateChecks `json:"checks"`
-	// DryRun When true, a tripped gate is only reported — {@link action} is not taken.
-	DryRun bool `json:"dryRun"`
-	// Enabled Whether automated gating is enabled for this project's rollouts.
-	Enabled bool `json:"enabled"`
-	// FailureThreshold How many failing evaluations within {@link windowSize} trip the gate. Defaults to `3` when omitted.
-	FailureThreshold *float64 `json:"failureThreshold,omitempty"`
-	// WindowSize How many of the most recent evaluations {@link failureThreshold} is counted against. Defaults to `5` when omitted.
-	WindowSize *float64 `json:"windowSize,omitempty"`
-}
-
-func (value *GetRollingReleaseConfigResponseRollingReleaseGate) UnmarshalJSON(data []byte) error {
-	type GetRollingReleaseConfigResponseRollingReleaseGateAlias GetRollingReleaseConfigResponseRollingReleaseGate
-	var decoded GetRollingReleaseConfigResponseRollingReleaseGateAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetRollingReleaseConfigResponseRollingReleaseGate(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"action", "checks", "dryRun", "enabled"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"action", "checks", "dryRun", "enabled"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetRollingReleaseConfigResponseRollingReleaseGate returns a validated GetRollingReleaseConfigResponseRollingReleaseGate built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetRollingReleaseConfigResponseRollingReleaseGate(fields GetRollingReleaseConfigResponseRollingReleaseGate) (*GetRollingReleaseConfigResponseRollingReleaseGate, error) {
-	return ConstructModel(fields)
-}
-
-// GetRollingReleaseConfigResponseRollingReleaseGateActionEnum What to do when the gate trips: pause the rollout, or roll it back.
-type GetRollingReleaseConfigResponseRollingReleaseGateActionEnum string
-
-const (
-	GetRollingReleaseConfigResponseRollingReleaseGateActionEnumPause    GetRollingReleaseConfigResponseRollingReleaseGateActionEnum = "pause"
-	GetRollingReleaseConfigResponseRollingReleaseGateActionEnumRollback GetRollingReleaseConfigResponseRollingReleaseGateActionEnum = "rollback"
-)
-
-// GetRollingReleaseConfigResponseRollingReleaseGateChecks The checks to evaluate. An empty array means nothing is evaluated.
-type GetRollingReleaseConfigResponseRollingReleaseGateChecks struct {
-	// ExcludePaths Request paths to ignore entirely — dropped from both the numerator (errors) and the denominator (total requests). Matched exactly against the request path with any query string removed; no prefix or glob matching. Defaults to `[]` when omitted.
-	ExcludePaths []string `json:"excludePaths,omitempty"`
-	// ExcludeStatusCodes Response status codes to ignore entirely — dropped from both the numerator (errors) and the denominator (total requests). Defaults to `[]` when omitted.
-	ExcludeStatusCodes []float64 `json:"excludeStatusCodes,omitempty"`
-	// IngestWatermarkSeconds Seconds of ingest lag to allow for: the query's upper bound is `now() - this value`, so the check never reads a window that is still filling. Defaults to `30` when omitted.
-	IngestWatermarkSeconds *float64 `json:"ingestWatermarkSeconds,omitempty"`
-	// SignificanceLevel A run fails only when the canary's error rate is higher and its one-sided Fisher p-value is below this significance level. Defaults to `0.05`; lower values require stronger evidence.
-	SignificanceLevel *float64 `json:"significanceLevel,omitempty"`
-	// Type The metric this check evaluates.
-	Type GetRollingReleaseConfigResponseRollingReleaseGateChecksTypeEnum `json:"type"`
-}
-
-func (value *GetRollingReleaseConfigResponseRollingReleaseGateChecks) UnmarshalJSON(data []byte) error {
-	type GetRollingReleaseConfigResponseRollingReleaseGateChecksAlias GetRollingReleaseConfigResponseRollingReleaseGateChecks
-	var decoded GetRollingReleaseConfigResponseRollingReleaseGateChecksAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetRollingReleaseConfigResponseRollingReleaseGateChecks(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"type"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"type"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetRollingReleaseConfigResponseRollingReleaseGateChecks returns a validated GetRollingReleaseConfigResponseRollingReleaseGateChecks built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetRollingReleaseConfigResponseRollingReleaseGateChecks(fields GetRollingReleaseConfigResponseRollingReleaseGateChecks) (*GetRollingReleaseConfigResponseRollingReleaseGateChecks, error) {
-	return ConstructModel(fields)
-}
-
-// GetRollingReleaseConfigResponseRollingReleaseGateChecksTypeEnum The metric this check evaluates.
-type GetRollingReleaseConfigResponseRollingReleaseGateChecksTypeEnum string
-
-const (
-	GetRollingReleaseConfigResponseRollingReleaseGateChecksTypeEnumErrorRate5xx GetRollingReleaseConfigResponseRollingReleaseGateChecksTypeEnum = "error-rate-5xx"
-)
-
-// GetRollingReleaseConfigResponseRollingReleaseStages An array of all the stages required during a deployment release. Each stage defines a target percentage and advancement rules. The final stage must always have targetPercentage: 100.
-type GetRollingReleaseConfigResponseRollingReleaseStages struct {
-	// Duration Duration in minutes for automatic advancement to the next stage
-	Duration *float64 `json:"duration,omitempty"`
-	// LinearShift Whether to linearly shift traffic over the duration of this stage
-	LinearShift *bool `json:"linearShift,omitempty"`
-	// RequireApproval Whether or not this stage requires manual approval to proceed
-	RequireApproval *bool `json:"requireApproval,omitempty"`
-	// TargetPercentage The percentage of traffic to serve to the canary deployment (0-100)
-	TargetPercentage float64 `json:"targetPercentage"`
-}
-
-func (value *GetRollingReleaseConfigResponseRollingReleaseStages) UnmarshalJSON(data []byte) error {
-	type GetRollingReleaseConfigResponseRollingReleaseStagesAlias GetRollingReleaseConfigResponseRollingReleaseStages
-	var decoded GetRollingReleaseConfigResponseRollingReleaseStagesAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetRollingReleaseConfigResponseRollingReleaseStages(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"targetPercentage"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"targetPercentage"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetRollingReleaseConfigResponseRollingReleaseStages returns a validated GetRollingReleaseConfigResponseRollingReleaseStages built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetRollingReleaseConfigResponseRollingReleaseStages(fields GetRollingReleaseConfigResponseRollingReleaseStages) (*GetRollingReleaseConfigResponseRollingReleaseStages, error) {
-	return ConstructModel(fields)
-}
-
-type DeleteRollingReleaseConfigResponse struct {
-	RollingRelease NullableValue[any] `json:"rollingRelease"`
-}
-
-func (value *DeleteRollingReleaseConfigResponse) UnmarshalJSON(data []byte) error {
-	type DeleteRollingReleaseConfigResponseAlias DeleteRollingReleaseConfigResponse
-	var decoded DeleteRollingReleaseConfigResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = DeleteRollingReleaseConfigResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"rollingRelease"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewDeleteRollingReleaseConfigResponse returns a validated DeleteRollingReleaseConfigResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewDeleteRollingReleaseConfigResponse(fields DeleteRollingReleaseConfigResponse) (*DeleteRollingReleaseConfigResponse, error) {
-	return ConstructModel(fields)
+	return &resp.Data, nil
 }
 
 // GetRollingReleaseResponse The response format for rolling release endpoints that return rolling release information
@@ -654,33 +457,3 @@ type GetRollingReleaseResponseRollingReleaseSubstateEnum string
 const (
 	GetRollingReleaseResponseRollingReleaseSubstateEnumPaused GetRollingReleaseResponseRollingReleaseSubstateEnum = "PAUSED"
 )
-
-// ApproveRollingReleaseStageResponse The response format for rolling release endpoints that return rolling release information
-type ApproveRollingReleaseStageResponse struct {
-	// RollingRelease Rolling release information including configuration and document details, or null if no rolling release exists
-	RollingRelease NullableValue[ApproveRollingReleaseStageResponseRollingRelease] `json:"rollingRelease"`
-}
-
-func (value *ApproveRollingReleaseStageResponse) UnmarshalJSON(data []byte) error {
-	type ApproveRollingReleaseStageResponseAlias ApproveRollingReleaseStageResponse
-	var decoded ApproveRollingReleaseStageResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ApproveRollingReleaseStageResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"rollingRelease"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewApproveRollingReleaseStageResponse returns a validated ApproveRollingReleaseStageResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewApproveRollingReleaseStageResponse(fields ApproveRollingReleaseStageResponse) (*ApproveRollingReleaseStageResponse, error) {
-	return ConstructModel(fields)
-}

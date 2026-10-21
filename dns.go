@@ -10,135 +10,6 @@ import (
 	"fmt"
 )
 
-type UpdateRecordSrv struct {
-	Target   NullableValue[string] `json:"target"`
-	Weight   NullableValue[int64]  `json:"weight"`
-	Port     NullableValue[int64]  `json:"port"`
-	Priority NullableValue[int64]  `json:"priority"`
-}
-
-func (value *UpdateRecordSrv) UnmarshalJSON(data []byte) error {
-	type UpdateRecordSrvAlias UpdateRecordSrv
-	var decoded UpdateRecordSrvAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateRecordSrv(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"target", "weight", "port", "priority"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateRecordSrv returns a validated UpdateRecordSrv built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateRecordSrv(fields UpdateRecordSrv) (*UpdateRecordSrv, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateRecordHttps struct {
-	Priority NullableValue[int64]   `json:"priority"`
-	Target   NullableValue[string]  `json:"target"`
-	Params   *NullableValue[string] `json:"params,omitempty"`
-}
-
-func (value *UpdateRecordHttps) UnmarshalJSON(data []byte) error {
-	type UpdateRecordHttpsAlias UpdateRecordHttps
-	var decoded UpdateRecordHttpsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateRecordHttps(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"priority", "target"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["params"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.Params = &NullableValue[string]{}
-	}
-	return nil
-}
-
-// NewUpdateRecordHttps returns a validated UpdateRecordHttps built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateRecordHttps(fields UpdateRecordHttps) (*UpdateRecordHttps, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateRecordResponse struct {
-	Comment    *string                            `json:"comment,omitempty"`
-	CreatedAt  *NullableValue[float64]            `json:"createdAt,omitempty"`
-	Creator    string                             `json:"creator"`
-	Domain     string                             `json:"domain"`
-	Id         string                             `json:"id"`
-	Name       string                             `json:"name"`
-	RecordType UpdateRecordResponseRecordTypeEnum `json:"recordType"`
-	Ttl        *float64                           `json:"ttl,omitempty"`
-	Type       UpdateRecordResponseTypeEnum       `json:"type"`
-	Value      string                             `json:"value"`
-}
-
-func (value *UpdateRecordResponse) UnmarshalJSON(data []byte) error {
-	type UpdateRecordResponseAlias UpdateRecordResponse
-	var decoded UpdateRecordResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateRecordResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"creator", "domain", "id", "name", "recordType", "type", "value"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"creator", "domain", "id", "name", "recordType", "type", "value"}); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["createdAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.CreatedAt = &NullableValue[float64]{}
-	}
-	return nil
-}
-
-// NewUpdateRecordResponse returns a validated UpdateRecordResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateRecordResponse(fields UpdateRecordResponse) (*UpdateRecordResponse, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateRecordResponseRecordTypeEnum string
-
-const (
-	UpdateRecordResponseRecordTypeEnumA     UpdateRecordResponseRecordTypeEnum = "A"
-	UpdateRecordResponseRecordTypeEnumAaaa  UpdateRecordResponseRecordTypeEnum = "AAAA"
-	UpdateRecordResponseRecordTypeEnumAlias UpdateRecordResponseRecordTypeEnum = "ALIAS"
-	UpdateRecordResponseRecordTypeEnumCaa   UpdateRecordResponseRecordTypeEnum = "CAA"
-	UpdateRecordResponseRecordTypeEnumCname UpdateRecordResponseRecordTypeEnum = "CNAME"
-	UpdateRecordResponseRecordTypeEnumHttps UpdateRecordResponseRecordTypeEnum = "HTTPS"
-	UpdateRecordResponseRecordTypeEnumMx    UpdateRecordResponseRecordTypeEnum = "MX"
-	UpdateRecordResponseRecordTypeEnumNs    UpdateRecordResponseRecordTypeEnum = "NS"
-	UpdateRecordResponseRecordTypeEnumSrv   UpdateRecordResponseRecordTypeEnum = "SRV"
-	UpdateRecordResponseRecordTypeEnumTxt   UpdateRecordResponseRecordTypeEnum = "TXT"
-)
-
-type UpdateRecordResponseTypeEnum string
-
-const (
-	UpdateRecordResponseTypeEnumRecord    UpdateRecordResponseTypeEnum = "record"
-	UpdateRecordResponseTypeEnumRecordSys UpdateRecordResponseTypeEnum = "record-sys"
-)
-
 type GetRecordsParams struct {
 	Domain string
 	Limit  *string
@@ -342,3 +213,132 @@ func RemoveRecord(ctx context.Context, clientConfig ClientConfig, params RemoveR
 	}
 	return resp.Data, nil
 }
+
+type UpdateRecordSrv struct {
+	Target   NullableValue[string] `json:"target"`
+	Weight   NullableValue[int64]  `json:"weight"`
+	Port     NullableValue[int64]  `json:"port"`
+	Priority NullableValue[int64]  `json:"priority"`
+}
+
+func (value *UpdateRecordSrv) UnmarshalJSON(data []byte) error {
+	type UpdateRecordSrvAlias UpdateRecordSrv
+	var decoded UpdateRecordSrvAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UpdateRecordSrv(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"target", "weight", "port", "priority"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewUpdateRecordSrv returns a validated UpdateRecordSrv built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUpdateRecordSrv(fields UpdateRecordSrv) (*UpdateRecordSrv, error) {
+	return ConstructModel(fields)
+}
+
+type UpdateRecordHttps struct {
+	Priority NullableValue[int64]   `json:"priority"`
+	Target   NullableValue[string]  `json:"target"`
+	Params   *NullableValue[string] `json:"params,omitempty"`
+}
+
+func (value *UpdateRecordHttps) UnmarshalJSON(data []byte) error {
+	type UpdateRecordHttpsAlias UpdateRecordHttps
+	var decoded UpdateRecordHttpsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UpdateRecordHttps(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"priority", "target"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["params"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.Params = &NullableValue[string]{}
+	}
+	return nil
+}
+
+// NewUpdateRecordHttps returns a validated UpdateRecordHttps built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUpdateRecordHttps(fields UpdateRecordHttps) (*UpdateRecordHttps, error) {
+	return ConstructModel(fields)
+}
+
+type UpdateRecordResponse struct {
+	Comment    *string                            `json:"comment,omitempty"`
+	CreatedAt  *NullableValue[float64]            `json:"createdAt,omitempty"`
+	Creator    string                             `json:"creator"`
+	Domain     string                             `json:"domain"`
+	Id         string                             `json:"id"`
+	Name       string                             `json:"name"`
+	RecordType UpdateRecordResponseRecordTypeEnum `json:"recordType"`
+	Ttl        *float64                           `json:"ttl,omitempty"`
+	Type       UpdateRecordResponseTypeEnum       `json:"type"`
+	Value      string                             `json:"value"`
+}
+
+func (value *UpdateRecordResponse) UnmarshalJSON(data []byte) error {
+	type UpdateRecordResponseAlias UpdateRecordResponse
+	var decoded UpdateRecordResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UpdateRecordResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"creator", "domain", "id", "name", "recordType", "type", "value"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"creator", "domain", "id", "name", "recordType", "type", "value"}); err != nil {
+		return err
+	}
+	if raw, ok := rawFields["createdAt"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		value.CreatedAt = &NullableValue[float64]{}
+	}
+	return nil
+}
+
+// NewUpdateRecordResponse returns a validated UpdateRecordResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUpdateRecordResponse(fields UpdateRecordResponse) (*UpdateRecordResponse, error) {
+	return ConstructModel(fields)
+}
+
+type UpdateRecordResponseRecordTypeEnum string
+
+const (
+	UpdateRecordResponseRecordTypeEnumA     UpdateRecordResponseRecordTypeEnum = "A"
+	UpdateRecordResponseRecordTypeEnumAaaa  UpdateRecordResponseRecordTypeEnum = "AAAA"
+	UpdateRecordResponseRecordTypeEnumAlias UpdateRecordResponseRecordTypeEnum = "ALIAS"
+	UpdateRecordResponseRecordTypeEnumCaa   UpdateRecordResponseRecordTypeEnum = "CAA"
+	UpdateRecordResponseRecordTypeEnumCname UpdateRecordResponseRecordTypeEnum = "CNAME"
+	UpdateRecordResponseRecordTypeEnumHttps UpdateRecordResponseRecordTypeEnum = "HTTPS"
+	UpdateRecordResponseRecordTypeEnumMx    UpdateRecordResponseRecordTypeEnum = "MX"
+	UpdateRecordResponseRecordTypeEnumNs    UpdateRecordResponseRecordTypeEnum = "NS"
+	UpdateRecordResponseRecordTypeEnumSrv   UpdateRecordResponseRecordTypeEnum = "SRV"
+	UpdateRecordResponseRecordTypeEnumTxt   UpdateRecordResponseRecordTypeEnum = "TXT"
+)
+
+type UpdateRecordResponseTypeEnum string
+
+const (
+	UpdateRecordResponseTypeEnumRecord    UpdateRecordResponseTypeEnum = "record"
+	UpdateRecordResponseTypeEnumRecordSys UpdateRecordResponseTypeEnum = "record-sys"
+)

@@ -9,6 +9,193 @@ import (
 	"fmt"
 )
 
+type GetObservabilityConfigurationProjectsParams struct {
+	TeamId *string
+	Slug   *string
+}
+
+// GetObservabilityConfigurationProjects lists the projects currently configured as disabled for Observability Plus on a team. Use this request to review which projects have the disabled setting and when that setting was applied.
+//
+// Lists the projects that are currently configured as disabled for Observability Plus on a team.
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetObservabilityConfigurationProjects(ctx context.Context, clientConfig ClientConfig, params GetObservabilityConfigurationProjectsParams, opts ...RequestOption) (*GetObservabilityConfigurationProjectsResponse, error) {
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[GetObservabilityConfigurationProjectsResponse](ctx, &clientConfig, "GET", "/v1/observability/manage/configuration/projects", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetObservabilityConfigurationProjects",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type UpdateObservabilityConfigurationProjectParams struct {
+	ProjectIdOrName string
+	Disabled        bool
+	TeamId          *string
+	Slug            *string
+}
+
+// UpdateObservabilityConfigurationProject updates whether Observability Plus is disabled for a project. Identify the project with `projectIdOrName` and set `disabled` to the desired boolean value.
+//
+// Updates whether Observability Plus is disabled for a single project.
+//
+// Parameters:
+//
+//	projectIdOrName: The ID or name of the project to update
+//	disabled: Whether Observability Plus should be disabled for the project
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func UpdateObservabilityConfigurationProject(ctx context.Context, clientConfig ClientConfig, params UpdateObservabilityConfigurationProjectParams, opts ...RequestOption) (*UpdateObservabilityConfigurationProjectResponse, error) {
+	projectIdOrName := params.ProjectIdOrName
+	disabled := params.Disabled
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[UpdateObservabilityConfigurationProjectResponse](ctx, &clientConfig, "PUT", fmt.Sprintf("/v1/observability/manage/configuration/projects/%s", EncodePathSegment(projectIdOrName)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"disabled": disabled,
+		},
+		OperationID: "UpdateObservabilityConfigurationProject",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type CreateObservabilityQueryParams struct {
+	Metric         string
+	Scope          map[string]any
+	Aggregation    *string
+	GroupBy        *[]string
+	Filter         *string
+	Limit          *float64
+	OrderBy        *string
+	OrderDirection *string
+	Granularity    *map[string]any
+	StartTime      *string
+	EndTime        *string
+	BucketTimezone *string
+}
+
+// CreateObservabilityQuery runs an Observability query for a metric and an owner or project scope. Provide `metric` and `scope`, then use optional aggregation, grouping, filtering, and time settings to shape the results.
+//
+// Parameters:
+//
+//	metric: Metric id
+//	scope: Owner or project scope for the query
+//	aggregation: Aggregation function to apply. Some aggregations require a
+//	dimension: use <agg>/<dimension>, for example unique/visitor_id.
+//	groupBy: Dimensions to group results by. JSON dimensions support nested
+//	refs, for example event_data/checkout_step. Nested keys containing
+//	characters that OData cannot parse as an identifier, such as '-', spaces,
+//	quotes, or '/', must be wrapped in single quotes (escape embedded single
+//	quotes by doubling them), for example flags/'enable-comments-view' or
+//	event_data/'some property''s/value'.
+//	filter: Filter to apply to the query. JSON dimensions support nested refs,
+//	for example event_data/checkout_step eq 'payment'. Nested keys containing
+//	characters that OData cannot parse as an identifier, such as '-', spaces,
+//	quotes, or '/', must be wrapped in single quotes (escape embedded single
+//	quotes by doubling them), for example flags/'enable-comments-view' eq true
+//	or event_data/'some property''s/value' eq true.
+//	limit: Maximum number of results
+//	orderBy: Rollup column to order grouped results by. Use the generated rollup
+//	key for the requested metric and aggregation. Defaults to the query engine
+//	count rollup.
+//	orderDirection: Direction to order grouped results by. Defaults to desc.
+//	granularity: Time bucket size
+//	startTime: Start timestamp
+//	endTime: End timestamp
+//	bucketTimezone: IANA timezone (e.g. Europe/Paris) used only to align
+//	calendar buckets (1d/1mo) to that zone's day/month boundaries.
+//	startTime/endTime and all output timestamps are always UTC. No effect on
+//	sub-day granularities.
+func CreateObservabilityQuery(ctx context.Context, clientConfig ClientConfig, params CreateObservabilityQueryParams, opts ...RequestOption) (map[string]any, error) {
+	metric := params.Metric
+	scope := params.Scope
+	aggregation := params.Aggregation
+	groupBy := params.GroupBy
+	filter := params.Filter
+	limit := params.Limit
+	orderBy := params.OrderBy
+	orderDirection := params.OrderDirection
+	granularity := params.Granularity
+	startTime := params.StartTime
+	endTime := params.EndTime
+	bucketTimezone := params.BucketTimezone
+
+	resp, err := DoCfg[map[string]any](ctx, &clientConfig, "POST", "/v2/observability/query", &RequestOpts{
+		Body: map[string]any{
+			"metric":         metric,
+			"scope":          scope,
+			"aggregation":    aggregation,
+			"groupBy":        groupBy,
+			"filter":         filter,
+			"limit":          limit,
+			"orderBy":        orderBy,
+			"orderDirection": orderDirection,
+			"granularity":    granularity,
+			"startTime":      startTime,
+			"endTime":        endTime,
+			"bucketTimezone": bucketTimezone,
+		},
+		OperationID: "CreateObservabilityQuery",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
+}
+
+// GetObservabilitySchema retrieves the available Observability metrics schema. Use the metric IDs and descriptions in the returned list to identify metrics for querying.
+func GetObservabilitySchema(ctx context.Context, clientConfig ClientConfig, opts ...RequestOption) (*GetObservabilitySchemaResponse, error) {
+
+	resp, err := DoCfg[GetObservabilitySchemaResponse](ctx, &clientConfig, "GET", "/v2/observability/schema", &RequestOpts{
+		OperationID: "GetObservabilitySchema",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type GetObservabilitySchemaByMetricIdParams struct {
+	MetricId string
+}
+
+// GetObservabilitySchemaByMetricId retrieves the Observability schema for a specific metric. Supply `metricId` to get the metric's supported aggregations, dimensions, unit, and default aggregation.
+func GetObservabilitySchemaByMetricId(ctx context.Context, clientConfig ClientConfig, params GetObservabilitySchemaByMetricIdParams, opts ...RequestOption) ([]GetObservabilitySchemaByMetricIdResponse, error) {
+	metricId := params.MetricId
+
+	resp, err := DoCfg[[]GetObservabilitySchemaByMetricIdResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/observability/schema/%s", EncodePathSegment(metricId)), &RequestOpts{
+		OperationID: "GetObservabilitySchemaByMetricId",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
+}
+
 type GetObservabilityConfigurationProjectsResponse struct {
 	DisabledProjects []GetObservabilityConfigurationProjectsResponseDisabledProjects `json:"disabledProjects"`
 }
@@ -235,191 +422,4 @@ func (value *GetObservabilitySchemaByMetricIdResponseDimensions) UnmarshalJSON(d
 // reported as *SdkValidationError.
 func NewGetObservabilitySchemaByMetricIdResponseDimensions(fields GetObservabilitySchemaByMetricIdResponseDimensions) (*GetObservabilitySchemaByMetricIdResponseDimensions, error) {
 	return ConstructModel(fields)
-}
-
-type GetObservabilityConfigurationProjectsParams struct {
-	TeamId *string
-	Slug   *string
-}
-
-// GetObservabilityConfigurationProjects lists the projects currently configured as disabled for Observability Plus on a team. Use this request to review which projects have the disabled setting and when that setting was applied.
-//
-// Lists the projects that are currently configured as disabled for Observability Plus on a team.
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetObservabilityConfigurationProjects(ctx context.Context, clientConfig ClientConfig, params GetObservabilityConfigurationProjectsParams, opts ...RequestOption) (*GetObservabilityConfigurationProjectsResponse, error) {
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[GetObservabilityConfigurationProjectsResponse](ctx, &clientConfig, "GET", "/v1/observability/manage/configuration/projects", &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetObservabilityConfigurationProjects",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type UpdateObservabilityConfigurationProjectParams struct {
-	ProjectIdOrName string
-	Disabled        bool
-	TeamId          *string
-	Slug            *string
-}
-
-// UpdateObservabilityConfigurationProject updates whether Observability Plus is disabled for a project. Identify the project with `projectIdOrName` and set `disabled` to the desired boolean value.
-//
-// Updates whether Observability Plus is disabled for a single project.
-//
-// Parameters:
-//
-//	projectIdOrName: The ID or name of the project to update
-//	disabled: Whether Observability Plus should be disabled for the project
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func UpdateObservabilityConfigurationProject(ctx context.Context, clientConfig ClientConfig, params UpdateObservabilityConfigurationProjectParams, opts ...RequestOption) (*UpdateObservabilityConfigurationProjectResponse, error) {
-	projectIdOrName := params.ProjectIdOrName
-	disabled := params.Disabled
-	teamId := params.TeamId
-	slug := params.Slug
-
-	resp, err := DoCfg[UpdateObservabilityConfigurationProjectResponse](ctx, &clientConfig, "PUT", fmt.Sprintf("/v1/observability/manage/configuration/projects/%s", EncodePathSegment(projectIdOrName)), &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"disabled": disabled,
-		},
-		OperationID: "UpdateObservabilityConfigurationProject",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type CreateObservabilityQueryParams struct {
-	Metric         string
-	Scope          map[string]any
-	Aggregation    *string
-	GroupBy        *[]string
-	Filter         *string
-	Limit          *float64
-	OrderBy        *string
-	OrderDirection *string
-	Granularity    *map[string]any
-	StartTime      *string
-	EndTime        *string
-	BucketTimezone *string
-}
-
-// CreateObservabilityQuery runs an Observability query for a metric and an owner or project scope. Provide `metric` and `scope`, then use optional aggregation, grouping, filtering, and time settings to shape the results.
-//
-// Parameters:
-//
-//	metric: Metric id
-//	scope: Owner or project scope for the query
-//	aggregation: Aggregation function to apply. Some aggregations require a
-//	dimension: use <agg>/<dimension>, for example unique/visitor_id.
-//	groupBy: Dimensions to group results by. JSON dimensions support nested
-//	refs, for example event_data/checkout_step. Nested keys containing
-//	characters that OData cannot parse as an identifier, such as '-', spaces,
-//	quotes, or '/', must be wrapped in single quotes (escape embedded single
-//	quotes by doubling them), for example flags/'enable-comments-view' or
-//	event_data/'some property''s/value'.
-//	filter: Filter to apply to the query. JSON dimensions support nested refs,
-//	for example event_data/checkout_step eq 'payment'. Nested keys containing
-//	characters that OData cannot parse as an identifier, such as '-', spaces,
-//	quotes, or '/', must be wrapped in single quotes (escape embedded single
-//	quotes by doubling them), for example flags/'enable-comments-view' eq true
-//	or event_data/'some property''s/value' eq true.
-//	limit: Maximum number of results
-//	orderBy: Rollup column to order grouped results by. Use the generated rollup
-//	key for the requested metric and aggregation. Defaults to the query engine
-//	count rollup.
-//	orderDirection: Direction to order grouped results by. Defaults to desc.
-//	granularity: Time bucket size
-//	startTime: Start timestamp
-//	endTime: End timestamp
-//	bucketTimezone: IANA timezone (e.g. Europe/Paris) used only to align
-//	calendar buckets (1d/1mo) to that zone's day/month boundaries.
-//	startTime/endTime and all output timestamps are always UTC. No effect on
-//	sub-day granularities.
-func CreateObservabilityQuery(ctx context.Context, clientConfig ClientConfig, params CreateObservabilityQueryParams, opts ...RequestOption) (map[string]any, error) {
-	metric := params.Metric
-	scope := params.Scope
-	aggregation := params.Aggregation
-	groupBy := params.GroupBy
-	filter := params.Filter
-	limit := params.Limit
-	orderBy := params.OrderBy
-	orderDirection := params.OrderDirection
-	granularity := params.Granularity
-	startTime := params.StartTime
-	endTime := params.EndTime
-	bucketTimezone := params.BucketTimezone
-
-	resp, err := DoCfg[map[string]any](ctx, &clientConfig, "POST", "/v2/observability/query", &RequestOpts{
-		Body: map[string]any{
-			"metric":         metric,
-			"scope":          scope,
-			"aggregation":    aggregation,
-			"groupBy":        groupBy,
-			"filter":         filter,
-			"limit":          limit,
-			"orderBy":        orderBy,
-			"orderDirection": orderDirection,
-			"granularity":    granularity,
-			"startTime":      startTime,
-			"endTime":        endTime,
-			"bucketTimezone": bucketTimezone,
-		},
-		OperationID: "CreateObservabilityQuery",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return resp.Data, nil
-}
-
-// GetObservabilitySchema retrieves the available Observability metrics schema. Use the metric IDs and descriptions in the returned list to identify metrics for querying.
-func GetObservabilitySchema(ctx context.Context, clientConfig ClientConfig, opts ...RequestOption) (*GetObservabilitySchemaResponse, error) {
-
-	resp, err := DoCfg[GetObservabilitySchemaResponse](ctx, &clientConfig, "GET", "/v2/observability/schema", &RequestOpts{
-		OperationID: "GetObservabilitySchema",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type GetObservabilitySchemaByMetricIdParams struct {
-	MetricId string
-}
-
-// GetObservabilitySchemaByMetricId retrieves the Observability schema for a specific metric. Supply `metricId` to get the metric's supported aggregations, dimensions, unit, and default aggregation.
-func GetObservabilitySchemaByMetricId(ctx context.Context, clientConfig ClientConfig, params GetObservabilitySchemaByMetricIdParams, opts ...RequestOption) ([]GetObservabilitySchemaByMetricIdResponse, error) {
-	metricId := params.MetricId
-
-	resp, err := DoCfg[[]GetObservabilitySchemaByMetricIdResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v2/observability/schema/%s", EncodePathSegment(metricId)), &RequestOpts{
-		OperationID: "GetObservabilitySchemaByMetricId",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return resp.Data, nil
 }

@@ -9,107 +9,6 @@ import (
 	"fmt"
 )
 
-// CreateAuthTokenResponse Successful response.
-type CreateAuthTokenResponse struct {
-	// BearerToken The authentication token's actual value. This token is only provided in this response, and can never be retrieved again in the future. Be sure to save it somewhere safe!
-	BearerToken string `json:"bearerToken"`
-	// Token Authentication token metadata.
-	Token AuthToken `json:"token"`
-}
-
-func (value *CreateAuthTokenResponse) UnmarshalJSON(data []byte) error {
-	type CreateAuthTokenResponseAlias CreateAuthTokenResponse
-	var decoded CreateAuthTokenResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateAuthTokenResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"bearerToken", "token"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"bearerToken", "token"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateAuthTokenResponse returns a validated CreateAuthTokenResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateAuthTokenResponse(fields CreateAuthTokenResponse) (*CreateAuthTokenResponse, error) {
-	return ConstructModel(fields)
-}
-
-// GetAuthTokenResponse Successful response.
-type GetAuthTokenResponse struct {
-	// Token Authentication token metadata.
-	Token AuthToken `json:"token"`
-}
-
-func (value *GetAuthTokenResponse) UnmarshalJSON(data []byte) error {
-	type GetAuthTokenResponseAlias GetAuthTokenResponse
-	var decoded GetAuthTokenResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetAuthTokenResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"token"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"token"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetAuthTokenResponse returns a validated GetAuthTokenResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetAuthTokenResponse(fields GetAuthTokenResponse) (*GetAuthTokenResponse, error) {
-	return ConstructModel(fields)
-}
-
-// DeleteAuthTokenResponse Authentication token successfully deleted.
-type DeleteAuthTokenResponse struct {
-	// TokenId The unique identifier of the token that was deleted.
-	TokenId string `json:"tokenId"`
-}
-
-func (value *DeleteAuthTokenResponse) UnmarshalJSON(data []byte) error {
-	type DeleteAuthTokenResponseAlias DeleteAuthTokenResponse
-	var decoded DeleteAuthTokenResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = DeleteAuthTokenResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"tokenId"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"tokenId"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewDeleteAuthTokenResponse returns a validated DeleteAuthTokenResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewDeleteAuthTokenResponse(fields DeleteAuthTokenResponse) (*DeleteAuthTokenResponse, error) {
-	return ConstructModel(fields)
-}
-
 type ExchangeSsoTokenParams struct {
 	Body map[string]any
 }
@@ -251,4 +150,105 @@ func DeleteAuthToken(ctx context.Context, clientConfig ClientConfig, params Dele
 		return nil, err
 	}
 	return &resp.Data, nil
+}
+
+// CreateAuthTokenResponse Successful response.
+type CreateAuthTokenResponse struct {
+	// BearerToken The authentication token's actual value. This token is only provided in this response, and can never be retrieved again in the future. Be sure to save it somewhere safe!
+	BearerToken string `json:"bearerToken"`
+	// Token Authentication token metadata.
+	Token AuthToken `json:"token"`
+}
+
+func (value *CreateAuthTokenResponse) UnmarshalJSON(data []byte) error {
+	type CreateAuthTokenResponseAlias CreateAuthTokenResponse
+	var decoded CreateAuthTokenResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = CreateAuthTokenResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"bearerToken", "token"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"bearerToken", "token"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewCreateAuthTokenResponse returns a validated CreateAuthTokenResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewCreateAuthTokenResponse(fields CreateAuthTokenResponse) (*CreateAuthTokenResponse, error) {
+	return ConstructModel(fields)
+}
+
+// GetAuthTokenResponse Successful response.
+type GetAuthTokenResponse struct {
+	// Token Authentication token metadata.
+	Token AuthToken `json:"token"`
+}
+
+func (value *GetAuthTokenResponse) UnmarshalJSON(data []byte) error {
+	type GetAuthTokenResponseAlias GetAuthTokenResponse
+	var decoded GetAuthTokenResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = GetAuthTokenResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"token"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"token"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewGetAuthTokenResponse returns a validated GetAuthTokenResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewGetAuthTokenResponse(fields GetAuthTokenResponse) (*GetAuthTokenResponse, error) {
+	return ConstructModel(fields)
+}
+
+// DeleteAuthTokenResponse Authentication token successfully deleted.
+type DeleteAuthTokenResponse struct {
+	// TokenId The unique identifier of the token that was deleted.
+	TokenId string `json:"tokenId"`
+}
+
+func (value *DeleteAuthTokenResponse) UnmarshalJSON(data []byte) error {
+	type DeleteAuthTokenResponseAlias DeleteAuthTokenResponse
+	var decoded DeleteAuthTokenResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = DeleteAuthTokenResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"tokenId"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"tokenId"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewDeleteAuthTokenResponse returns a validated DeleteAuthTokenResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewDeleteAuthTokenResponse(fields DeleteAuthTokenResponse) (*DeleteAuthTokenResponse, error) {
+	return ConstructModel(fields)
 }

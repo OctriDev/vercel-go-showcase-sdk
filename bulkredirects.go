@@ -8,6 +8,236 @@ import (
 	"encoding/json"
 )
 
+type StageRedirectsParams struct {
+	ProjectId string
+	TeamId    string
+	TeamId_2  *string
+	Slug      *string
+	Overwrite *bool
+	Name      *string
+	Redirects *[]StageRedirectsRedirects
+}
+
+// StageRedirects stages a new version of bulk redirects for a project. Supply `projectId` and `teamId` in the request body; `redirects` defaults to an empty array when omitted. A successful response includes the staged version and its alias.
+//
+// Stages new redirects for a project and returns the new version.
+//
+// Parameters:
+//
+//	teamId_2: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func StageRedirects(ctx context.Context, clientConfig ClientConfig, params StageRedirectsParams, opts ...RequestOption) (*StageRedirectsResponse, error) {
+	projectId := params.ProjectId
+	teamId := params.TeamId
+	teamId_2 := params.TeamId_2
+	slug := params.Slug
+	overwrite := params.Overwrite
+	name := params.Name
+	redirects := params.Redirects
+
+	if name != nil {
+		if err := ValidateLength("name", *name, LengthOpts{Max: Ptr[int](256)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[StageRedirectsResponse](ctx, &clientConfig, "PUT", "/v1/bulk-redirects", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId_2, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"projectId": projectId,
+			"teamId":    teamId,
+			"overwrite": overwrite,
+			"name":      name,
+			"redirects": redirects,
+		},
+		OperationID: "StageRedirects",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type GetRedirectsParams struct {
+	ProjectId string
+	VersionId *string
+	Q         *string
+	Diff      *any
+	Page      *int64
+	PerPage   *int64
+	SortBy    *string
+	SortOrder *string
+	TeamId    *string
+	Slug      *string
+}
+
+// GetRedirects lists project-level bulk redirects, with optional filtering and sorting. Use `projectId` to identify the project, and `page` and `per_page` to paginate the results.
+//
+// # Get the version history for a project's bulk redirects
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func GetRedirects(ctx context.Context, clientConfig ClientConfig, params GetRedirectsParams, opts ...RequestOption) (map[string]any, error) {
+	projectId := params.ProjectId
+	versionId := params.VersionId
+	q := params.Q
+	diff := params.Diff
+	page := params.Page
+	perPage := params.PerPage
+	sortBy := params.SortBy
+	sortOrder := params.SortOrder
+	teamId := params.TeamId
+	slug := params.Slug
+
+	if page != nil {
+		if err := ValidateRange("page", *page, RangeOpts{Min: Ptr[float64](1)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if perPage != nil {
+		if err := ValidateRange("per_page", *perPage, RangeOpts{Min: Ptr[float64](10), Max: Ptr[float64](250)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[map[string]any](ctx, &clientConfig, "GET", "/v1/bulk-redirects", &RequestOpts{
+		Query: map[string]any{
+			"projectId":  QueryValue{Value: projectId, Style: "form", Explode: true},
+			"versionId":  QueryValue{Value: versionId, Style: "form", Explode: true},
+			"q":          QueryValue{Value: q, Style: "form", Explode: true},
+			"diff":       QueryValue{Value: diff, Style: "form", Explode: true},
+			"page":       QueryValue{Value: page, Style: "form", Explode: true},
+			"per_page":   QueryValue{Value: perPage, Style: "form", Explode: true},
+			"sort_by":    QueryValue{Value: sortBy, Style: "form", Explode: true},
+			"sort_order": QueryValue{Value: sortOrder, Style: "form", Explode: true},
+			"teamId":     QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":       QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "GetRedirects",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
+}
+
+type DeleteRedirectsParams struct {
+	ProjectId string
+	Redirects []string
+	TeamId    *string
+	Slug      *string
+	Name      *string
+}
+
+// DeleteRedirects deletes specified redirects from the latest staged version for a project and stages the resulting changes. Provide the redirect source paths in `redirects`; the response includes the alias for the new version.
+//
+// Deletes the provided redirects from the latest version of the projects' bulk redirects. Stages a new change with the new redirects and returns the alias for the new version in the response.
+//
+// Parameters:
+//
+//	redirects: The redirects to delete. The source of the redirect is used to
+//	match the redirect to delete.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func DeleteRedirects(ctx context.Context, clientConfig ClientConfig, params DeleteRedirectsParams, opts ...RequestOption) (*DeleteRedirectsResponse, error) {
+	projectId := params.ProjectId
+	redirects := params.Redirects
+	teamId := params.TeamId
+	slug := params.Slug
+	name := params.Name
+
+	if err := ValidateItems("redirects", redirects, LengthOpts{Min: Ptr[int](1)}); err != nil {
+		return nil, err
+	}
+
+	if name != nil {
+		if err := ValidateLength("name", *name, LengthOpts{Max: Ptr[int](256)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[DeleteRedirectsResponse](ctx, &clientConfig, "DELETE", "/v1/bulk-redirects", &RequestOpts{
+		Query: map[string]any{
+			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
+			"teamId":    QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":      QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"redirects": redirects,
+			"name":      name,
+		},
+		OperationID: "DeleteRedirects",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type EditRedirectParams struct {
+	ProjectId string
+	Redirect  EditRedirectRedirect
+	TeamId    *string
+	Slug      *string
+	Name      *string
+	Restore   *bool
+}
+
+// EditRedirect updates a single staged project redirect by matching its source path, then stages a new version. Supply the redirect's `source` in the body; use `restore` to restore that redirect from the latest production version to staging.
+//
+// Edits a single redirect identified by its source path. Stages a new change with the modified redirect and returns the alias for the new version in the response.
+//
+// Parameters:
+//
+//	redirect: The redirect object to edit. The source field is used to match the
+//	redirect to modify.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+//	restore: If true, restores the redirect from the latest production version
+//	to staging.
+func EditRedirect(ctx context.Context, clientConfig ClientConfig, params EditRedirectParams, opts ...RequestOption) (*EditRedirectResponse, error) {
+	projectId := params.ProjectId
+	redirect := params.Redirect
+	teamId := params.TeamId
+	slug := params.Slug
+	name := params.Name
+	restore := params.Restore
+
+	if name != nil {
+		if err := ValidateLength("name", *name, LengthOpts{Max: Ptr[int](256)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[EditRedirectResponse](ctx, &clientConfig, "PATCH", "/v1/bulk-redirects", &RequestOpts{
+		Query: map[string]any{
+			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
+			"teamId":    QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":      QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"redirect": redirect,
+			"name":     name,
+			"restore":  restore,
+		},
+		OperationID: "EditRedirect",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 type StageRedirectsRedirects struct {
 	Source              string                             `json:"source"`
 	Destination         string                             `json:"destination"`
@@ -282,421 +512,4 @@ func (value *EditRedirectResponseVersion) UnmarshalJSON(data []byte) error {
 // reported as *SdkValidationError.
 func NewEditRedirectResponseVersion(fields EditRedirectResponseVersion) (*EditRedirectResponseVersion, error) {
 	return ConstructModel(fields)
-}
-
-type RestoreRedirectsResponse struct {
-	FailedToRestore []string                        `json:"failedToRestore"`
-	Restored        []string                        `json:"restored"`
-	Version         RestoreRedirectsResponseVersion `json:"version"`
-}
-
-func (value *RestoreRedirectsResponse) UnmarshalJSON(data []byte) error {
-	type RestoreRedirectsResponseAlias RestoreRedirectsResponse
-	var decoded RestoreRedirectsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = RestoreRedirectsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"failedToRestore", "restored", "version"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"failedToRestore", "restored", "version"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewRestoreRedirectsResponse returns a validated RestoreRedirectsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewRestoreRedirectsResponse(fields RestoreRedirectsResponse) (*RestoreRedirectsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type RestoreRedirectsResponseVersion struct {
-	// Alias The staging link for previewing redirects in this version.
-	Alias     *string `json:"alias,omitempty"`
-	CreatedBy string  `json:"createdBy"`
-	// Id The unique identifier for the version.
-	Id string `json:"id"`
-	// IsLive Whether this version is currently live in production.
-	IsLive *bool `json:"isLive,omitempty"`
-	// IsStaging Whether this version has not been promoted to production yet and is not serving end users.
-	IsStaging *bool `json:"isStaging,omitempty"`
-	// Key The key of the version. The key may be duplicated across versions if the contents are the same as a different version.
-	Key          string  `json:"key"`
-	LastModified float64 `json:"lastModified"`
-	// Name Optional name for the version. If not provided, defaults to an ISO timestamp string.
-	Name *string `json:"name,omitempty"`
-	// RedirectCount The number of redirects in this version.
-	RedirectCount *float64 `json:"redirectCount,omitempty"`
-}
-
-func (value *RestoreRedirectsResponseVersion) UnmarshalJSON(data []byte) error {
-	type RestoreRedirectsResponseVersionAlias RestoreRedirectsResponseVersion
-	var decoded RestoreRedirectsResponseVersionAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = RestoreRedirectsResponseVersion(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdBy", "id", "key", "lastModified"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdBy", "id", "key", "lastModified"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewRestoreRedirectsResponseVersion returns a validated RestoreRedirectsResponseVersion built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewRestoreRedirectsResponseVersion(fields RestoreRedirectsResponseVersion) (*RestoreRedirectsResponseVersion, error) {
-	return ConstructModel(fields)
-}
-
-type GetVersionsResponse struct {
-	Versions []GetVersionsResponseVersions `json:"versions"`
-}
-
-func (value *GetVersionsResponse) UnmarshalJSON(data []byte) error {
-	type GetVersionsResponseAlias GetVersionsResponse
-	var decoded GetVersionsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetVersionsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"versions"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"versions"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetVersionsResponse returns a validated GetVersionsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetVersionsResponse(fields GetVersionsResponse) (*GetVersionsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type GetVersionsResponseVersions struct {
-	// Alias The staging link for previewing redirects in this version.
-	Alias     *string `json:"alias,omitempty"`
-	CreatedBy string  `json:"createdBy"`
-	// Id The unique identifier for the version.
-	Id string `json:"id"`
-	// IsLive Whether this version is currently live in production.
-	IsLive *bool `json:"isLive,omitempty"`
-	// IsStaging Whether this version has not been promoted to production yet and is not serving end users.
-	IsStaging *bool `json:"isStaging,omitempty"`
-	// Key The key of the version. The key may be duplicated across versions if the contents are the same as a different version.
-	Key          string  `json:"key"`
-	LastModified float64 `json:"lastModified"`
-	// Name Optional name for the version. If not provided, defaults to an ISO timestamp string.
-	Name *string `json:"name,omitempty"`
-	// RedirectCount The number of redirects in this version.
-	RedirectCount *float64 `json:"redirectCount,omitempty"`
-}
-
-func (value *GetVersionsResponseVersions) UnmarshalJSON(data []byte) error {
-	type GetVersionsResponseVersionsAlias GetVersionsResponseVersions
-	var decoded GetVersionsResponseVersionsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = GetVersionsResponseVersions(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdBy", "id", "key", "lastModified"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdBy", "id", "key", "lastModified"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewGetVersionsResponseVersions returns a validated GetVersionsResponseVersions built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewGetVersionsResponseVersions(fields GetVersionsResponseVersions) (*GetVersionsResponseVersions, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateVersionResponse struct {
-	Version UpdateVersionResponseVersion `json:"version"`
-}
-
-func (value *UpdateVersionResponse) UnmarshalJSON(data []byte) error {
-	type UpdateVersionResponseAlias UpdateVersionResponse
-	var decoded UpdateVersionResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateVersionResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"version"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"version"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateVersionResponse returns a validated UpdateVersionResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateVersionResponse(fields UpdateVersionResponse) (*UpdateVersionResponse, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateVersionResponseVersion struct {
-	// Alias The staging link for previewing redirects in this version.
-	Alias     *string `json:"alias,omitempty"`
-	CreatedBy string  `json:"createdBy"`
-	// Id The unique identifier for the version.
-	Id string `json:"id"`
-	// IsLive Whether this version is currently live in production.
-	IsLive *bool `json:"isLive,omitempty"`
-	// IsStaging Whether this version has not been promoted to production yet and is not serving end users.
-	IsStaging *bool `json:"isStaging,omitempty"`
-	// Key The key of the version. The key may be duplicated across versions if the contents are the same as a different version.
-	Key          string  `json:"key"`
-	LastModified float64 `json:"lastModified"`
-	// Name Optional name for the version. If not provided, defaults to an ISO timestamp string.
-	Name *string `json:"name,omitempty"`
-	// RedirectCount The number of redirects in this version.
-	RedirectCount *float64 `json:"redirectCount,omitempty"`
-}
-
-func (value *UpdateVersionResponseVersion) UnmarshalJSON(data []byte) error {
-	type UpdateVersionResponseVersionAlias UpdateVersionResponseVersion
-	var decoded UpdateVersionResponseVersionAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateVersionResponseVersion(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdBy", "id", "key", "lastModified"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdBy", "id", "key", "lastModified"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateVersionResponseVersion returns a validated UpdateVersionResponseVersion built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateVersionResponseVersion(fields UpdateVersionResponseVersion) (*UpdateVersionResponseVersion, error) {
-	return ConstructModel(fields)
-}
-
-type StageRedirectsParams struct {
-	ProjectId string
-	TeamId    string
-	TeamId_2  *string
-	Slug      *string
-	Overwrite *bool
-	Name      *string
-	Redirects *[]StageRedirectsRedirects
-}
-
-// StageRedirects stages a new version of bulk redirects for a project. Supply `projectId` and `teamId` in the request body; `redirects` defaults to an empty array when omitted. A successful response includes the staged version and its alias.
-//
-// Stages new redirects for a project and returns the new version.
-//
-// Parameters:
-//
-//	teamId_2: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func StageRedirects(ctx context.Context, clientConfig ClientConfig, params StageRedirectsParams, opts ...RequestOption) (*StageRedirectsResponse, error) {
-	projectId := params.ProjectId
-	teamId := params.TeamId
-	teamId_2 := params.TeamId_2
-	slug := params.Slug
-	overwrite := params.Overwrite
-	name := params.Name
-	redirects := params.Redirects
-
-	if name != nil {
-		if err := ValidateLength("name", *name, LengthOpts{Max: Ptr[int](256)}); err != nil {
-			return nil, err
-		}
-	}
-
-	resp, err := DoCfg[StageRedirectsResponse](ctx, &clientConfig, "PUT", "/v1/bulk-redirects", &RequestOpts{
-		Query: map[string]any{
-			"teamId": QueryValue{Value: teamId_2, Style: "form", Explode: true},
-			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"projectId": projectId,
-			"teamId":    teamId,
-			"overwrite": overwrite,
-			"name":      name,
-			"redirects": redirects,
-		},
-		OperationID: "StageRedirects",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type GetRedirectsParams struct {
-	ProjectId string
-	VersionId *string
-	Q         *string
-	Diff      *any
-	Page      *int64
-	PerPage   *int64
-	SortBy    *string
-	SortOrder *string
-	TeamId    *string
-	Slug      *string
-}
-
-// GetRedirects lists project-level bulk redirects, with optional filtering and sorting. Use `projectId` to identify the project, and `page` and `per_page` to paginate the results.
-//
-// # Get the version history for a project's bulk redirects
-//
-// Parameters:
-//
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func GetRedirects(ctx context.Context, clientConfig ClientConfig, params GetRedirectsParams, opts ...RequestOption) (map[string]any, error) {
-	projectId := params.ProjectId
-	versionId := params.VersionId
-	q := params.Q
-	diff := params.Diff
-	page := params.Page
-	perPage := params.PerPage
-	sortBy := params.SortBy
-	sortOrder := params.SortOrder
-	teamId := params.TeamId
-	slug := params.Slug
-
-	if page != nil {
-		if err := ValidateRange("page", *page, RangeOpts{Min: Ptr[float64](1)}); err != nil {
-			return nil, err
-		}
-	}
-
-	if perPage != nil {
-		if err := ValidateRange("per_page", *perPage, RangeOpts{Min: Ptr[float64](10), Max: Ptr[float64](250)}); err != nil {
-			return nil, err
-		}
-	}
-
-	resp, err := DoCfg[map[string]any](ctx, &clientConfig, "GET", "/v1/bulk-redirects", &RequestOpts{
-		Query: map[string]any{
-			"projectId":  QueryValue{Value: projectId, Style: "form", Explode: true},
-			"versionId":  QueryValue{Value: versionId, Style: "form", Explode: true},
-			"q":          QueryValue{Value: q, Style: "form", Explode: true},
-			"diff":       QueryValue{Value: diff, Style: "form", Explode: true},
-			"page":       QueryValue{Value: page, Style: "form", Explode: true},
-			"per_page":   QueryValue{Value: perPage, Style: "form", Explode: true},
-			"sort_by":    QueryValue{Value: sortBy, Style: "form", Explode: true},
-			"sort_order": QueryValue{Value: sortOrder, Style: "form", Explode: true},
-			"teamId":     QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":       QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		OperationID: "GetRedirects",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return resp.Data, nil
-}
-
-type DeleteRedirectsParams struct {
-	ProjectId string
-	Redirects []string
-	TeamId    *string
-	Slug      *string
-	Name      *string
-}
-
-// DeleteRedirects deletes specified redirects from the latest staged version for a project and stages the resulting changes. Provide the redirect source paths in `redirects`; the response includes the alias for the new version.
-//
-// Deletes the provided redirects from the latest version of the projects' bulk redirects. Stages a new change with the new redirects and returns the alias for the new version in the response.
-//
-// Parameters:
-//
-//	redirects: The redirects to delete. The source of the redirect is used to
-//	match the redirect to delete.
-//	teamId: The Team identifier to perform the request on behalf of.
-//	slug: The Team slug to perform the request on behalf of.
-func DeleteRedirects(ctx context.Context, clientConfig ClientConfig, params DeleteRedirectsParams, opts ...RequestOption) (*DeleteRedirectsResponse, error) {
-	projectId := params.ProjectId
-	redirects := params.Redirects
-	teamId := params.TeamId
-	slug := params.Slug
-	name := params.Name
-
-	if err := ValidateItems("redirects", redirects, LengthOpts{Min: Ptr[int](1)}); err != nil {
-		return nil, err
-	}
-
-	if name != nil {
-		if err := ValidateLength("name", *name, LengthOpts{Max: Ptr[int](256)}); err != nil {
-			return nil, err
-		}
-	}
-
-	resp, err := DoCfg[DeleteRedirectsResponse](ctx, &clientConfig, "DELETE", "/v1/bulk-redirects", &RequestOpts{
-		Query: map[string]any{
-			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
-			"teamId":    QueryValue{Value: teamId, Style: "form", Explode: true},
-			"slug":      QueryValue{Value: slug, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"redirects": redirects,
-			"name":      name,
-		},
-		OperationID: "DeleteRedirects",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
-}
-
-type EditRedirectParams struct {
-	ProjectId string
-	Redirect  EditRedirectRedirect
-	TeamId    *string
-	Slug      *string
-	Name      *string
-	Restore   *bool
 }

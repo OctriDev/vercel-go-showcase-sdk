@@ -4,9 +4,259 @@
 package sdk
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
+	"fmt"
 )
+
+type ReadAccessGroupParams struct {
+	IdOrName string
+	TeamId   *string
+	Slug     *string
+}
+
+// ReadAccessGroup retrieves an access group by its ID or name. Use `idOrName` to identify the group and `teamId` or `slug` to select the team for the request.
+//
+// # Allows to read an access group
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func ReadAccessGroup(ctx context.Context, clientConfig ClientConfig, params ReadAccessGroupParams, opts ...RequestOption) (*ReadAccessGroupResponse, error) {
+	idOrName := params.IdOrName
+	teamId := params.TeamId
+	slug := params.Slug
+
+	resp, err := DoCfg[ReadAccessGroupResponse](ctx, &clientConfig, "GET", fmt.Sprintf("/v1/access-groups/%s", EncodePathSegment(idOrName)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "ReadAccessGroup",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type UpdateAccessGroupParams struct {
+	IdOrName        string
+	TeamId          *string
+	Slug            *string
+	Name            *string
+	Projects        *[]UpdateAccessGroupProjects
+	MembersToAdd    *[]string
+	MembersToRemove *[]string
+}
+
+// UpdateAccessGroup updates an access group's metadata, members, or project roles. Supply only the fields you want to change; `name` is limited to 50 characters and `projects` associates projects with roles.
+//
+// # Allows to update an access group metadata
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+//	name: The name of the access group
+//	membersToAdd: List of members to add to the access group.
+//	membersToRemove: List of members to remove from the access group.
+func UpdateAccessGroup(ctx context.Context, clientConfig ClientConfig, params UpdateAccessGroupParams, opts ...RequestOption) (*UpdateAccessGroupResponse, error) {
+	idOrName := params.IdOrName
+	teamId := params.TeamId
+	slug := params.Slug
+	name := params.Name
+	projects := params.Projects
+	membersToAdd := params.MembersToAdd
+	membersToRemove := params.MembersToRemove
+
+	if name != nil {
+		if err := ValidateLength("name", *name, LengthOpts{Max: Ptr[int](50)}); err != nil {
+			return nil, err
+		}
+		if err := ValidatePattern("name", *name, "^[A-z0-9_ -]+$"); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[UpdateAccessGroupResponse](ctx, &clientConfig, "POST", fmt.Sprintf("/v1/access-groups/%s", EncodePathSegment(idOrName)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"name":            name,
+			"projects":        projects,
+			"membersToAdd":    membersToAdd,
+			"membersToRemove": membersToRemove,
+		},
+		OperationID: "UpdateAccessGroup",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
+type DeleteAccessGroupParams struct {
+	IdOrName string
+	TeamId   *string
+	Slug     *string
+}
+
+// DeleteAccessGroup deletes an access group. Use `idOrName` to identify the group and `teamId` or `slug` to select the team for the request.
+//
+// # Allows to delete an access group
+//
+// Parameters:
+//
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func DeleteAccessGroup(ctx context.Context, clientConfig ClientConfig, params DeleteAccessGroupParams, opts ...RequestOption) (any, error) {
+	idOrName := params.IdOrName
+	teamId := params.TeamId
+	slug := params.Slug
+
+	_, err := DoEmptyCfg(ctx, &clientConfig, "DELETE", fmt.Sprintf("/v1/access-groups/%s", EncodePathSegment(idOrName)), &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "DeleteAccessGroup",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+type ListAccessGroupsParams struct {
+	ProjectId     *string
+	Search        *string
+	MembersLimit  *int64
+	ProjectsLimit *int64
+	Limit         *int64
+	Next          *string
+	TeamId        *string
+	Slug          *string
+}
+
+// ListAccessGroups lists access groups, with optional filters for project and group name. Use `membersLimit` and `projectsLimit` to control how many associated members and projects are included, and `next` to continue through paginated results.
+//
+// # List access groups
+//
+// Parameters:
+//
+//	projectId: Filter access groups by project.
+//	search: Search for access groups by name.
+//	membersLimit: Number of members to include in the response.
+//	projectsLimit: Number of projects to include in the response.
+//	limit: Limit how many access group should be returned.
+//	next: Continuation cursor to retrieve the next page of results.
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+func ListAccessGroups(ctx context.Context, clientConfig ClientConfig, params ListAccessGroupsParams, opts ...RequestOption) (map[string]any, error) {
+	projectId := params.ProjectId
+	search := params.Search
+	membersLimit := params.MembersLimit
+	projectsLimit := params.ProjectsLimit
+	limit := params.Limit
+	next := params.Next
+	teamId := params.TeamId
+	slug := params.Slug
+
+	if membersLimit != nil {
+		if err := ValidateRange("membersLimit", *membersLimit, RangeOpts{Min: Ptr[float64](1), Max: Ptr[float64](100)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if projectsLimit != nil {
+		if err := ValidateRange("projectsLimit", *projectsLimit, RangeOpts{Min: Ptr[float64](1), Max: Ptr[float64](100)}); err != nil {
+			return nil, err
+		}
+	}
+
+	if limit != nil {
+		if err := ValidateRange("limit", *limit, RangeOpts{Min: Ptr[float64](1), Max: Ptr[float64](100)}); err != nil {
+			return nil, err
+		}
+	}
+
+	resp, err := DoCfg[map[string]any](ctx, &clientConfig, "GET", "/v1/access-groups", &RequestOpts{
+		Query: map[string]any{
+			"projectId":     QueryValue{Value: projectId, Style: "form", Explode: true},
+			"search":        QueryValue{Value: search, Style: "form", Explode: true},
+			"membersLimit":  QueryValue{Value: membersLimit, Style: "form", Explode: true},
+			"projectsLimit": QueryValue{Value: projectsLimit, Style: "form", Explode: true},
+			"limit":         QueryValue{Value: limit, Style: "form", Explode: true},
+			"next":          QueryValue{Value: next, Style: "form", Explode: true},
+			"teamId":        QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":          QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		OperationID: "ListAccessGroups",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Data, nil
+}
+
+type CreateAccessGroupParams struct {
+	Name         string
+	TeamId       *string
+	Slug         *string
+	Projects     *[]CreateAccessGroupProjects
+	MembersToAdd *[]string
+}
+
+// CreateAccessGroup creates an access group for a team, optionally assigning projects and adding members. Provide a `name` that matches the allowed character pattern and is no longer than 50 characters.
+//
+// # Allows to create an access group
+//
+// Parameters:
+//
+//	name: The name of the access group
+//	teamId: The Team identifier to perform the request on behalf of.
+//	slug: The Team slug to perform the request on behalf of.
+//	membersToAdd: List of members to add to the access group.
+func CreateAccessGroup(ctx context.Context, clientConfig ClientConfig, params CreateAccessGroupParams, opts ...RequestOption) (*CreateAccessGroupResponse, error) {
+	name := params.Name
+	teamId := params.TeamId
+	slug := params.Slug
+	projects := params.Projects
+	membersToAdd := params.MembersToAdd
+
+	if err := ValidateLength("name", name, LengthOpts{Max: Ptr[int](50)}); err != nil {
+		return nil, err
+	}
+	if err := ValidatePattern("name", name, "^[A-z0-9_ -]+$"); err != nil {
+		return nil, err
+	}
+
+	resp, err := DoCfg[CreateAccessGroupResponse](ctx, &clientConfig, "POST", "/v1/access-groups", &RequestOpts{
+		Query: map[string]any{
+			"teamId": QueryValue{Value: teamId, Style: "form", Explode: true},
+			"slug":   QueryValue{Value: slug, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"name":         name,
+			"projects":     projects,
+			"membersToAdd": membersToAdd,
+		},
+		OperationID: "CreateAccessGroup",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
 
 type ReadAccessGroupResponse struct {
 	// AccessGroupId ID of the access group.
@@ -87,52 +337,6 @@ const (
 	ReadAccessGroupResponseTeamPermissionsEnumWorkflowdecryptor           ReadAccessGroupResponseTeamPermissionsEnum = "WorkflowDecryptor"
 )
 
-type UpdateAccessGroupProjects struct {
-	// ProjectId The ID of the project.
-	ProjectId string `json:"projectId"`
-	// Role The project role that will be added to this Access Group. "null" will remove this project level role.
-	Role NullableValue[UpdateAccessGroupProjectsRoleEnum] `json:"role"`
-}
-
-func (value *UpdateAccessGroupProjects) UnmarshalJSON(data []byte) error {
-	type UpdateAccessGroupProjectsAlias UpdateAccessGroupProjects
-	var decoded UpdateAccessGroupProjectsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateAccessGroupProjects(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"role", "projectId"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"projectId"}); err != nil {
-		return err
-	}
-	if err := ValidateLength("projectId", value.ProjectId, LengthOpts{Max: Ptr[int](256)}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateAccessGroupProjects returns a validated UpdateAccessGroupProjects built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateAccessGroupProjects(fields UpdateAccessGroupProjects) (*UpdateAccessGroupProjects, error) {
-	return ConstructModel(fields)
-}
-
-// UpdateAccessGroupProjectsRoleEnum The project role that will be added to this Access Group. "null" will remove this project level role.
-type UpdateAccessGroupProjectsRoleEnum string
-
-const (
-	UpdateAccessGroupProjectsRoleEnumAdmin            UpdateAccessGroupProjectsRoleEnum = "ADMIN"
-	UpdateAccessGroupProjectsRoleEnumProjectViewer    UpdateAccessGroupProjectsRoleEnum = "PROJECT_VIEWER"
-	UpdateAccessGroupProjectsRoleEnumProjectDeveloper UpdateAccessGroupProjectsRoleEnum = "PROJECT_DEVELOPER"
-)
-
 type UpdateAccessGroupResponse struct {
 	// AccessGroupId ID of the access group.
 	AccessGroupId string `json:"accessGroupId"`
@@ -188,166 +392,6 @@ const (
 	UpdateAccessGroupResponseEntitlementsEnumV0 UpdateAccessGroupResponseEntitlementsEnum = "v0"
 )
 
-type ListAccessGroupMembersResponse struct {
-	Members    []ListAccessGroupMembersResponseMembers  `json:"members"`
-	Pagination ListAccessGroupMembersResponsePagination `json:"pagination"`
-}
-
-func (value *ListAccessGroupMembersResponse) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupMembersResponseAlias ListAccessGroupMembersResponse
-	var decoded ListAccessGroupMembersResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupMembersResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"members", "pagination"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"members", "pagination"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListAccessGroupMembersResponse returns a validated ListAccessGroupMembersResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupMembersResponse(fields ListAccessGroupMembersResponse) (*ListAccessGroupMembersResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ListAccessGroupMembersResponseMembers struct {
-	Avatar    *string                                           `json:"avatar,omitempty"`
-	CreatedAt *string                                           `json:"createdAt,omitempty"`
-	Email     string                                            `json:"email"`
-	Name      *string                                           `json:"name,omitempty"`
-	TeamRole  ListAccessGroupMembersResponseMembersTeamRoleEnum `json:"teamRole"`
-	Uid       string                                            `json:"uid"`
-	Username  string                                            `json:"username"`
-}
-
-func (value *ListAccessGroupMembersResponseMembers) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupMembersResponseMembersAlias ListAccessGroupMembersResponseMembers
-	var decoded ListAccessGroupMembersResponseMembersAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupMembersResponseMembers(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"email", "teamRole", "uid", "username"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"email", "teamRole", "uid", "username"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListAccessGroupMembersResponseMembers returns a validated ListAccessGroupMembersResponseMembers built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupMembersResponseMembers(fields ListAccessGroupMembersResponseMembers) (*ListAccessGroupMembersResponseMembers, error) {
-	return ConstructModel(fields)
-}
-
-type ListAccessGroupMembersResponseMembersTeamRoleEnum string
-
-const (
-	ListAccessGroupMembersResponseMembersTeamRoleEnumBilling       ListAccessGroupMembersResponseMembersTeamRoleEnum = "BILLING"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumContributor   ListAccessGroupMembersResponseMembersTeamRoleEnum = "CONTRIBUTOR"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumDeveloper     ListAccessGroupMembersResponseMembersTeamRoleEnum = "DEVELOPER"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumMember        ListAccessGroupMembersResponseMembersTeamRoleEnum = "MEMBER"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumOwner         ListAccessGroupMembersResponseMembersTeamRoleEnum = "OWNER"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumSecurity      ListAccessGroupMembersResponseMembersTeamRoleEnum = "SECURITY"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumViewer        ListAccessGroupMembersResponseMembersTeamRoleEnum = "VIEWER"
-	ListAccessGroupMembersResponseMembersTeamRoleEnumViewerForPlus ListAccessGroupMembersResponseMembersTeamRoleEnum = "VIEWER_FOR_PLUS"
-)
-
-type ListAccessGroupMembersResponsePagination struct {
-	Count float64               `json:"count"`
-	Next  NullableValue[string] `json:"next"`
-}
-
-func (value *ListAccessGroupMembersResponsePagination) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupMembersResponsePaginationAlias ListAccessGroupMembersResponsePagination
-	var decoded ListAccessGroupMembersResponsePaginationAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupMembersResponsePagination(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"count", "next"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"count"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListAccessGroupMembersResponsePagination returns a validated ListAccessGroupMembersResponsePagination built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupMembersResponsePagination(fields ListAccessGroupMembersResponsePagination) (*ListAccessGroupMembersResponsePagination, error) {
-	return ConstructModel(fields)
-}
-
-type CreateAccessGroupProjects struct {
-	// ProjectId The ID of the project.
-	ProjectId string `json:"projectId"`
-	// Role The project role that will be added to this Access Group. "null" will remove this project level role.
-	Role NullableValue[CreateAccessGroupProjectsRoleEnum] `json:"role"`
-}
-
-func (value *CreateAccessGroupProjects) UnmarshalJSON(data []byte) error {
-	type CreateAccessGroupProjectsAlias CreateAccessGroupProjects
-	var decoded CreateAccessGroupProjectsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateAccessGroupProjects(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"role", "projectId"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"projectId"}); err != nil {
-		return err
-	}
-	if err := ValidateLength("projectId", value.ProjectId, LengthOpts{Max: Ptr[int](256)}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateAccessGroupProjects returns a validated CreateAccessGroupProjects built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateAccessGroupProjects(fields CreateAccessGroupProjects) (*CreateAccessGroupProjects, error) {
-	return ConstructModel(fields)
-}
-
-// CreateAccessGroupProjectsRoleEnum The project role that will be added to this Access Group. "null" will remove this project level role.
-type CreateAccessGroupProjectsRoleEnum string
-
-const (
-	CreateAccessGroupProjectsRoleEnumAdmin            CreateAccessGroupProjectsRoleEnum = "ADMIN"
-	CreateAccessGroupProjectsRoleEnumProjectViewer    CreateAccessGroupProjectsRoleEnum = "PROJECT_VIEWER"
-	CreateAccessGroupProjectsRoleEnumProjectDeveloper CreateAccessGroupProjectsRoleEnum = "PROJECT_DEVELOPER"
-)
-
 type CreateAccessGroupResponse struct {
 	// AccessGroupId ID of the access group.
 	AccessGroupId string `json:"accessGroupId"`
@@ -400,282 +444,3 @@ type CreateAccessGroupResponseEntitlementsEnum string
 const (
 	CreateAccessGroupResponseEntitlementsEnumV0 CreateAccessGroupResponseEntitlementsEnum = "v0"
 )
-
-type ListAccessGroupProjectsResponse struct {
-	Pagination ListAccessGroupProjectsResponsePagination `json:"pagination"`
-	Projects   []ListAccessGroupProjectsResponseProjects `json:"projects"`
-}
-
-func (value *ListAccessGroupProjectsResponse) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupProjectsResponseAlias ListAccessGroupProjectsResponse
-	var decoded ListAccessGroupProjectsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupProjectsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"pagination", "projects"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"pagination", "projects"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListAccessGroupProjectsResponse returns a validated ListAccessGroupProjectsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupProjectsResponse(fields ListAccessGroupProjectsResponse) (*ListAccessGroupProjectsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ListAccessGroupProjectsResponsePagination struct {
-	Count float64               `json:"count"`
-	Next  NullableValue[string] `json:"next"`
-}
-
-func (value *ListAccessGroupProjectsResponsePagination) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupProjectsResponsePaginationAlias ListAccessGroupProjectsResponsePagination
-	var decoded ListAccessGroupProjectsResponsePaginationAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupProjectsResponsePagination(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"count", "next"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"count"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListAccessGroupProjectsResponsePagination returns a validated ListAccessGroupProjectsResponsePagination built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupProjectsResponsePagination(fields ListAccessGroupProjectsResponsePagination) (*ListAccessGroupProjectsResponsePagination, error) {
-	return ConstructModel(fields)
-}
-
-type ListAccessGroupProjectsResponseProjects struct {
-	CreatedAt string                                          `json:"createdAt"`
-	Project   ListAccessGroupProjectsResponseProjectsProject  `json:"project"`
-	ProjectId string                                          `json:"projectId"`
-	Role      ListAccessGroupProjectsResponseProjectsRoleEnum `json:"role"`
-	UpdatedAt string                                          `json:"updatedAt"`
-}
-
-func (value *ListAccessGroupProjectsResponseProjects) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupProjectsResponseProjectsAlias ListAccessGroupProjectsResponseProjects
-	var decoded ListAccessGroupProjectsResponseProjectsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupProjectsResponseProjects(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"createdAt", "project", "projectId", "role", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"createdAt", "project", "projectId", "role", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewListAccessGroupProjectsResponseProjects returns a validated ListAccessGroupProjectsResponseProjects built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupProjectsResponseProjects(fields ListAccessGroupProjectsResponseProjects) (*ListAccessGroupProjectsResponseProjects, error) {
-	return ConstructModel(fields)
-}
-
-type ListAccessGroupProjectsResponseProjectsProject struct {
-	Framework          *NullableValue[string] `json:"framework,omitempty"`
-	LatestDeploymentId *string                `json:"latestDeploymentId,omitempty"`
-	Name               *string                `json:"name,omitempty"`
-}
-
-func (value *ListAccessGroupProjectsResponseProjectsProject) UnmarshalJSON(data []byte) error {
-	type ListAccessGroupProjectsResponseProjectsProjectAlias ListAccessGroupProjectsResponseProjectsProject
-	var decoded ListAccessGroupProjectsResponseProjectsProjectAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ListAccessGroupProjectsResponseProjectsProject(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if raw, ok := rawFields["framework"]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-		value.Framework = &NullableValue[string]{}
-	}
-	return nil
-}
-
-// NewListAccessGroupProjectsResponseProjectsProject returns a validated ListAccessGroupProjectsResponseProjectsProject built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewListAccessGroupProjectsResponseProjectsProject(fields ListAccessGroupProjectsResponseProjectsProject) (*ListAccessGroupProjectsResponseProjectsProject, error) {
-	return ConstructModel(fields)
-}
-
-type ListAccessGroupProjectsResponseProjectsRoleEnum string
-
-const (
-	ListAccessGroupProjectsResponseProjectsRoleEnumAdmin            ListAccessGroupProjectsResponseProjectsRoleEnum = "ADMIN"
-	ListAccessGroupProjectsResponseProjectsRoleEnumProjectDeveloper ListAccessGroupProjectsResponseProjectsRoleEnum = "PROJECT_DEVELOPER"
-	ListAccessGroupProjectsResponseProjectsRoleEnumProjectGuest     ListAccessGroupProjectsResponseProjectsRoleEnum = "PROJECT_GUEST"
-	ListAccessGroupProjectsResponseProjectsRoleEnumProjectViewer    ListAccessGroupProjectsResponseProjectsRoleEnum = "PROJECT_VIEWER"
-)
-
-type CreateAccessGroupProjectResponse struct {
-	AccessGroupId string                                   `json:"accessGroupId"`
-	CreatedAt     string                                   `json:"createdAt"`
-	ProjectId     string                                   `json:"projectId"`
-	Role          CreateAccessGroupProjectResponseRoleEnum `json:"role"`
-	TeamId        string                                   `json:"teamId"`
-	UpdatedAt     string                                   `json:"updatedAt"`
-}
-
-func (value *CreateAccessGroupProjectResponse) UnmarshalJSON(data []byte) error {
-	type CreateAccessGroupProjectResponseAlias CreateAccessGroupProjectResponse
-	var decoded CreateAccessGroupProjectResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = CreateAccessGroupProjectResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"accessGroupId", "createdAt", "projectId", "role", "teamId", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"accessGroupId", "createdAt", "projectId", "role", "teamId", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewCreateAccessGroupProjectResponse returns a validated CreateAccessGroupProjectResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewCreateAccessGroupProjectResponse(fields CreateAccessGroupProjectResponse) (*CreateAccessGroupProjectResponse, error) {
-	return ConstructModel(fields)
-}
-
-type CreateAccessGroupProjectResponseRoleEnum string
-
-const (
-	CreateAccessGroupProjectResponseRoleEnumAdmin            CreateAccessGroupProjectResponseRoleEnum = "ADMIN"
-	CreateAccessGroupProjectResponseRoleEnumProjectDeveloper CreateAccessGroupProjectResponseRoleEnum = "PROJECT_DEVELOPER"
-	CreateAccessGroupProjectResponseRoleEnumProjectGuest     CreateAccessGroupProjectResponseRoleEnum = "PROJECT_GUEST"
-	CreateAccessGroupProjectResponseRoleEnumProjectViewer    CreateAccessGroupProjectResponseRoleEnum = "PROJECT_VIEWER"
-)
-
-type ReadAccessGroupProjectResponse struct {
-	AccessGroupId string                                 `json:"accessGroupId"`
-	CreatedAt     string                                 `json:"createdAt"`
-	ProjectId     string                                 `json:"projectId"`
-	Role          ReadAccessGroupProjectResponseRoleEnum `json:"role"`
-	TeamId        string                                 `json:"teamId"`
-	UpdatedAt     string                                 `json:"updatedAt"`
-}
-
-func (value *ReadAccessGroupProjectResponse) UnmarshalJSON(data []byte) error {
-	type ReadAccessGroupProjectResponseAlias ReadAccessGroupProjectResponse
-	var decoded ReadAccessGroupProjectResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = ReadAccessGroupProjectResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"accessGroupId", "createdAt", "projectId", "role", "teamId", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"accessGroupId", "createdAt", "projectId", "role", "teamId", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewReadAccessGroupProjectResponse returns a validated ReadAccessGroupProjectResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewReadAccessGroupProjectResponse(fields ReadAccessGroupProjectResponse) (*ReadAccessGroupProjectResponse, error) {
-	return ConstructModel(fields)
-}
-
-type ReadAccessGroupProjectResponseRoleEnum string
-
-const (
-	ReadAccessGroupProjectResponseRoleEnumAdmin            ReadAccessGroupProjectResponseRoleEnum = "ADMIN"
-	ReadAccessGroupProjectResponseRoleEnumProjectDeveloper ReadAccessGroupProjectResponseRoleEnum = "PROJECT_DEVELOPER"
-	ReadAccessGroupProjectResponseRoleEnumProjectGuest     ReadAccessGroupProjectResponseRoleEnum = "PROJECT_GUEST"
-	ReadAccessGroupProjectResponseRoleEnumProjectViewer    ReadAccessGroupProjectResponseRoleEnum = "PROJECT_VIEWER"
-)
-
-type UpdateAccessGroupProjectResponse struct {
-	AccessGroupId string                                   `json:"accessGroupId"`
-	CreatedAt     string                                   `json:"createdAt"`
-	ProjectId     string                                   `json:"projectId"`
-	Role          UpdateAccessGroupProjectResponseRoleEnum `json:"role"`
-	TeamId        string                                   `json:"teamId"`
-	UpdatedAt     string                                   `json:"updatedAt"`
-}
-
-func (value *UpdateAccessGroupProjectResponse) UnmarshalJSON(data []byte) error {
-	type UpdateAccessGroupProjectResponseAlias UpdateAccessGroupProjectResponse
-	var decoded UpdateAccessGroupProjectResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateAccessGroupProjectResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"accessGroupId", "createdAt", "projectId", "role", "teamId", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"accessGroupId", "createdAt", "projectId", "role", "teamId", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateAccessGroupProjectResponse returns a validated UpdateAccessGroupProjectResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateAccessGroupProjectResponse(fields UpdateAccessGroupProjectResponse) (*UpdateAccessGroupProjectResponse, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateAccessGroupProjectResponseRoleEnum string
-
-const (
-	UpdateAccessGroupProjectResponseRoleEnumAdmin            UpdateAccessGroupProjectResponseRoleEnum = "ADMIN"
-	UpdateAccessGroupProjectResponseRoleEnumProjectDeveloper UpdateAccessGroupProjectResponseRoleEnum = "PROJECT_DEVELOPER"
-	UpdateAccessGroupProjectResponseRoleEnumProjectGuest     UpdateAccessGroupProjectResponseRoleEnum = "PROJECT_GUEST"
-	UpdateAccessGroupProjectResponseRoleEnumProjectViewer    UpdateAccessGroupProjectResponseRoleEnum = "PROJECT_VIEWER"
-)
-
-type ReadAccessGroupParams struct {
-	IdOrName string
-	TeamId   *string
-	Slug     *string
-}

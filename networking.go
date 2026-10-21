@@ -9,83 +9,6 @@ import (
 	"fmt"
 )
 
-type UpdateStaticIpsResponse struct {
-	Aws                    *UpdateStaticIpsResponseAws              `json:"aws,omitempty"`
-	BuildsEnabled          bool                                     `json:"buildsEnabled"`
-	ConnectConfigurationId string                                   `json:"connectConfigurationId"`
-	CreatedAt              float64                                  `json:"createdAt"`
-	Dc                     *string                                  `json:"dc,omitempty"`
-	EnvId                  UpdateStaticIpsResponseEnvIdVariant1Enum `json:"envId"`
-	Passive                bool                                     `json:"passive"`
-	UpdatedAt              float64                                  `json:"updatedAt"`
-}
-
-func (value *UpdateStaticIpsResponse) UnmarshalJSON(data []byte) error {
-	type UpdateStaticIpsResponseAlias UpdateStaticIpsResponse
-	var decoded UpdateStaticIpsResponseAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateStaticIpsResponse(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"buildsEnabled", "connectConfigurationId", "createdAt", "envId", "passive", "updatedAt"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"buildsEnabled", "connectConfigurationId", "createdAt", "envId", "passive", "updatedAt"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateStaticIpsResponse returns a validated UpdateStaticIpsResponse built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateStaticIpsResponse(fields UpdateStaticIpsResponse) (*UpdateStaticIpsResponse, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateStaticIpsResponseAws struct {
-	SecurityGroupId *string  `json:"securityGroupId,omitempty"`
-	SubnetIds       []string `json:"subnetIds"`
-}
-
-func (value *UpdateStaticIpsResponseAws) UnmarshalJSON(data []byte) error {
-	type UpdateStaticIpsResponseAwsAlias UpdateStaticIpsResponseAws
-	var decoded UpdateStaticIpsResponseAwsAlias
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		return err
-	}
-	*value = UpdateStaticIpsResponseAws(decoded)
-	var rawFields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &rawFields); err != nil {
-		return err
-	}
-	if err := ValidateRequired(rawFields, []string{"subnetIds"}); err != nil {
-		return err
-	}
-	if err := ValidateNotNull(rawFields, []string{"subnetIds"}); err != nil {
-		return err
-	}
-	return nil
-}
-
-// NewUpdateStaticIpsResponseAws returns a validated UpdateStaticIpsResponseAws built from named fields.
-// Optional fields may be left unset; a value that violates the schema is
-// reported as *SdkValidationError.
-func NewUpdateStaticIpsResponseAws(fields UpdateStaticIpsResponseAws) (*UpdateStaticIpsResponseAws, error) {
-	return ConstructModel(fields)
-}
-
-type UpdateStaticIpsResponseEnvIdVariant1Enum string
-
-const (
-	UpdateStaticIpsResponseEnvIdVariant1EnumPreview    UpdateStaticIpsResponseEnvIdVariant1Enum = "preview"
-	UpdateStaticIpsResponseEnvIdVariant1EnumProduction UpdateStaticIpsResponseEnvIdVariant1Enum = "production"
-)
-
 type ListNetworksParams struct {
 	IncludeHostedZones        *bool
 	IncludePeeringConnections *bool
@@ -592,3 +515,80 @@ func UpdateStaticIps(ctx context.Context, clientConfig ClientConfig, params Upda
 	}
 	return resp.Data, nil
 }
+
+type UpdateStaticIpsResponse struct {
+	Aws                    *UpdateStaticIpsResponseAws              `json:"aws,omitempty"`
+	BuildsEnabled          bool                                     `json:"buildsEnabled"`
+	ConnectConfigurationId string                                   `json:"connectConfigurationId"`
+	CreatedAt              float64                                  `json:"createdAt"`
+	Dc                     *string                                  `json:"dc,omitempty"`
+	EnvId                  UpdateStaticIpsResponseEnvIdVariant1Enum `json:"envId"`
+	Passive                bool                                     `json:"passive"`
+	UpdatedAt              float64                                  `json:"updatedAt"`
+}
+
+func (value *UpdateStaticIpsResponse) UnmarshalJSON(data []byte) error {
+	type UpdateStaticIpsResponseAlias UpdateStaticIpsResponse
+	var decoded UpdateStaticIpsResponseAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UpdateStaticIpsResponse(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"buildsEnabled", "connectConfigurationId", "createdAt", "envId", "passive", "updatedAt"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"buildsEnabled", "connectConfigurationId", "createdAt", "envId", "passive", "updatedAt"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewUpdateStaticIpsResponse returns a validated UpdateStaticIpsResponse built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUpdateStaticIpsResponse(fields UpdateStaticIpsResponse) (*UpdateStaticIpsResponse, error) {
+	return ConstructModel(fields)
+}
+
+type UpdateStaticIpsResponseAws struct {
+	SecurityGroupId *string  `json:"securityGroupId,omitempty"`
+	SubnetIds       []string `json:"subnetIds"`
+}
+
+func (value *UpdateStaticIpsResponseAws) UnmarshalJSON(data []byte) error {
+	type UpdateStaticIpsResponseAwsAlias UpdateStaticIpsResponseAws
+	var decoded UpdateStaticIpsResponseAwsAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	*value = UpdateStaticIpsResponseAws(decoded)
+	var rawFields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawFields); err != nil {
+		return err
+	}
+	if err := ValidateRequired(rawFields, []string{"subnetIds"}); err != nil {
+		return err
+	}
+	if err := ValidateNotNull(rawFields, []string{"subnetIds"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewUpdateStaticIpsResponseAws returns a validated UpdateStaticIpsResponseAws built from named fields.
+// Optional fields may be left unset; a value that violates the schema is
+// reported as *SdkValidationError.
+func NewUpdateStaticIpsResponseAws(fields UpdateStaticIpsResponseAws) (*UpdateStaticIpsResponseAws, error) {
+	return ConstructModel(fields)
+}
+
+type UpdateStaticIpsResponseEnvIdVariant1Enum string
+
+const (
+	UpdateStaticIpsResponseEnvIdVariant1EnumPreview    UpdateStaticIpsResponseEnvIdVariant1Enum = "preview"
+	UpdateStaticIpsResponseEnvIdVariant1EnumProduction UpdateStaticIpsResponseEnvIdVariant1Enum = "production"
+)

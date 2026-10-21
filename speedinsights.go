@@ -8,6 +8,32 @@ import (
 	"encoding/json"
 )
 
+type CreateSpeedInsightsToggleParams struct {
+	ProjectId string
+	Value     bool
+}
+
+// CreateSpeedInsightsToggle updates the Speed Insights toggle for a project. Provide the `value` field to set the toggle state, and use `projectId` to select the project. The response confirms the resulting toggle value.
+func CreateSpeedInsightsToggle(ctx context.Context, clientConfig ClientConfig, params CreateSpeedInsightsToggleParams, opts ...RequestOption) (*CreateSpeedInsightsToggleResponse, error) {
+	projectId := params.ProjectId
+	value := params.Value
+
+	resp, err := DoCfg[CreateSpeedInsightsToggleResponse](ctx, &clientConfig, "POST", "/speed-insights/toggle", &RequestOpts{
+		Query: map[string]any{
+			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
+		},
+		Body: map[string]any{
+			"value": value,
+		},
+		OperationID: "CreateSpeedInsightsToggle",
+		Options:     opts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Data, nil
+}
+
 type CreateSpeedInsightsToggleResponse struct {
 	Value bool `json:"value"`
 }
@@ -37,30 +63,4 @@ func (value *CreateSpeedInsightsToggleResponse) UnmarshalJSON(data []byte) error
 // reported as *SdkValidationError.
 func NewCreateSpeedInsightsToggleResponse(fields CreateSpeedInsightsToggleResponse) (*CreateSpeedInsightsToggleResponse, error) {
 	return ConstructModel(fields)
-}
-
-type CreateSpeedInsightsToggleParams struct {
-	ProjectId string
-	Value     bool
-}
-
-// CreateSpeedInsightsToggle updates the Speed Insights toggle for a project. Provide the `value` field to set the toggle state, and use `projectId` to select the project. The response confirms the resulting toggle value.
-func CreateSpeedInsightsToggle(ctx context.Context, clientConfig ClientConfig, params CreateSpeedInsightsToggleParams, opts ...RequestOption) (*CreateSpeedInsightsToggleResponse, error) {
-	projectId := params.ProjectId
-	value := params.Value
-
-	resp, err := DoCfg[CreateSpeedInsightsToggleResponse](ctx, &clientConfig, "POST", "/speed-insights/toggle", &RequestOpts{
-		Query: map[string]any{
-			"projectId": QueryValue{Value: projectId, Style: "form", Explode: true},
-		},
-		Body: map[string]any{
-			"value": value,
-		},
-		OperationID: "CreateSpeedInsightsToggle",
-		Options:     opts,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Data, nil
 }
